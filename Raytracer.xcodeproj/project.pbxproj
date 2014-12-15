@@ -24,6 +24,7 @@
 		D1C2607F1A3D13A70063CDF3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C2607E1A3D13A70063CDF3 /* Metal.framework */; };
 		D1C260811A3D146E0063CDF3 /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
 		D1C260831A3D52C70063CDF3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C260821A3D52C70063CDF3 /* QuartzCore.framework */; };
+		D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +59,9 @@
 		D1C2607E1A3D13A70063CDF3 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		D1C260801A3D146E0063CDF3 /* MainShader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MainShader.metal; sourceTree = "<group>"; };
 		D1C260821A3D52C70063CDF3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		D1C2608B1A3E3A630063CDF3 /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
+		D1C2608C1A3E97E30063CDF3 /* Raytracer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Raytracer-Bridging-Header.h"; sourceTree = "<group>"; };
+		D1C2608D1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+MBETextureUtilities.h"; sourceTree = "<group>"; };
+		D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+MBETextureUtilities.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +122,9 @@
 				D1C260781A3D010D0063CDF3 /* Hit.swift */,
 				D1C2607A1A3D01330063CDF3 /* Sphere.swift */,
 				D1C2607C1A3D0E8A0063CDF3 /* Scene.swift */,
+				D1C2608C1A3E97E30063CDF3 /* Raytracer-Bridging-Header.h */,
+				D1C2608D1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.h */,
+				D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */,
 			);
 			path = Raytracer;
 			sourceTree = "<group>";
@@ -151,7 +157,6 @@
 		D1C260881A3E37770063CDF3 /* Metal */ = {
 			isa = PBXGroup;
 			children = (
-				D1C2608B1A3E3A630063CDF3 /* Ray.h */,
 				D1C260801A3D146E0063CDF3 /* MainShader.metal */,
 			);
 			name = Metal;
@@ -258,6 +263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1C260731A3CFF040063CDF3 /* Shape.swift in Sources */,
+				D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */,
 				D1C260791A3D010D0063CDF3 /* Hit.swift in Sources */,
 				D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */,
 				D1C260811A3D146E0063CDF3 /* MainShader.metal in Sources */,
@@ -392,9 +398,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Raytracer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Raytracer/Raytracer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -402,9 +411,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Raytracer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Raytracer/Raytracer-Bridging-Header.h";
 			};
 			name = Release;
 		};

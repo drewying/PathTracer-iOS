@@ -7,55 +7,43 @@
 //
 
 #include <metal_stdlib>
-#include "Ray.h"
-
 using namespace metal;
+
+#define DBL_MAX    1.7976931348623157E+308
+
+struct Ray{
+    float3 origin;
+    float3 direction;
+};
 
 struct Hit{
     float distance;
     Ray ray;
     float3 normal;
     float3 hitPosition;
+    float4 color;
     bool didHit;
 };
 
-Hit getHit(float distance, Ray ray, float3 normal){
-    Hit hit;
-    hit.distance = distance;
-    hit.ray = ray;
-    hit.normal = normal;
-    float3 hitpos = ray.origin + ray.direction * distance;
-    hit.hitPosition = hitpos;
-    hit.didHit = true;
-    return hit;
-}
-
-Hit noHit();
-Hit noHit(){
-    Hit hit;
-    hit.didHit = false;
-    return hit;
-}
-
 struct Sphere{
-    float3 position = float3(0.0,0.0,0.0);
-    float radius = 0.1;
-    float4 color = float4(1.0,0.0,0.0,1.0);
+    float3 position;
+    float radius;
+    float4 color;
 };
 
 struct Plane{
-    float3 position = float3(-1.0,0.0,0.0);
-    float3 normal = float3(1.0,0.0,0.0);
-    float4 color = float4(0.0,1.0,0.0,1.0);
+    float3 position;
+    float3 normal;
+    float4 color;
 };
 
 
 struct Light{
-    float3 center = float3(0.0,-0.5,-0.5);
+    float3 center = float3(0.0,0.0,-1.0);
 };
 
 struct Camera{
-    float3 eye = float3(0.0,0.0,-1.0);
+    float3 eye = float3(0.0,0.0,-3.0);
     float3 lookAt = float3(0.0,0.0,1.0);
     float3 up = float3(0.0, 1.0, 0.0);
     float3 right = float3(1.0, 0.0, 0.0);
@@ -63,7 +51,7 @@ struct Camera{
     float focalLength = 1.0;
 };
 
-Ray makeRay(float x, float y, float r1, float r2);
+
 Ray makeRay(float x, float y, float r1, float r2){
     Camera cam;
     float3 base = cam.right * x + cam.up * y;
@@ -82,15 +70,40 @@ Ray makeRay(float x, float y, float r1, float r2){
     return outRay;
 }
 
+Hit noHit(){
+    Hit hit;
+    hit.didHit = false;
+    return hit;
+}
+
+Hit getHit(float maxT, float minT, Ray ray, float3 normal, float4 color){
+    
+    if (minT > 1.e-6 && minT < maxT){
+        Hit hit;
+        hit.distance = minT;
+        hit.ray = ray;
+        hit.normal = normal;
+        hit.color = color;
+        float3 hitpos = ray.origin + ray.direction * minT;
+        hit.hitPosition = hitpos;
+        hit.didHit = true;
+        return hit;
+    } else{
+        return noHit();
+    }
+    
+    
+}
+
 Hit planeIntersection(Plane p, Ray ray, float distance);
 Hit planeIntersection(Plane p, Ray ray, float distance){
     float3 n = normalize(p.normal);
     float d = dot(n, p.position);
     
     float denom = dot(n, ray.direction);
-    if (denom > 1.e-6) {
+    if (abs(denom) > 1.e-6) {
         float t = (d - dot(n, ray.origin)) / denom;
-        return getHit(t, ray, p.normal);
+        return getHit(distance, t, ray, p.normal, p.color);
     }
     return noHit();
 }
@@ -115,60 +128,93 @@ Hit sphereIntersection(Sphere s, Ray ray, float distance){
     if (tNear <= eps) {
         float3 hitpos = ray.origin + ray.direction * tFar;
         float3 norm = (hitpos - s.position);
-        return getHit(tFar, ray, norm);
+        return getHit(distance, tFar, ray, norm, s.color);
     } else{
         float3 hitpos = ray.origin + ray.direction * tNear;
         float3 norm = (hitpos - s.position);
-        return getHit(tNear, ray, norm);
+        return getHit(distance, tNear, ray, norm, s.color);
     }
 }
 
-float4 getLighting(Hit hit, float4 color){
+float4 getLighting(Hit hit){
     Light l;
     float3 normal = normalize(hit.normal);
     float3 lightDirection = l.center - hit.hitPosition;
     float cosphi = dot(normal, lightDirection);
-    return float4(1.0,1.0,1.0,1.0) * cosphi * color;
+    return float4(1.0,1.0,1.0,1.0) * cosphi * hit.color;
 }
 
-float rand(float2 co){
-    return fract(sin(dot(co.xy ,float2(12.9898,78.233))) * 43758.5453);
-}
+static constant struct Sphere spheres[] = {
+    {float3(0.5,0.0,0.0), 0.2, float4(0.0,0.0,1.0,1.0)},
+    {float3(-0.5,0.0,0.0), 0.2, float4(0.0,1.0,0.0,1.0)}
+};
 
-vertex float4 basic_vertex(const device packed_float3* vertex_array [[ buffer(0) ]],unsigned int vid [[ vertex_id ]]) {
-    return float4(vertex_array[vid], 1.0);
-}
+static constant struct Plane planes[] = {
+    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float4(1.0,0.0,0.0,1.0)},
+    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float4(0.0,1.0,0.0,1.0)},
+    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float4(1.0,1.0,1.0,1.0)},
+    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float4(1.0,1.0,1.0,1.0)},
+    {float3(0.0,0.0,-4.0), float3(0.0,0.0,4.0), float4(1.0,1.0,1.0,1.0)},
+    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float4(1.0,1.0,1.0,1.0)}
+};
 
-fragment float4 basic_fragment(const device float* array [[buffer(0)]], float4 position [[position]]) {
+static constant float sphereCount = 2;
+static constant float planeCount = 6;
+
+kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
+                             texture2d<float, access::write> outTexture [[texture(1)]],
+                             uint2 gid [[thread_position_in_grid]]){
     
-    return float4(array[0], array[0], array[0], 1.0);
+    uint2 textureIndex(gid.x, gid.y);
+    float4 inColor = inTexture.read(textureIndex).rgba;
     
-    float xResolution = 375.0;
-    float yResolution = 667.0;
+    float xResolution = 500.0;
+    float yResolution = 500.0;
     
     float dx = 1.0 / xResolution;
     float xmin = 0.0;
     float dy = 1.0 / yResolution;
     float ymin = 0.0;
-    float x = xmin + position.x * dx;
-    float y = ymin + position.y * dy;
+    float x = xmin + gid.x * dx;
+    float y = ymin + gid.y * dy;
     
     
     Ray r = makeRay(x,y, 0.0, 0.0);
     
-    Sphere s;
-    Hit h = sphereIntersection(s, r, 10000.0);
-    if (h.didHit){
-        return getLighting(h, s.color);
+    Hit h;
+    h.distance = DBL_MAX;
+    
+    for (int i=0; i<planeCount; i++){
+        Plane p = planes[i];
+        Hit hit = planeIntersection(p, r, h.distance);
+        if (hit.didHit){
+            h = hit;
+        }
     }
     
-    Plane p;
+    for (int i=0; i<sphereCount; i++){
+        Sphere s = spheres[i];
+        Hit hit = sphereIntersection(s, r, h.distance);
+        if (hit.didHit){
+            h = hit;
+        }
+    }
+    
+    if (h.didHit){
+        outTexture.write(getLighting(h), gid);
+    } else{
+        outTexture.write(float4(0.0,0.0,0.0,0.0), gid);
+    }
+    
+    
+    
+    /*Plane p;
     Hit h1 = planeIntersection(p, r, 10000.0);
     if (h1.didHit){
-        return getLighting(h1, p.color);
+        outTexture.write(getLighting(h, s.color), gid);
     }
-    
-    return float4(array[0], array[0], array[0], 1.0);
+    else{
+        outTexture.write(float4(1.0,1.0,1.0,1.0), gid);
+    }*/
     
 }
-
