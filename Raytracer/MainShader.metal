@@ -15,7 +15,7 @@ using namespace metal;
 
 static constant int sphereCount = 2;
 static constant int planeCount = 6;
-static constant int sampleCount = 10;
+static constant int sampleCount = 5;
 
 struct Ray{
     float3 origin;
@@ -156,7 +156,7 @@ float4 getLighting(Hit hit){
 
 static constant struct Sphere spheres[] = {
     {float3(0.0,0.0,0.0), 0.3, float4(0.0,0.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,0.0,-4.0), 0.5, float4(0.0,1.0,0.0,1.0), float4(10.0,10.0,10.0,1.0)}
+    {float3(0.0,0.0,-4.0), 1.0, float4(0.0,1.0,0.0,1.0), float4(5000.0,5000.0,5000.0,1.0)}
 };
 
 static constant struct Plane planes[] = {
@@ -175,34 +175,33 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, int sampleNum
 }
 
 
-
-
-float random(float2 seed){
-    float value = fract(sin(dot(seed.xy ,float2(12.9898,78.233))) * 43758.5453);
-    return value;
+float random(float3 scale, float seed, uint2 gid) {
+    float3 temp = float3(gid.x, gid.y, 0.5);
+    return fract(sin(dot(temp.xyz + seed, scale)) * 43758.5453 + seed);
 }
 
-Ray bounce(Hit h, float2 seed){
-    float pi = M_PI;
-    float phi = 2 * pi * random(seed); //Are these random enough?
-    float r = sqrt(random(seed+0.5)); //Are these random enough?
-    float x = r * cos(phi);
-    float y = r * sin(phi);
-    float z = sqrt(1 - x * x - y * y);
-    float3 randomVector = float3(x,y,z);
-    
-    randomVector = normalize(randomVector);
-    
-    // if the point is in the wrong hemisphere, mirror it
-    if (dot(h.normal, randomVector) < 0.0) {
-        randomVector *= -1.0;
-    }
-    
+float3 uniformlyRandomDirection(float seed, uint2 gid) {
+    float u = random(float3(12.9898, 78.233, 151.7182), seed, gid);
+    float v = random(float3(63.7264, 10.873, 623.6736), seed, gid);
+    float z = 1.0 - 2.0 * u;
+    float r = sqrt(1.0 - z * z);
+    float angle = 6.283185307179586 * v;
+    return float3(r * cos(angle), r * sin(angle), z);
+}
+
+float3 uniformlyRandomVector(float seed, uint2 gid)
+{
+    return uniformlyRandomDirection(seed, gid) *  (random(float3(36.7539, 50.3658, 306.2759), seed, gid));
+}
+
+Ray bounce(Hit h, float seed, uint2 gid){
     Ray outRay;
     outRay.origin = h.hitPosition;
-    outRay.direction = randomVector;
+    outRay.direction = uniformlyRandomVector(seed, gid);
     return outRay;
 }
+
+
 
 Hit getClosestHit(Ray r){
     Hit h = noHit();
@@ -227,7 +226,7 @@ Hit getClosestHit(Ray r){
 }
 
 
-float4 pathTrace(Ray r, float2 seed){
+float4 pathTrace(Ray r, float seed, uint2 gid){
     float4 finalColor = float4(0.0,0.0,0.0,1.0);
     float4 reflectColor = float4(1.0,1.0,1.0,1.0);
     for (int i=0; i < sampleCount; i++){
@@ -241,7 +240,7 @@ float4 pathTrace(Ray r, float2 seed){
         
         reflectColor = reflectColor * h.color;
         finalColor += (h.color * reflectColor);
-        r = bounce(h, seed+i);
+        r = bounce(h, seed, gid);
     }
     
     return float4(0.0,0.0,0.0,1.0);
@@ -251,13 +250,11 @@ float4 pathTrace(Ray r, float2 seed){
 
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                              texture2d<float, access::write> outTexture [[texture(1)]],
-                             uint2 gid [[thread_position_in_grid]], constant int &sampleNum [[buffer(0)]]){
+                             uint2 gid [[thread_position_in_grid]], device float *params [[buffer(0)]]){
     
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
     float4 inColor = inTexture.read(textureIndex).rgba;
-    
-    
     
     float xResolution = 500.0;
     float yResolution = 500.0;
@@ -273,7 +270,10 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     Ray r = makeRay(x,y, 0.0, 0.0);
     
     //Set the random seed;
-    float2 seed = float2(gid.x + sin(inColor.r), gid.y + sin(inColor.g));
-    float4 c = pathTrace(r, seed);
+    float sampleNum = params[0];
+    float seed = params[1];
+    float4 c = pathTrace(r, seed, gid);
     outTexture.write(monteCarloIntegrate(inColor, c, sampleNum), gid);
+    //outTexture.write(c + inColor, gid);
+    
 }

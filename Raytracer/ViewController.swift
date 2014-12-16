@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     var inputTexture: MTLTexture! = nil;
     var outputTexture: MTLTexture! = nil;
     var timer: CADisplayLink! = nil
-    
+    var now = NSDate();
     var sampleCount = 0;
     
     
@@ -52,7 +52,10 @@ class ViewController: UIViewController {
         commandEncoder.setComputePipelineState(pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
-        let b = self.device.newBufferWithBytes(&self.sampleCount, length: sizeof(Int), options:nil);
+        
+        let params = [Float(self.sampleCount), Float(now.timeIntervalSinceNow * -1)];
+        let b = self.device.newBufferWithBytes(params, length: sizeofValue(params[0])*2, options:nil);
+        
         commandEncoder.setBuffer(b, offset: 0, atIndex: 0);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
