@@ -21,6 +21,8 @@ class ViewController: UIViewController {
     var outputTexture: MTLTexture! = nil;
     var timer: CADisplayLink! = nil
     
+    var sampleCount = 0;
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,11 +52,16 @@ class ViewController: UIViewController {
         commandEncoder.setComputePipelineState(pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
+        let b = self.device.newBufferWithBytes(&self.sampleCount, length: sizeof(Int), options:nil);
+        commandEncoder.setBuffer(b, offset: 0, atIndex: 0);
+        
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
         commandBuffer.commit();
         commandBuffer.waitUntilCompleted();
+        
         self.inputTexture = self.outputTexture;
+        sampleCount++;
     }
     
     func gameloop() {

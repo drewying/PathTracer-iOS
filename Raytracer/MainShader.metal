@@ -10,6 +10,12 @@
 using namespace metal;
 
 #define DBL_MAX    1.7976931348623157E+308
+#define M_PI 3.14159265358979323846
+#define EPSILON 1.e-6
+
+static constant int sphereCount = 2;
+static constant int planeCount = 6;
+static constant int sampleCount = 10;
 
 struct Ray{
     float3 origin;
@@ -22,6 +28,7 @@ struct Hit{
     float3 normal;
     float3 hitPosition;
     float4 color;
+    float4 emmitColor;
     bool didHit;
 };
 
@@ -29,12 +36,14 @@ struct Sphere{
     float3 position;
     float radius;
     float4 color;
+    float4 emmitColor;
 };
 
 struct Plane{
     float3 position;
     float3 normal;
     float4 color;
+    float4 emmitColor;
 };
 
 
@@ -73,17 +82,19 @@ Ray makeRay(float x, float y, float r1, float r2){
 Hit noHit(){
     Hit hit;
     hit.didHit = false;
+    hit.distance = DBL_MAX;
     return hit;
 }
 
-Hit getHit(float maxT, float minT, Ray ray, float3 normal, float4 color){
+Hit getHit(float maxT, float minT, Ray ray, float3 normal, float4 color, float4 emmitColor){
     
-    if (minT > 1.e-6 && minT < maxT){
+    if (minT > EPSILON && minT < maxT){
         Hit hit;
         hit.distance = minT;
         hit.ray = ray;
         hit.normal = normal;
         hit.color = color;
+        hit.emmitColor = emmitColor;
         float3 hitpos = ray.origin + ray.direction * minT;
         hit.hitPosition = hitpos;
         hit.didHit = true;
@@ -101,9 +112,9 @@ Hit planeIntersection(Plane p, Ray ray, float distance){
     float d = dot(n, p.position);
     
     float denom = dot(n, ray.direction);
-    if (abs(denom) > 1.e-6) {
+    if (abs(denom) > EPSILON) {
         float t = (d - dot(n, ray.origin)) / denom;
-        return getHit(distance, t, ray, p.normal, p.color);
+        return getHit(distance, t, ray, p.normal, p.color, p.emmitColor);
     }
     return noHit();
 }
@@ -119,20 +130,19 @@ Hit sphereIntersection(Sphere s, Ray ray, float distance){
     }
     float d = sqrt(discriminant);
     float tFar = b + d;
-    float eps = 1e-4;
-    if (tFar <= eps) {
+    if (tFar <= EPSILON) {
         return noHit();
     }
     float tNear = b - d;
     
-    if (tNear <= eps) {
+    if (tNear <= EPSILON) {
         float3 hitpos = ray.origin + ray.direction * tFar;
         float3 norm = (hitpos - s.position);
-        return getHit(distance, tFar, ray, norm, s.color);
+        return getHit(distance, tFar, ray, norm, s.color, s.emmitColor);
     } else{
         float3 hitpos = ray.origin + ray.direction * tNear;
         float3 norm = (hitpos - s.position);
-        return getHit(distance, tNear, ray, norm, s.color);
+        return getHit(distance, tNear, ray, norm, s.color, s.emmitColor);
     }
 }
 
@@ -145,44 +155,57 @@ float4 getLighting(Hit hit){
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.5,0.0,0.0), 0.2, float4(0.0,0.0,1.0,1.0)},
-    {float3(-0.5,0.0,0.0), 0.2, float4(0.0,1.0,0.0,1.0)}
+    {float3(0.0,0.0,0.0), 0.3, float4(0.0,0.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,0.0,-4.0), 0.5, float4(0.0,1.0,0.0,1.0), float4(10.0,10.0,10.0,1.0)}
 };
 
 static constant struct Plane planes[] = {
-    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float4(1.0,0.0,0.0,1.0)},
-    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float4(0.0,1.0,0.0,1.0)},
-    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float4(1.0,1.0,1.0,1.0)},
-    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float4(1.0,1.0,1.0,1.0)},
-    {float3(0.0,0.0,-4.0), float3(0.0,0.0,4.0), float4(1.0,1.0,1.0,1.0)},
-    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float4(1.0,1.0,1.0,1.0)}
+    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float4(1.0,0.0,0.0,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float4(0.0,1.0,0.0,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)}
 };
 
-static constant float sphereCount = 2;
-static constant float planeCount = 6;
+float4 monteCarloIntegrate(float4 currentSample, float4 newSample, int sampleNumber){
+    currentSample -= currentSample / sampleNumber;
+    currentSample += newSample / sampleNumber;
+    return currentSample;
+}
 
-kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
-                             texture2d<float, access::write> outTexture [[texture(1)]],
-                             uint2 gid [[thread_position_in_grid]]){
+
+
+
+float random(float2 seed){
+    float value = fract(sin(dot(seed.xy ,float2(12.9898,78.233))) * 43758.5453);
+    return value;
+}
+
+Ray bounce(Hit h, float2 seed){
+    float pi = M_PI;
+    float phi = 2 * pi * random(seed); //Are these random enough?
+    float r = sqrt(random(seed+0.5)); //Are these random enough?
+    float x = r * cos(phi);
+    float y = r * sin(phi);
+    float z = sqrt(1 - x * x - y * y);
+    float3 randomVector = float3(x,y,z);
     
-    uint2 textureIndex(gid.x, gid.y);
-    float4 inColor = inTexture.read(textureIndex).rgba;
+    randomVector = normalize(randomVector);
     
-    float xResolution = 500.0;
-    float yResolution = 500.0;
+    // if the point is in the wrong hemisphere, mirror it
+    if (dot(h.normal, randomVector) < 0.0) {
+        randomVector *= -1.0;
+    }
     
-    float dx = 1.0 / xResolution;
-    float xmin = 0.0;
-    float dy = 1.0 / yResolution;
-    float ymin = 0.0;
-    float x = xmin + gid.x * dx;
-    float y = ymin + gid.y * dy;
-    
-    
-    Ray r = makeRay(x,y, 0.0, 0.0);
-    
-    Hit h;
-    h.distance = DBL_MAX;
+    Ray outRay;
+    outRay.origin = h.hitPosition;
+    outRay.direction = randomVector;
+    return outRay;
+}
+
+Hit getClosestHit(Ray r){
+    Hit h = noHit();
     
     for (int i=0; i<planeCount; i++){
         Plane p = planes[i];
@@ -200,21 +223,57 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
         }
     }
     
-    if (h.didHit){
-        outTexture.write(getLighting(h), gid);
-    } else{
-        outTexture.write(float4(0.0,0.0,0.0,0.0), gid);
+    return h;
+}
+
+
+float4 pathTrace(Ray r, float2 seed){
+    float4 finalColor = float4(0.0,0.0,0.0,1.0);
+    float4 reflectColor = float4(1.0,1.0,1.0,1.0);
+    for (int i=0; i < sampleCount; i++){
+        Hit h = getClosestHit(r);
+        if (!h.didHit){
+            return float4(0.0,0.0,0.0,1.0);
+        }
+        if (h.emmitColor.r > 0.0 || h.emmitColor.g > 0.0 || h.emmitColor.b > 0.0){
+            return finalColor * h.emmitColor;
+        }
+        
+        reflectColor = reflectColor * h.color;
+        finalColor += (h.color * reflectColor);
+        r = bounce(h, seed+i);
     }
     
+    return float4(0.0,0.0,0.0,1.0);
+}
+
+
+
+kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
+                             texture2d<float, access::write> outTexture [[texture(1)]],
+                             uint2 gid [[thread_position_in_grid]], constant int &sampleNum [[buffer(0)]]){
+    
+    //Get the inColor
+    uint2 textureIndex(gid.x, gid.y);
+    float4 inColor = inTexture.read(textureIndex).rgba;
     
     
-    /*Plane p;
-    Hit h1 = planeIntersection(p, r, 10000.0);
-    if (h1.didHit){
-        outTexture.write(getLighting(h, s.color), gid);
-    }
-    else{
-        outTexture.write(float4(1.0,1.0,1.0,1.0), gid);
-    }*/
     
+    float xResolution = 500.0;
+    float yResolution = 500.0;
+    
+    float dx = 1.0 / xResolution;
+    float xmin = 0.0;
+    float dy = 1.0 / yResolution;
+    float ymin = 0.0;
+    float x = xmin + gid.x * dx;
+    float y = ymin + gid.y * dy;
+    
+    
+    Ray r = makeRay(x,y, 0.0, 0.0);
+    
+    //Set the random seed;
+    float2 seed = float2(gid.x + sin(inColor.r), gid.y + sin(inColor.g));
+    float4 c = pathTrace(r, seed);
+    outTexture.write(monteCarloIntegrate(inColor, c, sampleNum), gid);
 }
