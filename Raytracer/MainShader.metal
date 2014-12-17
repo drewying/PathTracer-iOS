@@ -9,8 +9,11 @@
 #include <metal_stdlib>
 using namespace metal;
 
-#define DBL_MAX    1.7976931348623157E+308
+#define DBL_MAX 1.7976931348623157E+308
+#define INT_MAX 2147483647
+#define UINT_MAX 4294967295
 #define M_PI 3.14159265358979323846
+
 #define EPSILON 1.e-6
 
 static constant int sphereCount = 2;
@@ -156,48 +159,69 @@ float4 getLighting(Hit hit){
 
 static constant struct Sphere spheres[] = {
     {float3(0.0,-0.7,0.0), 0.3, float4(0.0,0.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,0.0,-4.0), 0.75, float4(0.0,1.0,0.0,1.0), float4(20.0,20.0,20.0,1.0)}
+    {float3(0.0,1.0,0.0), 0.5, float4(1.0,1.0,1.0,1.0), float4(2.0,2.0,2.0,1.0)}
 };
 
 static constant struct Plane planes[] = {
     {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float4(1.0,0.0,0.0,1.0), float4(0.0,0.0,0.0,1.0)},
     {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float4(0.0,1.0,0.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float4(1.0,1.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)}
+    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)}
 };
 
-float4 monteCarloIntegrate(float4 currentSample, float4 newSample, int sampleNumber){
-    currentSample -= currentSample / sampleNumber;
-    currentSample += newSample / sampleNumber;
+float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
+    currentSample -= currentSample / (float)sampleNumber;
+    currentSample += newSample / (float)sampleNumber;
     return currentSample;
 }
 
-
-float random(float3 scale, float seed, uint2 gid) {
-    float3 temp = float3(gid.x, gid.y, 0.5);
-    return fract(sin(dot(temp.xyz + seed, scale)) * 43758.5453 + seed);
-}
-
-float3 uniformlyRandomDirection(float seed, uint2 gid) {
-    float u = random(float3(12.9898, 78.233, 151.7182), seed, gid);
-    float v = random(float3(63.7264, 10.873, 623.6736), seed, gid);
-    float z = 1.0 - 2.0 * u;
-    float r = sqrt(1.0 - z * z);
-    float angle = 6.283185307179586 * v;
-    return float3(r * cos(angle), r * sin(angle), z);
-}
-
-float3 uniformlyRandomVector(float seed, uint2 gid)
+float rand(device uint *seed)
 {
-    return uniformlyRandomDirection(seed, gid) *  (random(float3(36.7539, 50.3658, 306.2759), seed, gid));
+    uint next = *seed;
+    int result;
+    
+    next *= 1103515245;
+    next += 12345;
+    result = (uint) (next / 65536) % 2048;
+    
+    next *= 1103515245;
+    next += 12345;
+    result <<= 10;
+    result ^= (uint) (next / 65536) % 1024;
+    
+    next *= 1103515245;
+    next += 12345;
+    result <<= 10;
+    result ^= (uint) (next / 65536) % 1024;
+    
+    *seed = next;
+    
+    return (float)result/(float)INT_MAX;
 }
 
-Ray bounce(Hit h, float seed, uint2 gid){
+
+
+Ray bounce(Hit h, device uint *seed){
+    float pi = M_PI;
+    float phi = 2 * pi * (float)rand(seed);
+    float r = sqrt(rand(seed));
+    float x = r * cos(phi);
+    float y = r * sin(phi);
+    float z = sqrt(1 - x * x - y * y);
+    float3 randomVector = normalize(float3(x,y,z));
+
+    auto normal = h.normal;
+    
+    // if the point is in the wrong hemisphere, mirror it
+    if (dot(normal, randomVector) < 0.0) {
+        randomVector *= -1.0;
+    }
+    
     Ray outRay;
     outRay.origin = h.hitPosition;
-    outRay.direction = uniformlyRandomVector(seed, gid);
+    outRay.direction = randomVector;
     return outRay;
 }
 
@@ -247,7 +271,7 @@ Hit getClosestHit(Ray r){
 }*/
 
 
-float4 pathTrace(Ray r, float seed, uint2 gid){
+float4 pathTrace(Ray r, device uint *seed){
     float4 finalColor = float4(0.0,0.0,0.0,1.0);
     float4 reflectColor = float4(1.0,1.0,1.0,1.0);
     for (int i=0; i < sampleCount; i++){
@@ -255,14 +279,16 @@ float4 pathTrace(Ray r, float seed, uint2 gid){
         if (!h.didHit){
             return float4(0.0,0.0,0.0,1.0);
         }
+        
+        
+        reflectColor = reflectColor * h.color;
+        finalColor += reflectColor;
+        
         if (h.emmitColor.r > 0.0 || h.emmitColor.g > 0.0 || h.emmitColor.b > 0.0){
             return finalColor * h.emmitColor;
         }
         
-        reflectColor = reflectColor * h.color;
-        finalColor += reflectColor;
-        r = bounce(h, seed, gid);
-        seed *= seed * seed;
+        r = bounce(h, seed);
     }
     
     return float4(0.0,0.0,0.0,1.0);
@@ -270,7 +296,7 @@ float4 pathTrace(Ray r, float seed, uint2 gid){
 
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                              texture2d<float, access::write> outTexture [[texture(1)]],
-                             uint2 gid [[thread_position_in_grid]], device float *params [[buffer(0)]]){
+                             uint2 gid [[thread_position_in_grid]], device uint *params [[buffer(0)]]){
     
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
@@ -289,11 +315,18 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Ray r = makeRay(x,y, 0.0, 0.0);
     
+    //int tr = rand_r(1);
+    
     //Set the random seed;
-    float sampleNum = params[0];
-    float seed = params[1];
-    float4 c = pathTrace(r, seed, gid);
-    outTexture.write(monteCarloIntegrate(inColor, c, sampleNum), gid);
-    //outTexture.write(c + inColor, gid);
+    float4 c = pathTrace(r, params);
+    
+    //testFunc(params);
+
+    uint sampleNumber = params[1];
+    //float val = 1.0/(float)params[1];
+    //outTexture.write(float4(val,val,val,1.0), gid);
+    
+    outTexture.write(monteCarloIntegrate(inColor, c, sampleNumber), gid);
+    
     
 }

@@ -57,8 +57,8 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
-        let params = [Float(self.sampleCount), Float(now.timeIntervalSinceNow * -1)];
-        let b = self.device.newBufferWithBytes(params, length: sizeofValue(params[0])*2, options:nil);
+        let params = [UInt32(now.timeIntervalSinceNow * -1000), UInt32(self.sampleCount)];
+        let b = self.device.newBufferWithBytes(params, length: sizeofValue(params[0])*params.count, options:nil);
         
         commandEncoder.setBuffer(b, offset: 0, atIndex: 0);
         
