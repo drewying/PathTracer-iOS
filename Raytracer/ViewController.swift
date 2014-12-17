@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     var outputTexture: MTLTexture! = nil;
     var timer: CADisplayLink! = nil
     var now = NSDate();
-    var sampleCount = 0;
+    var sampleCount = 1;
     
     
     override func viewDidLoad() {
