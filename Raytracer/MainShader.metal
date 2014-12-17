@@ -30,23 +30,23 @@ struct Hit{
     Ray ray;
     float3 normal;
     float3 hitPosition;
-    float4 color;
-    float4 emmitColor;
+    float3 color;
+    float3 emmitColor;
     bool didHit;
 };
 
 struct Sphere{
     float3 position;
     float radius;
-    float4 color;
-    float4 emmitColor;
+    float3 color;
+    float3 emmitColor;
 };
 
 struct Plane{
     float3 position;
     float3 normal;
-    float4 color;
-    float4 emmitColor;
+    float3 color;
+    float3 emmitColor;
 };
 
 
@@ -89,7 +89,7 @@ Hit noHit(){
     return hit;
 }
 
-Hit getHit(float maxT, float minT, Ray ray, float3 normal, float4 color, float4 emmitColor){
+Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, float3 emmitColor){
     
     if (minT > EPSILON && minT < maxT){
         Hit hit;
@@ -149,26 +149,26 @@ Hit sphereIntersection(Sphere s, Ray ray, float distance){
     }
 }
 
-float4 getLighting(Hit hit){
+float3 getLighting(Hit hit){
     Light l;
     float3 normal = normalize(hit.normal);
     float3 lightDirection = l.center - hit.hitPosition;
     float cosphi = dot(normal, lightDirection);
-    return float4(1.0,1.0,1.0,1.0) * cosphi * hit.color;
+    return float3(1.0,1.0,1.0) * cosphi * hit.color;
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.0,-0.7,0.0), 0.3, float4(0.0,0.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,1.0,0.0), 0.5, float4(1.0,1.0,1.0,1.0), float4(2.0,2.0,2.0,1.0)}
+    {float3(0.0,-0.7,0.0), 0.3, float3(0.0,0.0,1.0), float3(0.0,0.0,0.0)},
+    {float3(0.0,1.0,0.0), 0.5, float3(1.0,1.0,1.0), float3(2.0,2.0,2.0)}
 };
 
 static constant struct Plane planes[] = {
-    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float4(1.0,0.0,0.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float4(0.0,1.0,0.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float4(0.75,0.75,0.75,1.0), float4(0.0,0.0,0.0,1.0)}
+    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(0.0,0.0,0.0)},
+    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,1.0,0.0), float3(0.0,0.0,0.0)},
+    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), float3(0.0,0.0,0.0)},
+    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), float3(0.0,0.0,0.0)},
+    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float3(0.75,0.75,0.75), float3(0.0,0.0,0.0)},
+    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float3(0.75,0.75,0.75), float3(0.0,0.0,0.0)}
 };
 
 float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
@@ -179,26 +179,13 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
 
 float rand(device uint *seed)
 {
+    uint long_max = 4294967295;
+    float float_max = 4294967295.0;
+    uint mult = 62089911;
     uint next = *seed;
-    int result;
-    
-    next *= 1103515245;
-    next += 12345;
-    result = (uint) (next / 65536) % 2048;
-    
-    next *= 1103515245;
-    next += 12345;
-    result <<= 10;
-    result ^= (uint) (next / 65536) % 1024;
-    
-    next *= 1103515245;
-    next += 12345;
-    result <<= 10;
-    result ^= (uint) (next / 65536) % 1024;
-    
+    next = mult * next;
     *seed = next;
-    
-    return (float)result/(float)INT_MAX;
+    return float(next % long_max) / float_max;
 }
 
 
@@ -250,30 +237,11 @@ Hit getClosestHit(Ray r){
 }
 
 
-/*float4 pathTrace(Ray r, float seed, uint2 gid){
-    float4 finalColor = float4(0.0,0.0,0.0,1.0);
-    float4 reflectColor = float4(1.0,1.0,1.0,1.0);
-    for (int i=0; i < sampleCount; i++){
-        Hit h = getClosestHit(r);
-        if (!h.didHit){
-            return float4(0.0,0.0,0.0,1.0);
-        }
-        if (h.emmitColor.r > 0.0 || h.emmitColor.g > 0.0 || h.emmitColor.b > 0.0){
-            return finalColor * h.emmitColor;
-        }
-        
-        reflectColor = reflectColor * h.color;
-        finalColor += (h.color * reflectColor);
-        r = bounce(h, seed, gid);
-    }
-    
-    return float4(0.0,0.0,0.0,1.0);
-}*/
 
 
 float4 pathTrace(Ray r, device uint *seed){
-    float4 finalColor = float4(0.0,0.0,0.0,1.0);
-    float4 reflectColor = float4(1.0,1.0,1.0,1.0);
+    float3 finalColor = float3(0.0,0.0,0.0);
+    float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < sampleCount; i++){
         Hit h = getClosestHit(r);
         if (!h.didHit){
@@ -285,7 +253,7 @@ float4 pathTrace(Ray r, device uint *seed){
         finalColor += reflectColor;
         
         if (h.emmitColor.r > 0.0 || h.emmitColor.g > 0.0 || h.emmitColor.b > 0.0){
-            return finalColor * h.emmitColor;
+            return float4(finalColor * h.emmitColor,1.0);
         }
         
         r = bounce(h, seed);
