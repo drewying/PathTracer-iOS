@@ -29,13 +29,21 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uFE-EO-tVQ">
+                                <rect key="frame" x="227" y="562" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="1ft-mH-1i8" secondAttribute="centerY" id="0DE-9j-9C5"/>
+                            <constraint firstItem="lNS-cY-Cyy" firstAttribute="leading" secondItem="uFE-EO-tVQ" secondAttribute="trailing" constant="8" id="4Fi-wV-sZk"/>
                             <constraint firstAttribute="centerX" secondItem="1ft-mH-1i8" secondAttribute="centerX" id="E27-Yh-Z6b"/>
                             <constraint firstAttribute="centerX" secondItem="lNS-cY-Cyy" secondAttribute="centerX" id="KS1-nw-wk4"/>
                             <constraint firstItem="lNS-cY-Cyy" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="j71-3s-N3C"/>
+                            <constraint firstItem="uFE-EO-tVQ" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="12" id="krM-dL-P06"/>
                             <constraint firstAttribute="centerY" secondItem="lNS-cY-Cyy" secondAttribute="centerY" constant="-273" id="ujo-DX-ltj"/>
                         </constraints>
                         <variation key="default">
@@ -46,6 +54,7 @@
                     </view>
                     <connections>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
+                        <outlet property="sampleLabel" destination="uFE-EO-tVQ" id="q9n-2x-5wA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

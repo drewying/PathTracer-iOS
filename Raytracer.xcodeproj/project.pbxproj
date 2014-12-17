@@ -16,6 +16,7 @@
 		D130D6E61A3150480096BFC7 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E51A3150480096BFC7 /* Camera.swift */; };
 		D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E71A3150A30096BFC7 /* Vector3D.swift */; };
 		D138EFD01A40146800D13F11 /* PathTracerParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */; };
+		D16EE7E11A4118C800EB5411 /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
 		D1C260731A3CFF040063CDF3 /* Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260721A3CFF040063CDF3 /* Shape.swift */; };
 		D1C260751A3CFF230063CDF3 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260741A3CFF230063CDF3 /* Material.swift */; };
 		D1C260771A3D00620063CDF3 /* Ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260761A3D00620063CDF3 /* Ray.swift */; };
@@ -25,7 +26,6 @@
 		D1C2607F1A3D13A70063CDF3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C2607E1A3D13A70063CDF3 /* Metal.framework */; };
 		D1C260831A3D52C70063CDF3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C260821A3D52C70063CDF3 /* QuartzCore.framework */; };
 		D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */; };
-		D1F1ED7E1A4024760091D579 /* Shader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D138EFCD1A40092000D13F11 /* Shader.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -267,11 +267,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1F1ED7E1A4024760091D579 /* Shader.metal in Sources */,
 				D1C260731A3CFF040063CDF3 /* Shape.swift in Sources */,
 				D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */,
 				D1C260791A3D010D0063CDF3 /* Hit.swift in Sources */,
 				D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */,
+				D16EE7E11A4118C800EB5411 /* MainShader.metal in Sources */,
 				D1C2607B1A3D01330063CDF3 /* Sphere.swift in Sources */,
 				D130D6C81A314FD10096BFC7 /* ViewController.swift in Sources */,
 				D130D6C61A314FD10096BFC7 /* AppDelegate.swift in Sources */,

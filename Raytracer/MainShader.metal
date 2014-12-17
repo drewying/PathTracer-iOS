@@ -155,8 +155,8 @@ float4 getLighting(Hit hit){
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.0,0.0,0.0), 0.3, float4(0.0,0.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
-    {float3(0.0,0.0,-4.0), 1.0, float4(0.0,1.0,0.0,1.0), float4(5000.0,5000.0,5000.0,1.0)}
+    {float3(0.0,-0.7,0.0), 0.3, float4(0.0,0.0,1.0,1.0), float4(0.0,0.0,0.0,1.0)},
+    {float3(0.0,0.0,-4.0), 0.75, float4(0.0,1.0,0.0,1.0), float4(20.0,20.0,20.0,1.0)}
 };
 
 static constant struct Plane planes[] = {
@@ -226,7 +226,7 @@ Hit getClosestHit(Ray r){
 }
 
 
-float4 pathTrace(Ray r, float seed, uint2 gid){
+/*float4 pathTrace(Ray r, float seed, uint2 gid){
     float4 finalColor = float4(0.0,0.0,0.0,1.0);
     float4 reflectColor = float4(1.0,1.0,1.0,1.0);
     for (int i=0; i < sampleCount; i++){
@@ -244,9 +244,29 @@ float4 pathTrace(Ray r, float seed, uint2 gid){
     }
     
     return float4(0.0,0.0,0.0,1.0);
+}*/
+
+
+float4 pathTrace(Ray r, float seed, uint2 gid){
+    float4 finalColor = float4(0.0,0.0,0.0,1.0);
+    float4 reflectColor = float4(1.0,1.0,1.0,1.0);
+    for (int i=0; i < sampleCount; i++){
+        Hit h = getClosestHit(r);
+        if (!h.didHit){
+            return float4(0.0,0.0,0.0,1.0);
+        }
+        if (h.emmitColor.r > 0.0 || h.emmitColor.g > 0.0 || h.emmitColor.b > 0.0){
+            return finalColor * h.emmitColor;
+        }
+        
+        reflectColor = reflectColor * h.color;
+        finalColor += reflectColor;
+        r = bounce(h, seed, gid);
+        seed *= seed * seed;
+    }
+    
+    return float4(0.0,0.0,0.0,1.0);
 }
-
-
 
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                              texture2d<float, access::write> outTexture [[texture(1)]],

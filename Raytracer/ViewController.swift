@@ -12,7 +12,11 @@ import QuartzCore
 
 class ViewController: UIViewController {
     
+    
     @IBOutlet weak var imageView: UIImageView!
+    
+    @IBOutlet weak var sampleLabel: UILabel!
+    
     var device: MTLDevice! = nil;
     var defaultLibrary: MTLLibrary! = nil;
     var commandQueue: MTLCommandQueue! = nil
@@ -64,7 +68,7 @@ class ViewController: UIViewController {
         commandBuffer.waitUntilCompleted();
         
         self.inputTexture = self.outputTexture;
-        sampleCount++;
+        self.sampleLabel.text = NSString(format: "%o", sampleCount++);
     }
     
     func gameloop() {
