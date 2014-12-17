@@ -18,7 +18,7 @@ using namespace metal;
 
 static constant int sphereCount = 2;
 static constant int planeCount = 6;
-static constant int sampleCount = 5;
+static constant int sampleCount = 10;
 
 struct Ray{
     float3 origin;
@@ -158,8 +158,8 @@ float3 getLighting(Hit hit){
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.0,-0.7,0.0), 0.3, float3(0.0,0.0,1.0), float3(0.0,0.0,0.0)},
-    {float3(0.0,1.0,0.0), 0.5, float3(1.0,1.0,1.0), float3(2.0,2.0,2.0)}
+    {float3(0.2,-0.7,-0.5), 0.3, float3(0.0,0.0,1.0), float3(0.0,0.0,0.0)},
+    {float3(0.0,1.0,0.0), 0.5, float3(1.0,1.0,1.0), float3(0.75,0.75,0.75)}
 };
 
 static constant struct Plane planes[] = {
@@ -185,7 +185,7 @@ float rand(device uint *seed)
     uint next = *seed;
     next = mult * next;
     *seed = next;
-    return float(next % long_max) / float_max;
+    return (float)(next % long_max) / float_max;
 }
 
 
@@ -199,7 +199,7 @@ Ray bounce(Hit h, device uint *seed){
     float z = sqrt(1 - x * x - y * y);
     float3 randomVector = normalize(float3(x,y,z));
 
-    auto normal = h.normal;
+    float3 normal = h.normal;
     
     // if the point is in the wrong hemisphere, mirror it
     if (dot(normal, randomVector) < 0.0) {
@@ -281,7 +281,10 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float y = ymin + gid.y * dy;
     
     
-    Ray r = makeRay(x,y, 0.0, 0.0);
+    float xOffset = rand(params)/(xResolution);
+    float yOffset = rand(params)/(yResolution);
+    
+    Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0);
     
     //int tr = rand_r(1);
     
