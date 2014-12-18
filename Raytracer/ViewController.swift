@@ -45,7 +45,6 @@ class ViewController: UIViewController {
         timer = CADisplayLink(target: self, selector: Selector("gameloop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     func render() {
@@ -83,6 +82,11 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func button(sender: AnyObject) {
+        self.render();
+        self.imageView.image = UIImage(MTLTexture: self.inputTexture)
+    }
 
+    @IBOutlet weak var button: UIButton!
 }
 

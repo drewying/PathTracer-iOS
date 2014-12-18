@@ -16,7 +16,7 @@
 		D130D6E61A3150480096BFC7 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E51A3150480096BFC7 /* Camera.swift */; };
 		D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E71A3150A30096BFC7 /* Vector3D.swift */; };
 		D138EFD01A40146800D13F11 /* PathTracerParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */; };
-		D16EE7E11A4118C800EB5411 /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
+		D16EE7E51A417E6D00EB5411 /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
 		D1C260731A3CFF040063CDF3 /* Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260721A3CFF040063CDF3 /* Shape.swift */; };
 		D1C260751A3CFF230063CDF3 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260741A3CFF230063CDF3 /* Material.swift */; };
 		D1C260771A3D00620063CDF3 /* Ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260761A3D00620063CDF3 /* Ray.swift */; };
@@ -271,7 +271,6 @@
 				D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */,
 				D1C260791A3D010D0063CDF3 /* Hit.swift in Sources */,
 				D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */,
-				D16EE7E11A4118C800EB5411 /* MainShader.metal in Sources */,
 				D1C2607B1A3D01330063CDF3 /* Sphere.swift in Sources */,
 				D130D6C81A314FD10096BFC7 /* ViewController.swift in Sources */,
 				D130D6C61A314FD10096BFC7 /* AppDelegate.swift in Sources */,
@@ -280,6 +279,7 @@
 				D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */,
 				D1C260751A3CFF230063CDF3 /* Material.swift in Sources */,
 				D130D6E61A3150480096BFC7 /* Camera.swift in Sources */,
+				D16EE7E51A417E6D00EB5411 /* MainShader.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

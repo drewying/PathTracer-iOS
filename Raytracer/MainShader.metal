@@ -18,6 +18,7 @@ using namespace metal;
 
 static constant int sphereCount = 2;
 static constant int planeCount = 6;
+static constant int triangleCount = 2;
 static constant int sampleCount = 10;
 
 struct Ray{
@@ -49,9 +50,12 @@ struct Plane{
     float3 emmitColor;
 };
 
-
-struct Light{
-    float3 center = float3(0.0,0.0,-1.0);
+struct Triangle{
+    float3 p0;
+    float3 p1;
+    float3 p2;
+    float3 color;
+    float3 emmitColor;
 };
 
 struct Camera{
@@ -149,17 +153,60 @@ Hit sphereIntersection(Sphere s, Ray ray, float distance){
     }
 }
 
-float3 getLighting(Hit hit){
-    Light l;
-    float3 normal = normalize(hit.normal);
-    float3 lightDirection = l.center - hit.hitPosition;
-    float cosphi = dot(normal, lightDirection);
-    return float3(1.0,1.0,1.0) * cosphi * hit.color;
+Hit triangleIntersection(Triangle t, Ray ray, float distance){
+    float tVal;
+    
+    float A = t.p0.x - t.p1.x;
+    float B = t.p0.y - t.p1.y;
+    float C = t.p0.z - t.p1.z;
+    
+    float D = t.p0.x - t.p2.x;
+    float E = t.p0.y - t.p2.y;
+    float F = t.p0.z - t.p2.z;
+    
+    float G = ray.direction.x;
+    float H = ray.direction.y;
+    float I = ray.direction.z;
+    
+    float J = t.p0.x - ray.origin.x;
+    float K = t.p0.y - ray.origin.y;
+    float L = t.p0.z - ray.origin.z;
+    
+    float EIHF = E*I-H*F;
+    float GFDI = G*F-D*I;
+    float DHEG = D*H-E*G;
+    
+    float denom = (A*EIHF + B*GFDI + C*DHEG);
+    
+    float beta = (J*EIHF + K*GFDI + L*DHEG) / denom;
+    
+    if (beta <= 0.0f || beta >= 1.0f){
+        return noHit();
+    }
+    
+    float AKJB = A*K-J*B;
+    float JCAL = J*C-A*L;
+    float BLKC = B*L-K*C;
+    
+    float gamma = (I*AKJB + H*JCAL + G*BLKC)/denom;
+    
+    if (gamma <= 0.0f || beta + gamma >= 1.0f){
+        return noHit();
+    }
+    
+    tVal = -(F*AKJB + E*JCAL + D*BLKC) / denom;
+    
+    if (tVal > 0){
+        float3 normal = cross((t.p1-t.p2), (t.p2-t.p0));
+        return getHit(distance, tVal, ray, normal, t.color, t.emmitColor);
+    } else{
+        return noHit();
+    }
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.2,-0.7,-0.5), 0.3, float3(0.0,0.0,1.0), float3(0.0,0.0,0.0)},
-    {float3(0.0,1.0,0.0), 0.5, float3(1.0,1.0,1.0), float3(0.75,0.75,0.75)}
+    {float3(0.2,-0.7,0.7), 0.3, float3(0.0,0.0,1.0), float3(0.0,0.0,0.0)},
+    {float3(-0.2,-0.7,-0.7), 0.3, float3(1.0,0.0,0.0), float3(0.0,0.0,0.0)}
 };
 
 static constant struct Plane planes[] = {
@@ -171,13 +218,18 @@ static constant struct Plane planes[] = {
     {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float3(0.75,0.75,0.75), float3(0.0,0.0,0.0)}
 };
 
+static constant struct Triangle triangles[] = {
+    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(1.0,1.0,1.0)},
+    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(1.0,1.0,1.0)}
+};
+
 float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
     currentSample -= currentSample / (float)sampleNumber;
     currentSample += newSample / (float)sampleNumber;
     return currentSample;
 }
 
-float rand(device uint *seed)
+float rand(thread uint *seed)
 {
     uint long_max = 4294967295;
     float float_max = 4294967295.0;
@@ -190,7 +242,7 @@ float rand(device uint *seed)
 
 
 
-Ray bounce(Hit h, device uint *seed){
+Ray bounce(Hit h, thread uint *seed){
     float pi = M_PI;
     float phi = 2 * pi * (float)rand(seed);
     float r = sqrt(rand(seed));
@@ -233,13 +285,21 @@ Hit getClosestHit(Ray r){
         }
     }
     
+    for (int i=0; i<triangleCount; i++){
+        Triangle t = triangles[i];
+        Hit hit = triangleIntersection(t, r, h.distance);
+        if (hit.didHit){
+            h = hit;
+        }
+    }
+    
     return h;
 }
 
 
 
 
-float4 pathTrace(Ray r, device uint *seed){
+float4 pathTrace(Ray r, thread uint *seed){
     float3 finalColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < sampleCount; i++){
@@ -266,6 +326,10 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                              texture2d<float, access::write> outTexture [[texture(1)]],
                              uint2 gid [[thread_position_in_grid]], device uint *params [[buffer(0)]]){
     
+    //Set the random seed;
+    uint initialSeed = params[0] * gid.x * gid.y;
+    thread uint *seed = &initialSeed;
+    
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
     float4 inColor = inTexture.read(textureIndex).rgba;
@@ -277,27 +341,24 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float xmin = 0.0;
     float dy = 1.0 / yResolution;
     float ymin = 0.0;
-    float x = xmin + gid.x * dx;
-    float y = ymin + gid.y * dy;
+    float x = xmin + gid.x  * dx;
+    float y = ymin + gid.y  * dy;
     
     
-    float xOffset = rand(params)/(xResolution);
-    float yOffset = rand(params)/(yResolution);
+    
+    float xOffset = rand(seed)/(xResolution);
+    float yOffset = rand(seed)/(yResolution);
     
     Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0);
     
-    //int tr = rand_r(1);
-    
-    //Set the random seed;
-    float4 c = pathTrace(r, params);
-    
-    //testFunc(params);
 
-    uint sampleNumber = params[1];
-    //float val = 1.0/(float)params[1];
-    //outTexture.write(float4(val,val,val,1.0), gid);
     
-    outTexture.write(monteCarloIntegrate(inColor, c, sampleNumber), gid);
+    
+    float4 outColor = pathTrace(r, seed);
+    
+    uint sampleNumber = params[1];
+    
+    outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber), gid);
     
     
 }
