@@ -184,10 +184,14 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, float sampleN
 
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
-                      uint2 gid [[thread_position_in_grid]], device float *params [[buffer(0)]]){
+                      uint2 gid [[thread_position_in_grid]], device uint *params [[buffer(0)]]){
+    
+    
+    float seedValue = (float)params[0];
+    thread float *seed = &seedValue;
     
     float3 light = float3(0.0,1.0,-0.0);
-    float3 newLight = light + uniformlyRandomVector(params[1] - 53.0, gid) * 0.1;
+    float3 newLight = light + uniformlyRandomVector(seed - 53.0, gid) * 0.1;
     
     float xResolution = 500.0;
     float yResolution = 500.0;
@@ -209,5 +213,5 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     //outTexture.write(outColor, gid);
     
     float4 outColor = float4(calculateColor(float3(0.0,0.0,-3.0), initialRay, newLight, params[1], gid), 1.0);
-    outTexture.write(monteCarloIntegrate(inColor, outColor, params[0]), gid);
+    outTexture.write(monteCarloIntegrate(inColor, outColor, params[1]), gid);
 }

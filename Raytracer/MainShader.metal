@@ -219,8 +219,8 @@ static constant struct Plane planes[] = {
 };
 
 static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(1.0,1.0,1.0)},
-    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(1.0,1.0,1.0)}
+    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(5.0,5.0,5.0)},
+    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(5.0,5.0,5.0)}
 };
 
 float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
@@ -300,7 +300,7 @@ Hit getClosestHit(Ray r){
 
 
 float4 pathTrace(Ray r, thread uint *seed){
-    float3 finalColor = float3(0.0,0.0,0.0);
+    
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < sampleCount; i++){
         Hit h = getClosestHit(r);
@@ -308,12 +308,10 @@ float4 pathTrace(Ray r, thread uint *seed){
             return float4(0.0,0.0,0.0,1.0);
         }
         
-        
         reflectColor = reflectColor * h.color;
-        finalColor += reflectColor;
         
         if (h.emmitColor.r > 0.0 || h.emmitColor.g > 0.0 || h.emmitColor.b > 0.0){
-            return float4(finalColor * h.emmitColor,1.0);
+            return float4(reflectColor * h.emmitColor,1.0);
         }
         
         r = bounce(h, seed);
@@ -322,12 +320,14 @@ float4 pathTrace(Ray r, thread uint *seed){
     return float4(0.0,0.0,0.0,1.0);
 }
 
+thread uint *temp;
+
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                              texture2d<float, access::write> outTexture [[texture(1)]],
                              uint2 gid [[thread_position_in_grid]], device uint *params [[buffer(0)]]){
     
     //Set the random seed;
-    uint initialSeed = params[0] * gid.x * gid.y;
+    uint initialSeed = params[0] * gid.x * gid.y; //gid.x * gid.y;
     thread uint *seed = &initialSeed;
     
     //Get the inColor
