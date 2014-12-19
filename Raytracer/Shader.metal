@@ -1,14 +1,8 @@
-//
-//  Shader.metal
-//  Raytracer
-//
-//  Created by Drew Ingebretsen on 12/15/14.
-//  Copyright (c) 2014 Drew Ingebretsen. All rights reserved.
-//
-
+//Simple path tracer by Movania Muhammad Mobeen
 #include <metal_stdlib>
 using namespace metal;
 
+static constant float3 light = float3(10.0,10.0,10.0);
 
 struct Sphere {
     float4 center_radius;
@@ -17,6 +11,9 @@ struct Sphere {
 struct Box {
     float3 min, max;
 };
+
+static constant Box rootCube = {float3(-1.0,-1.0,-1.0), float3(1.0,1.0,1.0)};
+static constant Sphere spheres[4] = {{float4(0.0,-0.75,0.0,0.25)}, {float4(0.0,-0.25,0.0,0.25)}, {float4(0.0,0.25,0.0,0.25)}, {float4(0.0,0.75,0.0,0.25)}};
 
 float2 intersectCube(float3 origin, float3 ray, Box cube) {
     float3   tMin = (cube.min - origin) / ray;
@@ -27,7 +24,6 @@ float2 intersectCube(float3 origin, float3 ray, Box cube) {
     float  tFar = min(min(t2.x, t2.y), t2.z);
     return float2(tNear, tFar);
 }
-
 float3 normalForCube(float3 hit, Box cube)	{
     if(hit.x < cube.min.x + 0.0001) return float3(-1.0, 0.0, 0.0);
     else if(hit.x > cube.max.x - 0.0001) return float3(1.0, 0.0, 0.0);
@@ -50,37 +46,28 @@ float intersectSphere(float3 origin, float3 ray, Sphere s) {
     }
     return 10000.0;
 }
+
 float3 normalForSphere(float3 hit, Sphere s) {
     return (hit - s.center_radius.xyz) / s.center_radius.w;
 }
 
-float random(float3 scale, float seed, uint2 gid) {
-    float3 temp = float3(gid.x, gid.y, 0.5);
-    return fract(sin(dot(temp.xyz + seed, scale)) * 43758.5453 + seed);
+float random(float3 scale, float seed, float2 pos) {
+    return fract(sin(dot(float3(pos, 1.0) + seed, scale)) * 43758.5453 + seed);
 }
 
-float3 uniformlyRandomDirection(float seed, uint2 gid) {
-    float u = random(float3(12.9898, 78.233, 151.7182), seed, gid);
-    float v = random(float3(63.7264, 10.873, 623.6736), seed, gid);
+float3 uniformlyRandomDirection(float seed, float2 pos) {
+    float u = random(float3(12.9898, 78.233, 151.7182), seed, pos);
+    float v = random(float3(63.7264, 10.873, 623.6736), seed, pos);
     float z = 1.0 - 2.0 * u;
     float r = sqrt(1.0 - z * z);
     float angle = 6.283185307179586 * v;
     return float3(r * cos(angle), r * sin(angle), z);
 }
 
-float3 uniformlyRandomVector(float seed, uint2 gid)
+float3 uniformlyRandomVector(float seed, float2 pos)
 {
-    return uniformlyRandomDirection(seed, gid) *  (random(float3(36.7539, 50.3658, 306.2759), seed, gid));
+    return uniformlyRandomDirection(seed, pos) *  (random(float3(36.7539, 50.3658, 306.2759), seed, pos));
 }
-
-static constant struct Sphere spheres[] = {
-    {float4(0.0,0.0,0.0,0.3)},
-    {float4(0.5,0.0,0.0,0.3)},
-    {float4(0.0,0.5,0.0,0.3)},
-    {float4(0.0,0.0,0.5,0.3)},
-};
-
-static constant struct Box rootCube = {float3(-1.0,-1.0,-1.0),float3(1.0,1.0,1.0)};
 
 float shadow(float3 origin, float3 ray) {
     float tSphere0 = intersectSphere(origin, ray, spheres[0]);
@@ -94,11 +81,11 @@ float shadow(float3 origin, float3 ray) {
     return 1.0;
 }
 
-float3 calculateColor(float3 origin, float3 ray, float3 light, float timeSinceStart, uint2 gid) {
+float3 calculateColor(float3 origin, float3 ray, float3 light, float timeSinceStart, float2 pos) {
     float3 colorMask = float3(1.0);
     float3 accumulatedColor = float3(0.0);
     int i=0;
-    int rindex0=0;
+    float rindex0=0;
     for(int bounce = 0; bounce < 5; bounce++) {
         float2 tRoom = intersectCube(origin, ray, rootCube);
         float t = 10000.0;
@@ -117,18 +104,18 @@ float3 calculateColor(float3 origin, float3 ray, float3 light, float timeSinceSt
         if(tSphere3 < t) { t = tSphere3;i=3;}
         
         float3 hit = origin + ray * t;
-        float3 surfaceColor = float3(0.75);//(t==tLight)?vec3(10):vec3(0.75);
+        float3 surfaceColor = float3(0.75);//(t==tLight)?float3(10):float3(0.75);
         float specularHighlight = 0.0;
         float3 normal;
         if(t == tRoom.y) {
             normal = -normalForCube(hit, rootCube);
             if(hit.x < -0.9999)
-                //surfaceColor = vec3(0.5, 0.0, 0.0);
+                //surfaceColor = float3(0.5, 0.0, 0.0);
                 surfaceColor = float3(0.1, 0.5, 1.0);
             else if(hit.x > 0.9999)
-                //surfaceColor = vec3(0.0, 0.5, 0.0);
+                //surfaceColor = float3(0.0, 0.5, 0.0);
                 surfaceColor = float3(1.0, 0.9, 0.1);
-            ray = uniformlyRandomDirection(timeSinceStart + float(bounce), gid);
+            ray = uniformlyRandomDirection(timeSinceStart + float(bounce), pos);
             if(dot(normal, ray) < 0.0) ray = -ray;
         }
         else if(t == 10000.0) {
@@ -137,7 +124,7 @@ float3 calculateColor(float3 origin, float3 ray, float3 light, float timeSinceSt
             if(false) ;
             normal = normalForSphere(hit, spheres[i]);
             //diffuse
-            ray = uniformlyRandomDirection(timeSinceStart + float(bounce), gid);
+            ray = uniformlyRandomDirection(timeSinceStart + float(bounce), pos);
             //if(dot(normal, ray) < 0.0)
             //		ray = -ray;
             //}
@@ -154,44 +141,38 @@ float3 calculateColor(float3 origin, float3 ray, float3 light, float timeSinceSt
 }
 
 struct Camera{
-    float3 eye = float3(0.0,0.0,-3.0);
-    float3 lookAt = float3(0.0,0.0,1.0);
-    float3 up = float3(0.0, 1.0, 0.0);
-    float3 right = float3(1.0, 0.0, 0.0);
+    float3 eye = eye;
+    
     float apertureSize = 0.0;
     float focalLength = 1.0;
 };
 
-float3 makeRay(float x, float y, float r1, float r2){
-    Camera cam;
-    float3 base = cam.right * x + cam.up * y;
-    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, 0.0);
-    
-    float3 U = cam.up * r1 * cam.apertureSize;
-    float3 V = cam.right * r2 * cam.apertureSize;
-    float3 UV = U+V;
-    
-    float3 origin = cam.eye + UV;
-    float3 direction = normalize(((centered + cam.lookAt) * cam.focalLength) - UV);
-    return direction;
-}
+static constant float3 eye = float3(0.0,0.0,-3.0);
+static constant float3 lookAt = float3(0.0,0.0,1.0);
+static constant float3 up = float3(0.0, 1.0, 0.0);
+static constant float3 right = float3(1.0, 0.0, 0.0);
 
-float4 monteCarloIntegrate(float4 currentSample, float4 newSample, float sampleNumber){
-    currentSample -= currentSample / sampleNumber;
-    currentSample += newSample / sampleNumber;
-    return currentSample;
+float3 makeRay(float x, float y){
+    float3 base = right * x + up * y;
+    float3 centered = base - float3(right.x/2.0, up.y/2.0, 0.0);
+    float3 direction = normalize(centered + lookAt);
+    return direction;
 }
 
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
                       uint2 gid [[thread_position_in_grid]], device uint *params [[buffer(0)]]){
     
+    float timeSinceStart = float(params[0]);
+    uint sampleNumber = params[1];
     
-    float seedValue = (float)params[0];
-    thread float *seed = &seedValue;
+    //Set the random seed;
+    uint initialSeed = (timeSinceStart * (sampleNumber * 500)) * (gid.x + 500 * (gid.y-1)); //gid.x * gid.y;
+    thread uint *seed = &initialSeed;
     
-    float3 light = float3(0.0,1.0,-0.0);
-    float3 newLight = light + uniformlyRandomVector(seed - 53.0, gid) * 0.1;
+    //Get the inColor
+    uint2 textureIndex(gid.x, gid.y);
+    float4 inColor = inTexture.read(textureIndex).rgba;
     
     float xResolution = 500.0;
     float yResolution = 500.0;
@@ -200,18 +181,12 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float xmin = 0.0;
     float dy = 1.0 / yResolution;
     float ymin = 0.0;
-    float x = xmin + gid.x * dx;
-    float y = ymin + gid.y * dy;
+    float x = xmin + gid.x  * dx;
+    float y = ymin + gid.y  * dy;
     
+    float3 r = makeRay(x, y);
     
-    float3 initialRay = makeRay(x,y, 0.0, 0.0);
+    float4 outColor = float4(calculateColor(eye, r, light, timeSinceStart, float2(gid.x,gid.y)),1.0);
     
-    uint2 textureIndex(gid.x, gid.y);
-    float4 inColor = inTexture.read(textureIndex).rgba;
-    //float val = test(uint2(0,0));
-    //float4 outColor = float4(val,val,val,1.0);
-    //outTexture.write(outColor, gid);
-    
-    float4 outColor = float4(calculateColor(float3(0.0,0.0,-3.0), initialRay, newLight, params[1], gid), 1.0);
-    outTexture.write(monteCarloIntegrate(inColor, outColor, params[1]), gid);
+    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
