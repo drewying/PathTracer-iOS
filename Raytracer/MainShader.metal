@@ -223,12 +223,6 @@ static constant struct Triangle triangles[] = {
     {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(5.0,5.0,5.0)}
 };
 
-float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
-    currentSample -= currentSample / (float)sampleNumber;
-    currentSample += newSample / (float)sampleNumber;
-    return currentSample;
-}
-
 float rand(thread uint *seed)
 {
     uint long_max = 4294967295;
@@ -320,14 +314,15 @@ float4 pathTrace(Ray r, thread uint *seed){
     return float4(0.0,0.0,0.0,1.0);
 }
 
-thread uint *temp;
-
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                              texture2d<float, access::write> outTexture [[texture(1)]],
                              uint2 gid [[thread_position_in_grid]], device uint *params [[buffer(0)]]){
     
+    uint timeSinceStart = params[0];
+    uint sampleNumber = params[1];
+    
     //Set the random seed;
-    uint initialSeed = params[0] * gid.x * gid.y; //gid.x * gid.y;
+    uint initialSeed = timeSinceStart * (sampleNumber * 500) * (gid.x + 500 * (gid.y-1)); //gid.x * gid.y;
     thread uint *seed = &initialSeed;
     
     //Get the inColor
@@ -356,9 +351,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     float4 outColor = pathTrace(r, seed);
     
-    uint sampleNumber = params[1];
     
-    outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber), gid);
+    
+    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
     
     
 }
