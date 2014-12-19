@@ -11,15 +11,15 @@ using namespace metal;
 
 #define DBL_MAX 1.7976931348623157E+308
 #define INT_MAX 2147483647
-#define UINT_MAX 4294967295
+#define UNSIGNED_INT_MAX 4294967295
 #define M_PI 3.14159265358979323846
 
 #define EPSILON 1.e-6
 
-static constant int sphereCount = 2;
+static constant int sphereCount = 3;
 static constant int planeCount = 6;
 static constant int triangleCount = 2;
-static constant int sampleCount = 10;
+static constant int bounceCount = 5;
 
 struct Ray{
     float3 origin;
@@ -49,6 +49,14 @@ struct Plane{
     float3 color;
     float3 emmitColor;
 };
+
+struct Box{
+    float3 min;
+    float3 max;
+    float3 color;
+    float3 emmitColor;
+};
+
 
 struct Triangle{
     float3 p0;
@@ -111,6 +119,36 @@ Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, float3 
     }
     
     
+}
+
+Hit boxIntersection(Box b, Ray ray, float distance){
+    float3 tMin = (b.min - ray.origin) / ray.direction;
+    float3 tMax = (b.max - ray.origin) / ray.direction;
+    float3 t1 = min(tMin, tMax);
+    float3 t2 = max(tMin, tMax);
+    float tNear = max(max(t1.x, t1.y), t1.z);
+    float tFar = min(min(t2.x, t2.y), t2.z);
+
+    float t;
+    if (tNear <= EPSILON) {
+        t = tNear;
+    } else{
+        t = tFar;
+    }
+    
+    float3 hit = ray.origin + ray.direction * t;
+    
+    //Get Normal
+    float3 normal;
+    
+    if(hit.x < b.min.x + 0.0001) normal = float3(-1.0, 0.0, 0.0);
+    else if(hit.x > b.max.x - 0.0001) normal = float3(1.0, 0.0, 0.0);
+    else if(hit.y < b.min.y + 0.0001) normal = float3(0.0, -1.0, 0.0);
+    else if(hit.y > b.max.y - 0.0001) normal = float3(0.0, 1.0, 0.0);
+    else if(hit.z < b.min.z + 0.0001) normal = float3(0.0, 0.0, -1.0);
+    else normal = float3(0.0, 0.0, 1.0);
+
+    return getHit(distance, t, ray, normal, b.color, b.emmitColor);
 }
 
 Hit planeIntersection(Plane p, Ray ray, float distance);
@@ -205,8 +243,9 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.2,-0.7,0.7), 0.3, float3(0.0,0.0,1.0), float3(0.0,0.0,0.0)},
-    {float3(-0.2,-0.7,-0.7), 0.3, float3(1.0,0.0,0.0), float3(0.0,0.0,0.0)}
+    {float3(0.0,-0.75,0.0), 0.25, float3(0.5,0.5,0.5), float3(0.0,0.0,0.0)},
+    {float3(0.5,-0.25,0.0), 0.25, float3(0.5,0.5,0.5), float3(0.0,0.0,0.0)},
+    {float3(-0.5,0.25,0.0), 0.25, float3(0.5,0.5,0.5), float3(0.0,0.0,0.0)}
 };
 
 static constant struct Plane planes[] = {
@@ -219,20 +258,42 @@ static constant struct Plane planes[] = {
 };
 
 static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(5.0,5.0,5.0)},
-    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(5.0,5.0,5.0)}
+    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(7.0,7.0,7.0)},
+    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), float3(7.0,7.0,7.0)}
 };
 
 float rand(thread uint *seed)
 {
+    //From Realistic Ray Tracing
     uint long_max = 4294967295;
     float float_max = 4294967295.0;
     uint mult = 62089911;
     uint next = *seed;
     next = mult * next;
     *seed = next;
-    return (float)(next % long_max) / float_max;
+    float returnValue = (float)(next % long_max) / float_max;
+    
+    return returnValue;
+    
 }
+
+/*float rand(thread uint *seed)
+{
+    
+    uint next = *seed;
+    
+    unsigned int z1 = 12345, z2 = 12345, z3 = 12345, z4 = 12345;
+    unsigned int b;
+    b  = ((z1 << 6) ^ z1) >> 13;
+    z1 = ((z1 & 4294967294U) << 18) ^ b;
+    b  = ((z2 << 2) ^ z2) >> 27;
+    z2 = ((z2 & 4294967288U) << 2) ^ b;
+    b  = ((z3 << 13) ^ z3) >> 21;
+    z3 = ((z3 & 4294967280U) << 7) ^ b;
+    b  = ((z4 << 3) ^ z4) >> 12;
+    z4 = ((z4 & 4294967168U) << 13) ^ b;
+    return (z1 ^ z2 ^ z3 ^ z4);
+}*/
 
 float3 uniformSampleDirection(thread uint *seed){
     float u1 = rand(seed);
@@ -256,14 +317,15 @@ float3 cosineWeightedDirection(thread uint *seed){
     
     float x = r * cos(theta);
     float y = r * sin(theta);
-    float z = sqrt(max(0.0, 1.0 - u1));
+    float z = sqrt(1.0 - u1);
     return normalize(float3(x,y,z));
 }
 
 Ray bounce(Hit h, thread uint *seed){
     
     
-    float3 randomVector = uniformSampleDirection(seed);
+    //float3 randomVector = uniformSampleDirection(seed);
+    float3 randomVector = cosineWeightedDirection(seed);
     float3 normal = h.normal;
     
     // if the point is in the wrong hemisphere, mirror it
@@ -312,10 +374,10 @@ Hit getClosestHit(Ray r){
 
 
 
-float4 pathTrace(Ray r, thread uint *seed){
+float4 tracePath(Ray r, thread uint *seed){
     
     float3 reflectColor = float3(1.0,1.0,1.0);
-    for (int i=0; i < sampleCount; i++){
+    for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(r);
         if (!h.didHit){
             return float4(0.0,0.0,0.0,1.0);
@@ -341,16 +403,17 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint sampleNumber = params[1];
     
     //Set the random seed;
-    uint initialSeed = (timeSinceStart * (sampleNumber * 500)) * (gid.x + 500 * (gid.y-1)); //gid.x * gid.y;
+    uint initialSeed = (timeSinceStart * 500 * 500) + timeSinceStart * (gid.x + 500 * (gid.y-1));
+    
     thread uint *seed = &initialSeed;
     
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
     float4 inColor = inTexture.read(textureIndex).rgba;
     
+    
     float xResolution = 500.0;
     float yResolution = 500.0;
-    
     float dx = 1.0 / xResolution;
     float xmin = 0.0;
     float dy = 1.0 / yResolution;
@@ -365,7 +428,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0);
     
-    float4 outColor = pathTrace(r, seed);
+    float4 outColor = tracePath(r, seed);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    //outTexture.write(float4(1.0,0.0,0.0,1.0),gid);
 }

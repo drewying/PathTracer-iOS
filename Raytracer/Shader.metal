@@ -64,6 +64,26 @@ float3 uniformlyRandomDirection(float seed, float2 pos) {
     return float3(r * cos(angle), r * sin(angle), z);
 }
 
+float3 cosineWeightedDirection(float seed, float2 pos, float3 normal) {
+   float u = random(float3(12.9898, 78.233, 151.7182), seed, pos);
+   float v = random(float3(63.7264, 10.873, 623.6736), seed, pos);
+   float r = sqrt(u);
+   float angle = 6.283185307179586 * v;
+// compute basis from normal
+   float3 sdir, tdir;
+   if (abs(normal.x)<.5) {
+     sdir = cross(normal, float3(1,0,0));
+   } else {
+     sdir = cross(normal, float3(0,1,0));
+   }
+   tdir = cross(normal, sdir);
+   return r*cos(angle)*sdir + r*sin(angle)*tdir + sqrt(1.-u)*normal;
+}
+
+float3 cosineWeightedVector(float seed, float2 pos, float3 normal){
+    return cosineWeightedDirection(seed, pos, normal) *  (random(float3(36.7539, 50.3658, 306.2759), seed, pos));
+}
+
 float3 uniformlyRandomVector(float seed, float2 pos)
 {
     return uniformlyRandomDirection(seed, pos) *  (random(float3(36.7539, 50.3658, 306.2759), seed, pos));
@@ -115,7 +135,8 @@ float3 calculateColor(float3 origin, float3 ray, float3 light, float timeSinceSt
             else if(hit.x > 0.9999)
                 //surfaceColor = float3(0.0, 0.5, 0.0);
                 surfaceColor = float3(1.0, 0.9, 0.1);
-            ray = uniformlyRandomDirection(timeSinceStart + float(bounce), pos);
+            //ray = uniformlyRandomDirection(timeSinceStart + float(bounce), pos);
+            ray = cosineWeightedDirection(timeSinceStart + float(bounce), pos, normal);
             if(dot(normal, ray) < 0.0) ray = -ray;
         }
         else if(t == 10000.0) {
@@ -124,7 +145,9 @@ float3 calculateColor(float3 origin, float3 ray, float3 light, float timeSinceSt
             if(false) ;
             normal = normalForSphere(hit, spheres[i]);
             //diffuse
-            ray = uniformlyRandomDirection(timeSinceStart + float(bounce), pos);
+            //ray = uniformlyRandomDirection(timeSinceStart + float(bounce), pos);
+            ray = cosineWeightedDirection(timeSinceStart + float(bounce), pos, normal);
+            
             //if(dot(normal, ray) < 0.0)
             //		ray = -ray;
             //}

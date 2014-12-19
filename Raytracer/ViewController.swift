@@ -37,7 +37,7 @@ class ViewController: UIViewController {
         let kernalProgram = defaultLibrary!.newFunctionWithName("pathtrace");
         pipelineState = self.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
         
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.BGRA8Unorm, width: 500, height: 500, mipmapped: true);
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
         
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = device.newTextureWithDescriptor(textureDescriptor);
@@ -67,7 +67,7 @@ class ViewController: UIViewController {
         commandBuffer.waitUntilCompleted();
         
         self.inputTexture = self.outputTexture;
-        self.sampleLabel.text = NSString(format: "%o", sampleCount++);
+        self.sampleLabel.text = NSString(format: "%u", self.sampleCount++);
     }
     
     func gameloop() {

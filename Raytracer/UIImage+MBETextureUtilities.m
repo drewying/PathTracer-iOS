@@ -18,7 +18,7 @@ static void MBEReleaseDataCallback(void *info, const void *data, size_t size)
 
 + (UIImage *)imageWithMTLTexture:(id<MTLTexture>)texture
 {
-    //NSAssert([texture pixelFormat] == MTLPixelFormatRGBA8Unorm, @"Pixel format of texture must be MTLPixelFormatBGRA8Unorm to create UIImage");
+    NSAssert([texture pixelFormat] == MTLPixelFormatRGBA8Unorm, @"Pixel format of texture must be MTLPixelFormatBGRA8Unorm to create UIImage");
     
     CGSize imageSize = CGSizeMake([texture width], [texture height]);
     size_t imageByteCount = imageSize.width * imageSize.height * 4;
