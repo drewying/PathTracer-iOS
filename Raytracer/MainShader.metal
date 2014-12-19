@@ -234,17 +234,36 @@ float rand(thread uint *seed)
     return (float)(next % long_max) / float_max;
 }
 
-
-
-Ray bounce(Hit h, thread uint *seed){
-    float pi = M_PI;
-    float phi = 2 * pi * (float)rand(seed);
-    float r = sqrt(rand(seed));
+float3 uniformSampleDirection(thread uint *seed){
+    float u1 = rand(seed);
+    float u2 = rand(seed);
+    float r = sqrt(1.0 - u1 * u2);
+    float phi = 2 * M_PI * u2;
     float x = r * cos(phi);
     float y = r * sin(phi);
-    float z = sqrt(1 - x * x - y * y);
-    float3 randomVector = normalize(float3(x,y,z));
+    float z = u1;
+    
+    return normalize(float3(x,y,z));
+}
 
+
+float3 cosineWeightedDirection(thread uint *seed){
+    float u1 = rand(seed);
+    float u2 = rand(seed);
+    
+    float r = sqrt(u1);
+    float theta = 2 * M_PI * u2;
+    
+    float x = r * cos(theta);
+    float y = r * sin(theta);
+    float z = sqrt(max(0.0, 1.0 - u1));
+    return normalize(float3(x,y,z));
+}
+
+Ray bounce(Hit h, thread uint *seed){
+    
+    
+    float3 randomVector = uniformSampleDirection(seed);
     float3 normal = h.normal;
     
     // if the point is in the wrong hemisphere, mirror it
@@ -322,7 +341,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint sampleNumber = params[1];
     
     //Set the random seed;
-    uint initialSeed = timeSinceStart * (sampleNumber * 500) * (gid.x + 500 * (gid.y-1)); //gid.x * gid.y;
+    uint initialSeed = (timeSinceStart * (sampleNumber * 500)) * (gid.x + 500 * (gid.y-1)); //gid.x * gid.y;
     thread uint *seed = &initialSeed;
     
     //Get the inColor
@@ -346,14 +365,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0);
     
-
-    
-    
     float4 outColor = pathTrace(r, seed);
     
-    
-    
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
-    
-    
 }
