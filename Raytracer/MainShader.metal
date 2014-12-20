@@ -70,16 +70,17 @@ struct Triangle{
 };
 
 struct Camera{
-    float3 eye = float3(0.0,0.0,-3.0);
-    float3 lookAt = float3(0.0,0.0,1.0);
+    float3 eye;
+    float3 lookAt = float3(0.0,0.0,0.001);
     float3 up = float3(0.0, 1.0, 0.0);
     float3 right = float3(1.0, 0.0, 0.0);
     float apertureSize = 0.0;
     float focalLength = 1.0;
 };
 
-Ray makeRay(float x, float y, float r1, float r2){
+Ray makeRay(float x, float y, float r1, float r2, constant float3 *floatParams){
     Camera cam;
+    cam.eye = floatParams[0];
     float3 base = cam.right * x + cam.up * y;
     float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, 0.0);
     
@@ -88,7 +89,7 @@ Ray makeRay(float x, float y, float r1, float r2){
     float3 UV = U+V;
     
     float3 origin = cam.eye + UV;
-    float3 direction = normalize(((centered + cam.lookAt) * cam.focalLength) - UV);
+    float3 direction = normalize(((centered + normalize(cam.lookAt)) * cam.focalLength) - UV);
     
     Ray outRay;
     outRay.origin = origin;
@@ -416,19 +417,30 @@ float4 tracePath(Ray r, thread uint *seed){
     return float4(0.0,0.0,0.0,1.0);
 }
 
+float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
+    currentSample -= currentSample / (float)sampleNumber;
+    currentSample += newSample / (float)sampleNumber;
+    return currentSample;
+}
+
+
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                              texture2d<float, access::write> outTexture [[texture(1)]],
-                             uint2 gid [[thread_position_in_grid]], device uint *params [[buffer(0)]]){
+                             uint2 gid [[thread_position_in_grid]], constant uint *params [[buffer(0)]], constant float3 *floatParams [[buffer(1)]]){
     
     uint timeSinceStart = params[0];
     uint sampleNumber = params[1];
     
     //Set the random seed;
+    float gridNumber = fract(sin(dot(float2(gid.x, gid.y), float2(12.9898,78.233))) * 43758.5453);
+    
+    uint temp = uint(gridNumber * 4294967295.0);
+    
     uint initialSeed[4];
-    initialSeed[0] = timeSinceStart * timeSinceStart + 2;
-    initialSeed[1] = timeSinceStart * gid.x * gid.x + 8;
-    initialSeed[2] = timeSinceStart * gid.y * gid.y + 16;
-    initialSeed[3] = timeSinceStart * gid.x * gid.y + 128;
+    initialSeed[0] = timeSinceStart * temp;
+    initialSeed[1] = timeSinceStart * temp;
+    initialSeed[2] = timeSinceStart * temp;
+    initialSeed[3] = timeSinceStart * temp;
     
     
     thread uint *seed = initialSeed;
@@ -452,10 +464,11 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float xOffset = rand(seed)/(xResolution);
     float yOffset = rand(seed)/(yResolution);
     
-    Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0);
+    Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0, floatParams);
     
     float4 outColor = tracePath(r, seed);
     
-    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
-    //outTexture.write(float4(1.0,0.0,0.0,1.0),gid);
+    //outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber),gid);
+    //outTexture.write(outColor,gid);
 }

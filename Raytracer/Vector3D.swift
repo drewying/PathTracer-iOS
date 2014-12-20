@@ -11,9 +11,9 @@ import Foundation
 
 
 struct Vector3D{
-    var x:Double = 0.0;
-    var y:Double = 0.0;
-    var z:Double = 0.0;
+    var x:Float = 0.0;
+    var y:Float = 0.0;
+    var z:Float = 0.0;
     
     func normalized() -> Vector3D{
         let len = length();
@@ -21,7 +21,7 @@ struct Vector3D{
         return Vector3D(x: x*scale, y: y*scale, z: z*scale);
     }
     
-    func length() -> Double{
+    func length() -> Float{
         return sqrt(x * x + y * y + z * z);
     }
 }
@@ -34,7 +34,7 @@ func + (left: Vector3D, right: Vector3D) -> Vector3D{
     return Vector3D(x:left.x + right.x, y:left.y + right.y, z: left.z + right.z);
 }
 
-func + (left: Vector3D, right: Double) -> Vector3D{
+func + (left: Vector3D, right: Float) -> Vector3D{
     return Vector3D(x:left.x + right, y:left.y + right, z: left.z + right);
 }
 
@@ -42,7 +42,7 @@ func - (left: Vector3D, right: Vector3D) -> Vector3D{
     return Vector3D(x:left.x - right.x, y:left.y - right.y, z: left.z - right.z);
 }
 
-func - (left: Vector3D, right: Double) -> Vector3D{
+func - (left: Vector3D, right: Float) -> Vector3D{
     return Vector3D(x:left.x - right, y:left.y - right, z: left.z - right);
 }
 
@@ -50,7 +50,7 @@ func * (left: Vector3D, right: Vector3D) -> Vector3D{
     return Vector3D(x:left.x * right.x, y:left.y * right.y, z: left.z * right.z);
 }
 
-func * (left: Vector3D, right: Double) -> Vector3D{
+func * (left: Vector3D, right: Float) -> Vector3D{
     return Vector3D(x:left.x * right, y:left.y * right, z: left.z * right);
 }
 
@@ -58,7 +58,7 @@ func / (left: Vector3D, right: Vector3D) -> Vector3D{
     return Vector3D(x:left.x / right.x, y:left.y / right.y, z: left.z / right.z);
 }
 
-func / (left: Vector3D, right: Double) -> Vector3D{
+func / (left: Vector3D, right: Float) -> Vector3D{
     return Vector3D(x:left.x / right, y:left.y / right, z: left.z / right);
 }
 
@@ -73,7 +73,7 @@ func × (left: Vector3D, right: Vector3D) -> Vector3D{
     );
 }
 
-func ⋅ (left: Vector3D, right: Vector3D) -> Double{
+func ⋅ (left: Vector3D, right: Vector3D) -> Float{
     return left.x * right.x + left.y * right.y + left.z * right.z;
 }
 

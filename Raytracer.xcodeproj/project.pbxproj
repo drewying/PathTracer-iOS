@@ -7,21 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D12560541A463C61000811BF /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12560531A463C61000811BF /* Matrix.swift */; };
 		D130D6C61A314FD10096BFC7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6C51A314FD10096BFC7 /* AppDelegate.swift */; };
 		D130D6C81A314FD10096BFC7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6C71A314FD10096BFC7 /* ViewController.swift */; };
 		D130D6CB1A314FD10096BFC7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D130D6C91A314FD10096BFC7 /* Main.storyboard */; };
 		D130D6CD1A314FD10096BFC7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D130D6CC1A314FD10096BFC7 /* Images.xcassets */; };
 		D130D6D01A314FD10096BFC7 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D130D6CE1A314FD10096BFC7 /* LaunchScreen.xib */; };
 		D130D6DC1A314FD10096BFC7 /* RaytracerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */; };
-		D130D6E61A3150480096BFC7 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E51A3150480096BFC7 /* Camera.swift */; };
 		D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E71A3150A30096BFC7 /* Vector3D.swift */; };
 		D138EFD01A40146800D13F11 /* PathTracerParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */; };
 		D172A5CF1A43E9AB00B29EFA /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
-		D1C260731A3CFF040063CDF3 /* Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260721A3CFF040063CDF3 /* Shape.swift */; };
 		D1C260751A3CFF230063CDF3 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260741A3CFF230063CDF3 /* Material.swift */; };
-		D1C260771A3D00620063CDF3 /* Ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260761A3D00620063CDF3 /* Ray.swift */; };
-		D1C260791A3D010D0063CDF3 /* Hit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260781A3D010D0063CDF3 /* Hit.swift */; };
-		D1C2607B1A3D01330063CDF3 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C2607A1A3D01330063CDF3 /* Sphere.swift */; };
 		D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C2607C1A3D0E8A0063CDF3 /* Scene.swift */; };
 		D1C2607F1A3D13A70063CDF3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C2607E1A3D13A70063CDF3 /* Metal.framework */; };
 		D1C260831A3D52C70063CDF3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C260821A3D52C70063CDF3 /* QuartzCore.framework */; };
@@ -39,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D12560531A463C61000811BF /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
 		D130D6C01A314FD10096BFC7 /* Raytracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Raytracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D130D6C41A314FD10096BFC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D130D6C51A314FD10096BFC7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -49,15 +46,10 @@
 		D130D6D51A314FD10096BFC7 /* RaytracerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RaytracerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D130D6DA1A314FD10096BFC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaytracerTests.swift; sourceTree = "<group>"; };
-		D130D6E51A3150480096BFC7 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		D130D6E71A3150A30096BFC7 /* Vector3D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3D.swift; sourceTree = "<group>"; };
 		D138EFCD1A40092000D13F11 /* Shader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shader.metal; sourceTree = "<group>"; };
 		D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathTracerParameters.swift; sourceTree = "<group>"; };
-		D1C260721A3CFF040063CDF3 /* Shape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shape.swift; sourceTree = "<group>"; };
 		D1C260741A3CFF230063CDF3 /* Material.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
-		D1C260761A3D00620063CDF3 /* Ray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ray.swift; sourceTree = "<group>"; };
-		D1C260781A3D010D0063CDF3 /* Hit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hit.swift; sourceTree = "<group>"; };
-		D1C2607A1A3D01330063CDF3 /* Sphere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
 		D1C2607C1A3D0E8A0063CDF3 /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		D1C2607E1A3D13A70063CDF3 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		D1C260801A3D146E0063CDF3 /* MainShader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MainShader.metal; sourceTree = "<group>"; };
@@ -117,18 +109,14 @@
 				D130D6CC1A314FD10096BFC7 /* Images.xcassets */,
 				D130D6CE1A314FD10096BFC7 /* LaunchScreen.xib */,
 				D130D6C31A314FD10096BFC7 /* Supporting Files */,
-				D130D6E51A3150480096BFC7 /* Camera.swift */,
 				D130D6E71A3150A30096BFC7 /* Vector3D.swift */,
-				D1C260721A3CFF040063CDF3 /* Shape.swift */,
-				D1C260761A3D00620063CDF3 /* Ray.swift */,
 				D1C260741A3CFF230063CDF3 /* Material.swift */,
-				D1C260781A3D010D0063CDF3 /* Hit.swift */,
-				D1C2607A1A3D01330063CDF3 /* Sphere.swift */,
 				D1C2607C1A3D0E8A0063CDF3 /* Scene.swift */,
 				D1C2608C1A3E97E30063CDF3 /* Raytracer-Bridging-Header.h */,
 				D1C2608D1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.h */,
 				D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */,
 				D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */,
+				D12560531A463C61000811BF /* Matrix.swift */,
 			);
 			path = Raytracer;
 			sourceTree = "<group>";
@@ -267,19 +255,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1C260731A3CFF040063CDF3 /* Shape.swift in Sources */,
 				D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */,
-				D1C260791A3D010D0063CDF3 /* Hit.swift in Sources */,
 				D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */,
+				D12560541A463C61000811BF /* Matrix.swift in Sources */,
 				D172A5CF1A43E9AB00B29EFA /* MainShader.metal in Sources */,
-				D1C2607B1A3D01330063CDF3 /* Sphere.swift in Sources */,
 				D130D6C81A314FD10096BFC7 /* ViewController.swift in Sources */,
 				D130D6C61A314FD10096BFC7 /* AppDelegate.swift in Sources */,
 				D138EFD01A40146800D13F11 /* PathTracerParameters.swift in Sources */,
-				D1C260771A3D00620063CDF3 /* Ray.swift in Sources */,
 				D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */,
 				D1C260751A3CFF230063CDF3 /* Material.swift in Sources */,
-				D130D6E61A3150480096BFC7 /* Camera.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

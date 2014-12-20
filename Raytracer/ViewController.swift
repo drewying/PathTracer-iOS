@@ -27,6 +27,8 @@ class ViewController: UIViewController {
     var now = NSDate();
     var sampleCount = 1;
     
+    var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:-3.0);
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,10 +58,17 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
-        let params = [UInt32(now.timeIntervalSinceNow * -1000), UInt32(self.sampleCount)];
-        let b = self.device.newBufferWithBytes(params, length: sizeofValue(params[0])*params.count, options:nil);
+        let intParams = [UInt32(now.timeIntervalSinceNow * -1000), UInt32(self.sampleCount)];
+        let floatParams = [self.cameraEye];
         
-        commandEncoder.setBuffer(b, offset: 0, atIndex: 0);
+        let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count, options:nil);
+        let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count+4, options:nil);
+        
+        
+        
+        
+        commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
+        commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
@@ -87,6 +96,32 @@ class ViewController: UIViewController {
         self.imageView.image = UIImage(MTLTexture: self.inputTexture)
     }
 
+    @IBAction func dragAction(sender: UIPanGestureRecognizer) {
+        
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
+        inputTexture = device.newTextureWithDescriptor(textureDescriptor);
+        self.sampleCount = 0;
+        
+        
+        var point = sender.translationInView(self.imageView);
+        
+        /**
+        * Rotates a vector around an origin.
+        * @author Obli from Badlogic forum (libGDX)
+        * @param v The vector to rotate.
+        * @param o The origin.
+        * @param angleDeg The angle, in degrees.
+        */
+        var cosCalc:Float = cos(Float(point.x));
+        var sinCalc:Float = sin(Float(point.y));
+        var x:Float = self.cameraEye.x;
+        var y:Float = self.cameraEye.y;
+        self.cameraEye.x = cosCalc*(x) - sinCalc*(y);
+        //self.cameraEye.y = sinCalc*(x) + cosCalc*(y);
+            
+        
+    }
+    
     @IBOutlet weak var button: UIButton!
 }
 
