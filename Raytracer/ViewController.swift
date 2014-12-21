@@ -50,7 +50,7 @@ class ViewController: UIViewController {
     }
     
     func render() {
-        let threadgroupCounts = MTLSizeMake(8, 8, 1);
+        let threadgroupCounts = MTLSizeMake(16, 16, 1);
         let threadgroups = MTLSizeMake(500 / threadgroupCounts.width, 500 / threadgroupCounts.height, 1);
         let commandBuffer = commandQueue.commandBuffer();
         let commandEncoder = commandBuffer.computeCommandEncoder();
