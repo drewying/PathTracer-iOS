@@ -10,10 +10,10 @@ import UIKit
 
 struct Matrix{
     var x:[[Float]] = [
-        [1.0,0.0,0.0,0.0],
-        [0.0,1.0,0.0,0.0],
-        [0.0,0.0,1.0,0.0],
-        [0.0,0.0,0.0,1.0]
+        [0.0,0.0,0.0,0.0],
+        [0.0,0.0,0.0,0.0],
+        [0.0,0.0,0.0,0.0],
+        [0.0,0.0,0.0,0.0]
     ];
     
     static func identityMatrix() -> Matrix{
@@ -83,12 +83,32 @@ struct Matrix{
 }
 
 func * (left: Matrix, right: Vector3D) -> Vector3D {
-    let x:Float = (right.x * left.x[0][0] + right.y * left.x[0][1] + right.z * left.x[0][2] + left.x[0][3]);
-    let y:Float = (right.x * left.x[1][0] + right.y * left.x[1][1] + right.z * left.x[1][2] + left.x[1][3]);
-    let z:Float = (right.x * left.x[2][0] + right.y * left.x[2][1] + right.z * left.x[2][2] + left.x[2][3]);
-    var temp:Float = right.x * left.x[3][0] + right.y * left.x[3][1] + right.z * left.x[3][2] + left.x[3][3];
+    var x:Float
+    x = (right.x * left.x[0][0])
+    x += (right.y * left.x[0][1])
+    x += (right.z * left.x[0][2])
+    x += left.x[0][3];
+    
+    var y:Float;
+    y = (right.x * left.x[1][0])
+    y += (right.y * left.x[1][1])
+    y += (right.z * left.x[1][2])
+    y += left.x[1][3];
+    
+    var z:Float;
+    z = (right.x * left.x[2][0])
+    z += (right.y * left.x[2][1])
+    z += (right.z * left.x[2][2])
+    z += left.x[2][3];
+    
+    var t:Float;
+    t = (right.x * left.x[3][0])
+    t += (right.y * left.x[3][1])
+    t += (right.z * left.x[3][2])
+    t += left.x[3][3];
     
     var returnVector:Vector3D = Vector3D(x:x,y:y,z:z);
-    returnVector /= temp;
+    returnVector = returnVector / t;
+    
     return returnVector;
 }

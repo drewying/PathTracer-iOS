@@ -96,27 +96,20 @@ class ViewController: UIViewController {
         self.imageView.image = UIImage(MTLTexture: self.inputTexture)
     }
 
+    var tempX:Float = 0;
+    
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
-        self.sampleCount = 0;
+        self.sampleCount = 1;
         
         
-        var point = sender.translationInView(self.imageView);
         
-        /**
-        * Rotates a vector around an origin.
-        * @author Obli from Badlogic forum (libGDX)
-        * @param v The vector to rotate.
-        * @param o The origin.
-        * @param angleDeg The angle, in degrees.
-        */
-        var cosCalc:Float = cos(Float(point.x));
-        var sinCalc:Float = sin(Float(point.y));
-        var x:Float = self.cameraEye.x;
-        var y:Float = self.cameraEye.y;
-        self.cameraEye.x = cosCalc*(x) - sinCalc*(y);
+        var point = sender.velocityInView(self.imageView);
+        tempX = tempX + (Float(point.x-250.0));
+        NSLog("%f", tempX);
+        self.cameraEye = Matrix.transformPoint(Matrix.rotateX(Float(point.x/(6.0*500.0))), right: self.cameraEye);
         //self.cameraEye.y = sinCalc*(x) + cosCalc*(y);
             
         
