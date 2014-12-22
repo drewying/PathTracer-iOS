@@ -265,7 +265,7 @@ static constant struct Triangle triangles[] = {
     {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(7.0,7.0,7.0), LIGHT}
 };
 
-/*float rand(thread uint *seed)
+float rand(device uint *seed)
 {
     //From Realistic Ray Tracing
     uint long_max = 4294967295;
@@ -278,9 +278,9 @@ static constant struct Triangle triangles[] = {
     
     return returnValue;
     
-}*/
+}
 
-float rand(thread uint *seed)
+/*float rand(device uint *seed)
 {
     
     uint z1 = seed[0];
@@ -306,9 +306,9 @@ float rand(thread uint *seed)
     
     uint returnValue = (z1 ^ z2 ^ z3 ^ z4);
     return float(returnValue)/4294967295.0;
-}
+}*/
 
-float3 uniformSampleDirection(thread uint *seed){
+float3 uniformSampleDirection(device uint *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
     float r = sqrt(1.0 - u1 * u2);
@@ -321,7 +321,7 @@ float3 uniformSampleDirection(thread uint *seed){
 }
 
 
-float3 cosineWeightedDirection(thread uint *seed){
+float3 cosineWeightedDirection(device uint *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
     
@@ -334,7 +334,7 @@ float3 cosineWeightedDirection(thread uint *seed){
     return normalize(float3(x,y,z));
 }
 
-Ray bounce(Hit h, thread uint *seed){
+Ray bounce(Hit h, device uint *seed){
     
     float3 outVector;
     
@@ -396,7 +396,7 @@ Hit getClosestHit(Ray r){
 
 
 
-float4 tracePath(Ray r, thread uint *seed){
+float4 tracePath(Ray r, device uint *seed){
     
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
@@ -425,30 +425,22 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
 
 
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
-                             texture2d<float, access::write> outTexture [[texture(1)]],
-                             uint2 gid [[thread_position_in_grid]], constant uint *params [[buffer(0)]], constant float3 *floatParams [[buffer(1)]]){
+                      texture2d<float, access::write> outTexture [[texture(1)]],
+                      uint2 gid [[thread_position_in_grid]],
+                      uint gindex [[thread_index_in_threadgroup]],
+                      device uint *seed [[buffer(0)]],
+                      constant uint *intParams [[buffer(1)]],
+                      constant float3 *floatParams [[buffer(2)]]){
     
-    uint timeSinceStart = params[0];
-    uint sampleNumber = params[1];
+    uint gidIndex = (gid.x+1) + 500 * gid.y;
     
-    //Set the random seed;
-    float gridNumber = fract(sin(dot(float2(gid.x, gid.y), float2(12.9898,78.233))) * 43758.5453);
-    
-    uint temp = uint(gridNumber * 4294967295.0);
-    
-    uint initialSeed[4];
-    initialSeed[0] = timeSinceStart * temp;
-    initialSeed[1] = timeSinceStart * temp;
-    initialSeed[2] = timeSinceStart * temp;
-    initialSeed[3] = timeSinceStart * temp;
-    
-    
-    thread uint *seed = initialSeed;
+    /*for (uint i=0; i < gindex; i++){
+        float test = rand(seed);
+    }*/
     
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
     float4 inColor = inTexture.read(textureIndex).rgba;
-    
     
     float xResolution = 500.0;
     float yResolution = 500.0;
@@ -459,16 +451,16 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float x = xmin + gid.x  * dx;
     float y = ymin + gid.y  * dy;
     
-    
-    
-    float xOffset = rand(seed)/(xResolution);
-    float yOffset = rand(seed)/(yResolution);
+    float xOffset = rand(seed + (gidIndex - 1))/(xResolution);
+    float yOffset = rand(seed + (gidIndex - 1))/(yResolution);
     
     Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0, floatParams);
     
-    float4 outColor = tracePath(r, seed);
+    float4 outColor = tracePath(r, seed + (gidIndex-1));
     
-    //outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
-    outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber),gid);
+    uint sampleNumber = intParams[0];
+    
+    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    //outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber),gid);
     //outTexture.write(outColor,gid);
 }

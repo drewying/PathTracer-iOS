@@ -29,6 +29,8 @@ class ViewController: UIViewController {
     
     var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:-3.0);
     
+    var seed: Array<UInt32>! = nil; //[11111];
+    var seedBuffer: MTLBuffer! = nil;
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +41,7 @@ class ViewController: UIViewController {
         let kernalProgram = defaultLibrary!.newFunctionWithName("pathtrace");
         pipelineState = self.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
         
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: false);
         
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = device.newTextureWithDescriptor(textureDescriptor);
@@ -47,6 +49,10 @@ class ViewController: UIViewController {
         timer = CADisplayLink(target: self, selector: Selector("gameloop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         
+        self.generateRandom();
+        
+        seedBuffer = self.device.newBufferWithBytes(seed, length: sizeofValue(seed[0])*seed.count, options: nil);
+        //seedBuffer = self.device.newBufferWithLength(sizeofValue(UInt32(0.0))*500*500, options: nil);
     }
     
     func render() {
@@ -58,17 +64,16 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
-        let intParams = [UInt32(now.timeIntervalSinceNow * -1000), UInt32(self.sampleCount)];
         let floatParams = [self.cameraEye];
+        let intParams = [UInt32(self.sampleCount)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count+4, options:nil);
         
         
-        
-        
-        commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
-        commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
+        commandEncoder.setBuffer(seedBuffer, offset: 0, atIndex: 0);
+        commandEncoder.setBuffer(a, offset: 0, atIndex: 1);
+        commandEncoder.setBuffer(b, offset: 0, atIndex: 2);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
@@ -113,6 +118,14 @@ class ViewController: UIViewController {
         //self.cameraEye.y = sinCalc*(x) + cosCalc*(y);
             
         
+    }
+    
+    func generateRandom(){
+        NSLog("Swift Sucks");
+        self.seed = Array<UInt32>();
+        for i in 0..<(500*500){
+            self.seed.append(UInt32(arc4random()));
+        }
     }
     
     @IBOutlet weak var button: UIButton!
