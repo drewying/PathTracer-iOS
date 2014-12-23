@@ -121,7 +121,6 @@ class ViewController: UIViewController {
     }
     
     func generateRandom(){
-        NSLog("Swift Sucks");
         self.seed = Array<UInt32>();
         for i in 0..<(500*500){
             self.seed.append(UInt32(arc4random()));

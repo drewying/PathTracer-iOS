@@ -246,9 +246,9 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.0,-0.75,0.0), 0.25, float3(0.5,0.5,0.5), DIFFUSE},
+    {float3(0.0,-0.75,0.0), 0.25, float3(0.25,0.0,0.75), DIFFUSE},
     {float3(0.5,-0.25,0.0), 0.25, float3(1.0,1.0,1.0), SPECULAR},
-    {float3(-0.5,0.25,0.0), 0.25, float3(0.5,0.5,0.5), DIFFUSE}
+    {float3(-0.5,0.25,0.0), 0.25, float3(0.0,0.5,0.25), DIFFUSE}
 };
 
 static constant struct Plane planes[] = {
@@ -339,8 +339,8 @@ Ray bounce(Hit h, device uint *seed){
     float3 outVector;
     
     if (h.material == DIFFUSE){
-        outVector = uniformSampleDirection(seed);
-        //outVector = cosineWeightedDirection(seed);
+        //outVector = uniformSampleDirection(seed);
+        outVector = cosineWeightedDirection(seed);
         float3 normal = h.normal;
         
         // if the point is in the wrong hemisphere, mirror it
@@ -432,11 +432,13 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       constant uint *intParams [[buffer(1)]],
                       constant float3 *floatParams [[buffer(2)]]){
     
-    uint gidIndex = (gid.x+1) + 500 * gid.y;
+    uint gidIndex = ((gid.x+1) + 500 * gid.y)-1;
     
     /*for (uint i=0; i < gindex; i++){
         float test = rand(seed);
     }*/
+    
+    uint sampleNumber = intParams[0];
     
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
@@ -451,14 +453,25 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float x = xmin + gid.x  * dx;
     float y = ymin + gid.y  * dy;
     
-    float xOffset = rand(seed + (gidIndex - 1))/(xResolution);
-    float yOffset = rand(seed + (gidIndex - 1))/(yResolution);
     
-    Ray r = makeRay(x + xOffset,y + yOffset, 0.0, 0.0, floatParams);
+    //Jitter the ray
+    uint jitterIndex = sampleNumber%100;
+    uint xJitterPosition = jitterIndex%10;
+    uint yJitterPosition = floor(jitterIndex/10.0);
     
-    float4 outColor = tracePath(r, seed + (gidIndex-1));
+    float incX = 1.0/xResolution;
+    float xOffset = (rand(seed + gidIndex) * incX) + (xJitterPosition * incX);
     
-    uint sampleNumber = intParams[0];
+    float incY = 1.0/yResolution;
+    float yOffset = (rand(seed + gidIndex) * incY) + (yJitterPosition * incY);
+    
+    xOffset = rand(seed + gidIndex)/xResolution;
+    yOffset = rand(seed + gidIndex)/yResolution;
+    Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
+    
+    float4 outColor = tracePath(r, seed + gidIndex);
+    
+    //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
     //outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber),gid);
