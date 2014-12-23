@@ -268,8 +268,8 @@ static constant struct Plane planes[] = {
 };
 
 static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(7.0,7.0,7.0), LIGHT},
-    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(7.0,7.0,7.0), LIGHT}
+    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), LIGHT},
+    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), LIGHT}
 };
 
 /*float rand(device uint *seed)
@@ -404,7 +404,7 @@ Hit getClosestHit(Ray r){
 
 
 float4 tracePath(Ray r, thread RandomSeed *seed){
-    
+    float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(r);
@@ -413,10 +413,12 @@ float4 tracePath(Ray r, thread RandomSeed *seed){
         }
         
         reflectColor = reflectColor * h.color;
+        accumulatedColor += reflectColor;
         
         if (h.material == LIGHT){
-            return float4(reflectColor, 1.0);
+            return float4(accumulatedColor,1.0);
         }
+    
         
         r = bounce(h, seed);
     }
@@ -450,8 +452,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     RandomSeed seedMemory;
     seedMemory.a = gidIndex * sysTime * sampleNumber;
-    seedMemory.b = gidIndex * sysTime * gidIndex * sysTime * sampleNumber;
-    seedMemory.c = gidIndex * gidIndex * sysTime * sampleNumber;
+    seedMemory.b = gidIndex * gidIndex * sysTime * sysTime * sampleNumber;
+    seedMemory.c = gidIndex * sysTime * sysTime * sampleNumber;
     seedMemory.d = gidIndex * gidIndex * gidIndex * sysTime * sampleNumber;
     
     thread RandomSeed *seed1 = &seedMemory;
@@ -485,7 +487,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float yOffset = (rand(seed1) * incY) + (yJitterPosition * incY);
     
     xOffset = rand(seed1)/xResolution;
-    yOffset = rand(seed1)/yResolution;
+    yOffset = yOffset/yResolution;
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
     
