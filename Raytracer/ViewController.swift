@@ -49,9 +49,9 @@ class ViewController: UIViewController {
         timer = CADisplayLink(target: self, selector: Selector("gameloop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         
-        self.generateRandom();
+        //self.generateRandom();
         
-        seedBuffer = self.device.newBufferWithBytes(seed, length: sizeofValue(seed[0])*seed.count, options: nil);
+        //seedBuffer = self.device.newBufferWithBytes(seed, length: sizeofValue(seed[0])*seed.count, options: nil);
         //seedBuffer = self.device.newBufferWithLength(sizeofValue(UInt32(0.0))*500*500, options: nil);
     }
     
@@ -65,15 +65,15 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
         let floatParams = [self.cameraEye];
-        let intParams = [UInt32(self.sampleCount)];
+        let intParams = [UInt32(self.sampleCount), UInt32(NSDate().timeIntervalSince1970)];
         
-        let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count, options:nil);
+        let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count+4, options:nil);
         let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count+4, options:nil);
         
         
-        commandEncoder.setBuffer(seedBuffer, offset: 0, atIndex: 0);
-        commandEncoder.setBuffer(a, offset: 0, atIndex: 1);
-        commandEncoder.setBuffer(b, offset: 0, atIndex: 2);
+        //commandEncoder.setBuffer(seedBuffer, offset: 0, atIndex: 0);
+        commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
+        commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();

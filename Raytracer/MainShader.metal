@@ -78,6 +78,13 @@ struct Camera{
     float focalLength = 1.0;
 };
 
+struct RandomSeed{
+    uint a;
+    uint b;
+    uint c;
+    uint d;
+};
+
 Ray makeRay(float x, float y, float r1, float r2, constant float3 *floatParams){
     Camera cam;
     cam.eye = floatParams[0];
@@ -265,7 +272,7 @@ static constant struct Triangle triangles[] = {
     {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(7.0,7.0,7.0), LIGHT}
 };
 
-float rand(device uint *seed)
+/*float rand(device uint *seed)
 {
     //From Realistic Ray Tracing
     uint long_max = 4294967295;
@@ -278,15 +285,15 @@ float rand(device uint *seed)
     
     return returnValue;
     
-}
+}*/
 
-/*float rand(device uint *seed)
+float rand(thread RandomSeed *seed)
 {
     
-    uint z1 = seed[0];
-    uint z2 = seed[1];
-    uint z3 = seed[2];
-    uint z4 = seed[3];
+    uint z1 = seed->a;
+    uint z2 = seed->b;
+    uint z3 = seed->c;
+    uint z4 = seed->d;
     
     
     uint b;
@@ -299,16 +306,16 @@ float rand(device uint *seed)
     b  = ((z4 << 3) ^ z4) >> 12;
     z4 = ((z4 & 4294967168) << 13) ^ b;
     
-    seed[0] = z1;
-    seed[1] = z2;
-    seed[2] = z3;
-    seed[3] = z4;
+    seed->a = z1;
+    seed->b = z2;
+    seed->c = z3;
+    seed->d = z4;
     
     uint returnValue = (z1 ^ z2 ^ z3 ^ z4);
     return float(returnValue)/4294967295.0;
-}*/
+}
 
-float3 uniformSampleDirection(device uint *seed){
+float3 uniformSampleDirection(thread RandomSeed *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
     float r = sqrt(1.0 - u1 * u2);
@@ -321,7 +328,7 @@ float3 uniformSampleDirection(device uint *seed){
 }
 
 
-float3 cosineWeightedDirection(device uint *seed){
+float3 cosineWeightedDirection(thread RandomSeed *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
     
@@ -334,7 +341,7 @@ float3 cosineWeightedDirection(device uint *seed){
     return normalize(float3(x,y,z));
 }
 
-Ray bounce(Hit h, device uint *seed){
+Ray bounce(Hit h, thread RandomSeed *seed){
     
     float3 outVector;
     
@@ -396,7 +403,7 @@ Hit getClosestHit(Ray r){
 
 
 
-float4 tracePath(Ray r, device uint *seed){
+float4 tracePath(Ray r, thread RandomSeed *seed){
     
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
@@ -428,17 +435,29 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
-                      device uint *seed [[buffer(0)]],
-                      constant uint *intParams [[buffer(1)]],
-                      constant float3 *floatParams [[buffer(2)]]){
+                      constant uint *intParams [[buffer(0)]],
+                      constant float3 *floatParams [[buffer(1)]]){
     
-    uint gidIndex = ((gid.x+1) + 500 * gid.y)-1;
+    uint gidIndex = gid.x * 500 + gid.y;
     
     /*for (uint i=0; i < gindex; i++){
         float test = rand(seed);
     }*/
     
     uint sampleNumber = intParams[0];
+    uint sysTime = intParams[1];
+    
+    
+    RandomSeed seedMemory;
+    seedMemory.a = gidIndex * sysTime * sampleNumber;
+    seedMemory.b = gidIndex * sysTime * gidIndex * sysTime * sampleNumber;
+    seedMemory.c = gidIndex * gidIndex * sysTime * sampleNumber;
+    seedMemory.d = gidIndex * gidIndex * gidIndex * sysTime * sampleNumber;
+    
+    thread RandomSeed *seed1 = &seedMemory;
+    
+    
+    
     
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
@@ -460,16 +479,17 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint yJitterPosition = floor(jitterIndex/10.0);
     
     float incX = 1.0/xResolution;
-    float xOffset = (rand(seed + gidIndex) * incX) + (xJitterPosition * incX);
+    float xOffset = (rand(seed1) * incX) + (xJitterPosition * incX);
     
     float incY = 1.0/yResolution;
-    float yOffset = (rand(seed + gidIndex) * incY) + (yJitterPosition * incY);
+    float yOffset = (rand(seed1) * incY) + (yJitterPosition * incY);
     
-    xOffset = rand(seed + gidIndex)/xResolution;
-    yOffset = rand(seed + gidIndex)/yResolution;
+    xOffset = rand(seed1)/xResolution;
+    yOffset = rand(seed1)/yResolution;
+    
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
     
-    float4 outColor = tracePath(r, seed + gidIndex);
+    float4 outColor = tracePath(r, seed1);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
