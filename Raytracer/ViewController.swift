@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     var outputTexture: MTLTexture! = nil;
     var timer: CADisplayLink! = nil
     var now = NSDate();
-    var sampleCount = 1;
+    var sampleNumber = 1;
     
     var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:-3.0);
     
@@ -65,7 +65,7 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
         let floatParams = [self.cameraEye];
-        let intParams = [UInt32(self.sampleCount), UInt32(NSDate().timeIntervalSince1970)];
+        let intParams = [UInt32(self.sampleNumber), UInt32(NSDate().timeIntervalSince1970)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count+4, options:nil);
         let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count+4, options:nil);
@@ -81,7 +81,23 @@ class ViewController: UIViewController {
         commandBuffer.waitUntilCompleted();
         
         self.inputTexture = self.outputTexture;
-        self.sampleLabel.text = NSString(format: "%u", self.sampleCount++);
+        self.sampleLabel.text = NSString(format: "%u", self.sampleNumber++);
+        
+        /*var jitterIndex:UInt32 = UInt32(self.sampleNumber%100);
+        var xJitterPosition: UInt32 = UInt32(jitterIndex%10);
+        var yJitterPosition: UInt32 = UInt32(floor(CGFloat(jitterIndex)/10.0));
+        
+        var rand1 = CGFloat(Float(arc4random()) / Float(UINT32_MAX));
+        var rand2 = CGFloat(Float(arc4random()) / Float(UINT32_MAX));
+        
+        
+        var incX:CGFloat = 1.0/500;
+        var xOffset:CGFloat = (rand1 * CGFloat(incX)) + (CGFloat(xJitterPosition) * incX);
+        
+        var incY:CGFloat = 1.0/500;
+        var yOffset = (rand2 * CGFloat(incY)) + (CGFloat(yJitterPosition) * incY);*/
+        
+        //NSLog("Break");
     }
     
     func gameloop() {
@@ -107,7 +123,7 @@ class ViewController: UIViewController {
         
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
-        self.sampleCount = 1;
+        self.sampleNumber = 1;
         
         
         

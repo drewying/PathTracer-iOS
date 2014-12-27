@@ -16,7 +16,7 @@
 		D130D6DC1A314FD10096BFC7 /* RaytracerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */; };
 		D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E71A3150A30096BFC7 /* Vector3D.swift */; };
 		D138EFD01A40146800D13F11 /* PathTracerParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */; };
-		D175A96D1A49629600BBFA50 /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
+		D175A9721A4F49EA00BBFA50 /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
 		D1C260751A3CFF230063CDF3 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260741A3CFF230063CDF3 /* Material.swift */; };
 		D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C2607C1A3D0E8A0063CDF3 /* Scene.swift */; };
 		D1C2607F1A3D13A70063CDF3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C2607E1A3D13A70063CDF3 /* Metal.framework */; };
@@ -257,7 +257,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D175A96D1A49629600BBFA50 /* MainShader.metal in Sources */,
+				D175A9721A4F49EA00BBFA50 /* MainShader.metal in Sources */,
 				D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */,
 				D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */,
 				D12560541A463C61000811BF /* Matrix.swift in Sources */,

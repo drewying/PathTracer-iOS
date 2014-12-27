@@ -252,26 +252,6 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
     }
 }
 
-static constant struct Sphere spheres[] = {
-    {float3(0.0,-0.75,0.0), 0.25, float3(0.25,0.0,0.75), DIFFUSE},
-    {float3(0.5,-0.25,0.0), 0.25, float3(1.0,1.0,1.0), SPECULAR},
-    {float3(-0.5,0.25,0.0), 0.25, float3(0.0,0.5,0.25), DIFFUSE}
-};
-
-static constant struct Plane planes[] = {
-    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(1.0,0.0,0.0), DIFFUSE},
-    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,1.0,0.0), DIFFUSE},
-    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float3(0.75,0.75,0.75), DIFFUSE}
-};
-
-static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), LIGHT},
-    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(1.0,1.0,1.0), LIGHT}
-};
-
 /*float rand(device uint *seed)
 {
     //From Realistic Ray Tracing
@@ -318,13 +298,29 @@ float rand(thread RandomSeed *seed)
 float3 uniformSampleDirection(thread RandomSeed *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
+    
     float r = sqrt(1.0 - u1 * u2);
-    float phi = 2 * M_PI * u2;
-    float x = r * cos(phi);
-    float y = r * sin(phi);
+    float theta = 2 * M_PI * u2;
+    
+    float x = r * cos(theta);
+    float y = r * sin(theta);
     float z = u1;
     
     return normalize(float3(x,y,z));
+}
+
+float3 bookSampleDirection(thread RandomSeed *seed){
+    float u1 = rand(seed);
+    float u2 = rand(seed);
+    
+    float r = sqrt(u1);
+    float theta = 2 * M_PI * u2;
+    
+    float x = r * cos(theta);
+    float y = r * sin(theta);
+    float z = sqrt(1.0 - x * x - y * y);
+    return normalize(float3(x,y,z));
+
 }
 
 
@@ -347,7 +343,8 @@ Ray bounce(Hit h, thread RandomSeed *seed){
     
     if (h.material == DIFFUSE){
         //outVector = uniformSampleDirection(seed);
-        outVector = cosineWeightedDirection(seed);
+        //outVector = cosineWeightedDirection(seed);
+        outVector = bookSampleDirection(seed);
         float3 normal = h.normal;
         
         // if the point is in the wrong hemisphere, mirror it
@@ -368,7 +365,27 @@ Ray bounce(Hit h, thread RandomSeed *seed){
     return outRay;
 }
 
+static constant struct Sphere spheres[] = {
+    {float3(0.0,-0.75,0.0), 0.25, float3(0.25,0.0,0.75), DIFFUSE},
+    {float3(0.5,-0.25,0.0), 0.25, float3(1.0,1.0,1.0), SPECULAR},
+    {float3(-0.5,0.25,0.0), 0.25, float3(0.0,0.5,0.25), DIFFUSE}
+};
 
+static constant struct Plane planes[] = {
+    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(1.0,0.0,0.0), DIFFUSE},
+    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,1.0,0.0), DIFFUSE},
+    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
+    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
+    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float3(0.75,0.75,0.75), DIFFUSE},
+    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float3(0.75,0.75,0.75), DIFFUSE}
+};
+
+static constant struct Triangle triangles[] = {
+    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(5.0,5.0,5.0), LIGHT},
+    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(5.0,5.0,5.0), LIGHT}
+};
+
+static constant float3 light = float3(0.0,0.0,-1.0);
 
 Hit getClosestHit(Ray r){
     Hit h = noHit();
@@ -399,9 +416,6 @@ Hit getClosestHit(Ray r){
     
     return h;
 }
-
-
-static constant float3 light = float3(0.0,0.0,-1.0);
 
 float3 traceRay(Ray r, thread RandomSeed *seed){
     Hit h = getClosestHit(r);
@@ -435,11 +449,12 @@ float3 tracePath(Ray r, thread RandomSeed *seed){
             return float3(0.0,0.0,0.0);
         }
         
-        reflectColor = reflectColor * h.color;
+        reflectColor *= h.color;
         accumulatedColor += reflectColor;
         
         if (h.material == LIGHT){
-            return accumulatedColor;
+            return reflectColor;
+            //return accumulatedColor;
         }
     
         
@@ -496,22 +511,22 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     
     //Jitter the ray
-    uint jitterIndex = sampleNumber%100;
+    /*uint jitterIndex = sampleNumber%100;
     uint xJitterPosition = jitterIndex%10;
-    uint yJitterPosition = floor(jitterIndex/10.0);
+    uint yJitterPosition = floor(float(jitterIndex)/10.0);
     
-    float incX = 1.0/xResolution;
-    float xOffset = (rand(seed1) * incX) + (xJitterPosition * incX);
+    float incX = 1.0/(xResolution*10);
+    float xOffset = rand(seed1) * float(incX) + float(xJitterPosition) * float(incX);
     
-    float incY = 1.0/yResolution;
-    float yOffset = (rand(seed1) * incY) + (yJitterPosition * incY);
+    float incY = 1.0/(yResolution*10);
+    float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);*/;
+    xOffset = 0.0;
+    yOffset = 0.0;
     
-    xOffset = rand(seed1)/xResolution;
-    yOffset = yOffset/yResolution;
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
     
-    float4 outColor = float4(traceRay(r, seed1), 1.0);
+    float4 outColor = float4(tracePath(r, seed1), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
