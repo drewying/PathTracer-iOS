@@ -14,7 +14,7 @@ using namespace metal;
 #define UNSIGNED_INT_MAX 4294967295
 #define M_PI 3.14159265358979323846
 
-#define EPSILON 1.e-6
+#define EPSILON 1.e-4
 
 static constant int sphereCount = 3;
 static constant int planeCount = 6;
