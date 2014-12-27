@@ -401,29 +401,52 @@ Hit getClosestHit(Ray r){
 }
 
 
+static constant float3 light = float3(0.0,0.0,-1.0);
+
+float3 traceRay(Ray r, thread RandomSeed *seed){
+    Hit h = getClosestHit(r);
+    if (!h.didHit){
+        return float3(0.0,0.0,0.0);
+    }
+    
+    
+    float3 finalColor = float3(0.0,0.0,0.0);
+    float3 normal = normalize(h.normal);
+    float3 lightDirection = normalize(light - h.hitPosition);
+    float cosphi = dot(normal, lightDirection);
+    if (cosphi > 0){
+        finalColor = float3(1.0,1.0,1.0) * cosphi;
+        Ray shadowRay = {h.hitPosition, lightDirection};
+        Hit shadowHit = getClosestHit(shadowRay);
+        if (shadowHit.didHit){
+            //finalColor = float3(0.0,0.0,0.0);
+        }
+    }
+    return finalColor * h.color;
+}
 
 
-float4 tracePath(Ray r, thread RandomSeed *seed){
+float3 tracePath(Ray r, thread RandomSeed *seed){
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(r);
         if (!h.didHit){
-            return float4(0.0,0.0,0.0,1.0);
+            return float3(0.0,0.0,0.0);
         }
         
         reflectColor = reflectColor * h.color;
         accumulatedColor += reflectColor;
         
         if (h.material == LIGHT){
-            return float4(accumulatedColor,1.0);
+            return accumulatedColor;
         }
     
         
         r = bounce(h, seed);
     }
     
-    return float4(0.0,0.0,0.0,1.0);
+    return float3(0.0,0.0,0.0);
 }
 
 float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
@@ -458,9 +481,6 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     thread RandomSeed *seed1 = &seedMemory;
     
-    
-    
-    
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
     float4 inColor = inTexture.read(textureIndex).rgba;
@@ -491,7 +511,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
     
-    float4 outColor = tracePath(r, seed1);
+    float4 outColor = float4(traceRay(r, seed1), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
