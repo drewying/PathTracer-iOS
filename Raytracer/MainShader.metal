@@ -418,24 +418,29 @@ Hit getClosestHit(Ray r){
 }
 
 float3 traceRay(Ray r, thread RandomSeed *seed){
+    float3 finalColor = float3(0.0,0.0,0.0);
+    
     Hit h = getClosestHit(r);
     if (!h.didHit){
-        return float3(0.0,0.0,0.0);
+        return finalColor;
     }
     
-    
-    float3 finalColor = float3(0.0,0.0,0.0);
     float3 normal = normalize(h.normal);
     float3 lightDirection = normalize(light - h.hitPosition);
+    float lightDistance = distance(light, h.hitPosition);
+    Ray shadowRay = {h.hitPosition, lightDirection};
+    Hit shadowHit = getClosestHit(shadowRay);
+    
+    if (shadowHit.didHit && shadowHit.distance <= lightDistance){
+        return finalColor;
+    }
+    
     float cosphi = dot(normal, lightDirection);
+    
     if (cosphi > 0){
         finalColor = float3(1.0,1.0,1.0) * cosphi;
-        Ray shadowRay = {h.hitPosition, lightDirection};
-        Hit shadowHit = getClosestHit(shadowRay);
-        if (shadowHit.didHit){
-            //finalColor = float3(0.0,0.0,0.0);
-        }
     }
+    
     return finalColor * h.color;
 }
 
@@ -515,11 +520,11 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     float incY = 1.0/(yResolution*10);
     float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);
-    
+
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
     
-    float4 outColor = float4(tracePath(r, seed1), 1.0);
+    float4 outColor = float4(traceRay(r, seed1), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
