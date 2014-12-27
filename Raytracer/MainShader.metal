@@ -479,19 +479,14 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       constant float3 *floatParams [[buffer(1)]]){
     
     uint gidIndex = gid.x * 500 + gid.y;
-    
-    /*for (uint i=0; i < gindex; i++){
-        float test = rand(seed);
-    }*/
-    
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
     
     
     RandomSeed seedMemory;
     seedMemory.a = gidIndex * sysTime * sampleNumber;
-    seedMemory.b = gidIndex * gidIndex * sysTime * sysTime * sampleNumber;
-    seedMemory.c = gidIndex * sysTime * sysTime * sampleNumber;
+    seedMemory.b = gidIndex * gidIndex * sysTime * sysTime * sampleNumber * sampleNumber;
+    seedMemory.c = gidIndex * gidIndex * sysTime * sampleNumber;
     seedMemory.d = gidIndex * gidIndex * gidIndex * sysTime * sampleNumber;
     
     thread RandomSeed *seed1 = &seedMemory;
