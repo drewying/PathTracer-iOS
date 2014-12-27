@@ -49,10 +49,9 @@ class ViewController: UIViewController {
         timer = CADisplayLink(target: self, selector: Selector("gameloop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         
-        //self.generateRandom();
+        //self.cameraEye.x = cos(0.5);
+        //self.cameraEye.z = sin(0.5);
         
-        //seedBuffer = self.device.newBufferWithBytes(seed, length: sizeofValue(seed[0])*seed.count, options: nil);
-        //seedBuffer = self.device.newBufferWithLength(sizeofValue(UInt32(0.0))*500*500, options: nil);
     }
     
     func render() {
@@ -132,7 +131,7 @@ class ViewController: UIViewController {
         NSLog("%f", tempX);
         self.cameraEye = Matrix.transformPoint(Matrix.rotateX(Float(point.x/(6.0*500.0))), right: self.cameraEye);
         //self.cameraEye.y = sinCalc*(x) + cosCalc*(y);
-            
+        
         
     }
     

@@ -71,7 +71,7 @@ struct Triangle{
 
 struct Camera{
     float3 eye;
-    float3 lookAt = float3(0.0,0.0,0.001);
+    float3 lookAt = float3(0.0,0.0,1.0);
     float3 up = float3(0.0, 1.0, 0.0);
     float3 right = float3(1.0, 0.0, 0.0);
     float apertureSize = 0.0;
@@ -88,6 +88,8 @@ struct RandomSeed{
 Ray makeRay(float x, float y, float r1, float r2, constant float3 *floatParams){
     Camera cam;
     cam.eye = floatParams[0];
+    cam.lookAt = -normalize(cam.eye);
+    
     float3 base = cam.right * x + cam.up * y;
     float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, 0.0);
     
@@ -96,11 +98,11 @@ Ray makeRay(float x, float y, float r1, float r2, constant float3 *floatParams){
     float3 UV = U+V;
     
     float3 origin = cam.eye + UV;
-    float3 direction = normalize(((centered + normalize(cam.lookAt)) * cam.focalLength) - UV);
+    float3 direction = centered + cam.lookAt;
+    direction = (direction * cam.focalLength) - UV;
+    direction = normalize(direction);
     
-    Ray outRay;
-    outRay.origin = origin;
-    outRay.direction = direction;
+    Ray outRay = {origin, direction};
     return outRay;
 }
 
@@ -377,7 +379,7 @@ static constant struct Plane planes[] = {
     {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,0.0,2.0), float3(0.0,0.0,-2.0), float3(0.75,0.75,0.75), DIFFUSE}
+    {float3(0.0,0.0,5.0), float3(0.0,0.0,-5.0), float3(0.75,0.75,0.75), DIFFUSE}
 };
 
 static constant struct Triangle triangles[] = {
@@ -528,7 +530,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
-    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    //outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
     //outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber),gid);
-    //outTexture.write(outColor,gid);
+    outTexture.write(outColor,gid);
 }
