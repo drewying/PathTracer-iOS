@@ -511,7 +511,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     
     //Jitter the ray
-    /*uint jitterIndex = sampleNumber%100;
+    uint jitterIndex = sampleNumber%100;
     uint xJitterPosition = jitterIndex%10;
     uint yJitterPosition = floor(float(jitterIndex)/10.0);
     
@@ -519,9 +519,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float xOffset = rand(seed1) * float(incX) + float(xJitterPosition) * float(incX);
     
     float incY = 1.0/(yResolution*10);
-    float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);*/;
-    xOffset = 0.0;
-    yOffset = 0.0;
+    float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);
     
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
