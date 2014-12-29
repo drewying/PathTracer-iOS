@@ -85,34 +85,27 @@ struct RandomSeed{
     uint d;
 };
 
-Hit noHit(){
-    Hit hit;
-    hit.didHit = false;
-    hit.distance = DBL_MAX;
-    return hit;
+inline void noHit(thread Hit *hit){
+    hit->didHit = false;
+    hit->distance = DBL_MAX;
+    hit->color = float3(0.0,0.0,0.0);
 }
 
-Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, Material material){
+inline void getHit(thread Hit *hit, float maxT, float minT, Ray ray, float3 normal, float3 color, Material material){
     
     if (minT > EPSILON && minT < maxT){
-        Hit hit;
-        hit.distance = minT;
-        hit.ray = ray;
-        hit.normal = normal;
-        hit.color = color;
-        hit.material = material;
+        hit->distance = minT;
+        hit->ray = ray;
+        hit->normal = normal;
+        hit->color = color;
+        hit->material = material;
         float3 hitpos = ray.origin + ray.direction * minT;
-        hit.hitPosition = hitpos;
-        hit.didHit = true;
-        return hit;
-    } else{
-        return noHit();
+        hit->hitPosition = hitpos;
+        hit->didHit = true;
     }
-    
-    
 }
 
-Hit boxIntersection(Box b, Ray ray, float distance){
+void boxIntersection(thread Hit *hit, Box b, Ray ray, float distance){
     float3 tMin = (b.min - ray.origin) / ray.direction;
     float3 tMax = (b.max - ray.origin) / ray.direction;
     float3 t1 = min(tMin, tMax);
@@ -127,61 +120,59 @@ Hit boxIntersection(Box b, Ray ray, float distance){
         t = tFar;
     }
     
-    float3 hit = ray.origin + ray.direction * t;
+    float3 h = ray.origin + ray.direction * t;
     
     //Get Normal
     float3 normal;
     
-    if(hit.x < b.min.x + 0.0001) normal = float3(-1.0, 0.0, 0.0);
-    else if(hit.x > b.max.x - 0.0001) normal = float3(1.0, 0.0, 0.0);
-    else if(hit.y < b.min.y + 0.0001) normal = float3(0.0, -1.0, 0.0);
-    else if(hit.y > b.max.y - 0.0001) normal = float3(0.0, 1.0, 0.0);
-    else if(hit.z < b.min.z + 0.0001) normal = float3(0.0, 0.0, -1.0);
+    if(h.x < b.min.x + 0.0001) normal = float3(-1.0, 0.0, 0.0);
+    else if(h.x > b.max.x - 0.0001) normal = float3(1.0, 0.0, 0.0);
+    else if(h.y < b.min.y + 0.0001) normal = float3(0.0, -1.0, 0.0);
+    else if(h.y > b.max.y - 0.0001) normal = float3(0.0, 1.0, 0.0);
+    else if(h.z < b.min.z + 0.0001) normal = float3(0.0, 0.0, -1.0);
     else normal = float3(0.0, 0.0, 1.0);
 
-    return getHit(distance, t, ray, normal, b.color, b.material);
+    getHit(hit, distance, t, ray, normal, b.color, b.material);
 }
 
-Hit planeIntersection(Plane p, Ray ray, float distance);
-Hit planeIntersection(Plane p, Ray ray, float distance){
+void planeIntersection(thread Hit *hit, Plane p, Ray ray, float distance){
     float3 n = normalize(p.normal);
     float d = dot(n, p.position);
     float denom = dot(n, ray.direction);
     if (-denom > EPSILON) {
         float t = (d - dot(n, ray.origin)) / denom;
-        return getHit(distance, t, ray, p.normal, p.color, p.material);
+        getHit(hit, distance, t, ray, p.normal, p.color, p.material);
     }
-    return noHit();
+    //return noHit();
 }
 
 
-Hit sphereIntersection(Sphere s, Ray ray, float distance);
-Hit sphereIntersection(Sphere s, Ray ray, float distance){
+void sphereIntersection(thread Hit *hit, Sphere s, Ray ray, float distance){
     float3 v = s.position - ray.origin;
     float b = dot(v, ray.direction);
     float discriminant = b * b - dot(v, v) + s.radius * s.radius;
     if (discriminant < 0) {
-        return noHit();
+        return;
     }
     float d = sqrt(discriminant);
     float tFar = b + d;
     if (tFar <= EPSILON) {
-        return noHit();
+        return;
     }
     float tNear = b - d;
     
     if (tNear <= EPSILON) {
         float3 hitpos = ray.origin + ray.direction * tFar;
         float3 norm = (hitpos - s.position);
-        return getHit(distance, tFar, ray, norm, s.color, s.material);
+        getHit(hit, distance, tFar, ray, norm, s.color, s.material);
     } else{
         float3 hitpos = ray.origin + ray.direction * tNear;
         float3 norm = (hitpos - s.position);
-        return getHit(distance, tNear, ray, norm, s.color, s.material);
+        getHit(hit, distance, tNear, ray, norm, s.color, s.material);
     }
 }
 
-Hit triangleIntersection(Triangle t, Ray ray, float distance){
+void triangleIntersection(thread Hit *hit, Triangle t, Ray ray, float distance){
     float tVal;
     
     float A = t.p0.x - t.p1.x;
@@ -209,7 +200,7 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
     float beta = (J*EIHF + K*GFDI + L*DHEG) / denom;
     
     if (beta <= 0.0f || beta >= 1.0f){
-        return noHit();
+        return;
     }
     
     float AKJB = A*K-J*B;
@@ -219,16 +210,14 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
     float gamma = (I*AKJB + H*JCAL + G*BLKC)/denom;
     
     if (gamma <= 0.0f || beta + gamma >= 1.0f){
-        return noHit();
+        return;
     }
     
     tVal = -(F*AKJB + E*JCAL + D*BLKC) / denom;
     
     if (tVal > 0){
         float3 normal = cross((t.p1-t.p2), (t.p2-t.p0));
-        return getHit(distance, tVal, ray, normal, t.color, t.material);
-    } else{
-        return noHit();
+        getHit(hit, distance, tVal, ray, normal, t.color, t.material);
     }
 }
 
@@ -317,36 +306,36 @@ float3 cosineWeightedDirection(thread RandomSeed *seed){
     return normalize(float3(x,y,z));
 }
 
-Ray bounce(Hit h, thread RandomSeed *seed){
+Ray bounce(thread Hit *hit, thread RandomSeed *seed){
     
     float3 outVector;
     
-    if (h.material == DIFFUSE){
+    if (hit->material == DIFFUSE){
         //outVector = uniformSampleDirection(seed);
         //outVector = cosineWeightedDirection(seed);
         outVector = bookSampleDirection(seed);
-        float3 normal = h.normal;
+        float3 normal = hit->normal;
         
         // if the point is in the wrong hemisphere, mirror it
         if (dot(normal, outVector) < 0.0) {
             outVector *= -1.0;
         }
         
-    } else if (h.material == SPECULAR){
-        outVector = reflect(h.ray.direction, normalize(h.normal));
-    } else if (h.material == DIELECTRIC){
+    } else if (hit->material == SPECULAR){
+        outVector = reflect(hit->ray.direction, normalize(hit->normal));
+    } else if (hit->material == DIELECTRIC){
         float refractiveIndexAir = 1.0;
         float refractiveIndexGlass = 1.5;
-        float3 normal = normalize(h.normal);
-        float3 nl = dot(normal, h.ray.direction) < 0 ? normal : normal * -1.0;
+        float3 normal = normalize(hit->normal);
+        float3 nl = dot(normal, hit->ray.direction) < 0 ? normal : normal * -1.0;
         float into = dot(nl, normal);
         float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
-        outVector = refract(h.ray.direction, normal, refractiveIndexRatio);
+        outVector = refract(hit->ray.direction, normal, refractiveIndexRatio);
     }
     
     
     Ray outRay;
-    outRay.origin = h.hitPosition;
+    outRay.origin = hit->hitPosition;
     outRay.direction = outVector;
     return outRay;
 }
@@ -375,34 +364,23 @@ static constant struct Triangle triangles[] = {
 
 static constant float3 light = float3(0.25,0.75,-0.5);
 
-Hit getClosestHit(Ray r){
-    Hit h = noHit();
+void getClosestHit(thread Hit *hit, Ray r){
+    noHit(hit);
     
     for (int i=0; i<planeCount; i++){
         Plane p = planes[i];
-        Hit hit = planeIntersection(p, r, h.distance);
-        if (hit.didHit){
-            h = hit;
-        }
+        planeIntersection(hit, p, r, hit->distance);
     }
     
     for (int i=0; i<sphereCount; i++){
         Sphere s = spheres[i];
-        Hit hit = sphereIntersection(s, r, h.distance);
-        if (hit.didHit){
-            h = hit;
-        }
+        sphereIntersection(hit, s, r, hit->distance);
     }
     
     for (int i=0; i<triangleCount; i++){
         Triangle t = triangles[i];
-        Hit hit = triangleIntersection(t, r, h.distance);
-        if (hit.didHit){
-            h = hit;
-        }
+        triangleIntersection(hit, t, r, hit->distance);
     }
-    
-    return h;
 }
 
 float3 traceRay(Ray r, thread RandomSeed *seed){
@@ -414,19 +392,25 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
     
     float3 finalColor = float3(0.0,0.0,0.0);
     
-    Hit h = getClosestHit(r);
-    if (!h.didHit){
+    Hit hitValue;
+    thread Hit *hit = &hitValue;
+    
+    Hit shadowHitValue;
+    thread Hit *shadowHit = &shadowHitValue;
+    
+    getClosestHit(hit, r);
+    if (!hit->didHit){
         return finalColor;
     }
     
     
-    float3 normal = normalize(h.normal);
-    float3 lightDirection = normalize(jitteredLight - h.hitPosition);
-    float lightDistance = distance(jitteredLight, h.hitPosition);
-    Ray shadowRay = {h.hitPosition, lightDirection};
-    Hit shadowHit = getClosestHit(shadowRay);
+    float3 normal = normalize(hit->normal);
+    float3 lightDirection = normalize(jitteredLight - hit->hitPosition);
+    float lightDistance = distance(jitteredLight, hit->hitPosition);
+    Ray shadowRay = {hit->hitPosition, lightDirection};
+    getClosestHit(shadowHit, shadowRay);
     
-    if (shadowHit.didHit && shadowHit.distance <= lightDistance){
+    if (shadowHit->didHit && shadowHit->distance <= lightDistance){
         return finalColor;
     }
     
@@ -436,7 +420,7 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
         finalColor = float3(1.0,1.0,1.0) * cosphi;
     }
     
-    return finalColor * h.color;
+    return finalColor * hit->color;
 }
 
 float3 tracePath(Ray r, thread RandomSeed *seed){
@@ -449,33 +433,40 @@ float3 tracePath(Ray r, thread RandomSeed *seed){
     
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
+    
+    Hit hitValue;
+    thread Hit *hit = &hitValue;
+    
+    Hit shadowHitValue;
+    thread Hit *shadowHit = &shadowHitValue;
+    
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r);
-        if (!h.didHit){
-            return float3(0.0,0.0,0.0);
+        getClosestHit(hit, r);
+        if (!hit->didHit){
+            return accumulatedColor * 0.5;
         }
         
         //Calculate direct lighting
-        float3 normal = normalize(h.normal);
-        float3 lightDirection = normalize(jitteredLight - h.hitPosition);
+        float3 normal = normalize(hit->normal);
+        float3 lightDirection = normalize(jitteredLight - hit->hitPosition);
         float cosphi = dot(normal, lightDirection);
         
         
         //Calculate shadow factor
         
-        Ray shadowRay = {h.hitPosition, lightDirection};
-        Hit shadowHit = getClosestHit(shadowRay);
+        Ray shadowRay = {hit->hitPosition, lightDirection};
+        getClosestHit(shadowHit, shadowRay);
         
-        float lightDistance = distance(jitteredLight, h.hitPosition);
+        float lightDistance = distance(jitteredLight, hit->hitPosition);
         float shadowFactor = 1.0;
-        if (shadowHit.didHit && shadowHit.distance <= lightDistance){
+        if (shadowHit->didHit && shadowHit->distance <= lightDistance){
             shadowFactor = 0.0;
         }
         
-        reflectColor *= h.color;
+        reflectColor *= hit->color;
         accumulatedColor += reflectColor * cosphi * shadowFactor;
         
-        r = bounce(h, seed);
+        r = bounce(hit, seed);
     }
     
     return accumulatedColor * 0.5;
@@ -483,24 +474,23 @@ float3 tracePath(Ray r, thread RandomSeed *seed){
 
 
 float3 tracePathNoDirect(Ray r, thread RandomSeed *seed){
-    float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
+    
+    Hit hitValue;
+    thread Hit *hit = &hitValue;
+    
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r);
-        if (!h.didHit){
+        getClosestHit(hit, r);
+        if (!hit->didHit){
             return float3(0.0,0.0,0.0);
         }
         
-        reflectColor *= h.color;
-        accumulatedColor += reflectColor;
+        reflectColor *= hit->color;
         
-        if (h.material == LIGHT){
+        if (hit->material == LIGHT){
             return reflectColor;
-            //return accumulatedColor;
         }
-    
-        
-        r = bounce(h, seed);
+        r = bounce(hit, seed);
     }
     
     return float3(0.0,0.0,0.0);
