@@ -361,8 +361,8 @@ static constant struct Plane planes[] = {
 };
 
 static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99,0.5), float3(0.5,0.99,0.5), float3(-0.5,0.99,-0.5), float3(5.0,5.0,5.0), LIGHT},
-    {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(5.0,5.0,5.0), LIGHT}
+    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(5.0,5.0,5.0), LIGHT},
+    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(5.0,5.0,5.0), LIGHT}
 };
 
 static constant float3 light = float3(0.0,0.0,-0.5);
@@ -517,20 +517,18 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint xJitterPosition = jitterIndex%10;
     uint yJitterPosition = floor(float(jitterIndex)/10.0);
     
-    float incX = 1.0/(xResolution*10);
+    float incX = 1.0/(xResolution*8);
     float xOffset = rand(seed1) * float(incX) + float(xJitterPosition) * float(incX);
     
-    float incY = 1.0/(yResolution*10);
+    float incY = 1.0/(yResolution*8);
     float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);
 
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
     
-    float4 outColor = float4(traceRay(r, seed1), 1.0);
+    float4 outColor = float4(tracePath(r, seed1), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
-    //outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
-    //outTexture.write(monteCarloIntegrate(inColor, outColor, sampleNumber),gid);
-    outTexture.write(outColor,gid);
+    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }

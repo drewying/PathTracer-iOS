@@ -120,8 +120,8 @@ class ViewController: UIViewController {
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
-        inputTexture = device.newTextureWithDescriptor(textureDescriptor);
+        //let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
+        //inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         self.sampleNumber = 1;
         
         var point = sender.velocityInView(self.imageView);
