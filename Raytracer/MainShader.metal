@@ -85,27 +85,6 @@ struct RandomSeed{
     uint d;
 };
 
-Ray makeRay(float x, float y, float r1, float r2, constant float3 *floatParams){
-    Camera cam;
-    cam.eye = floatParams[0];
-    cam.lookAt = -normalize(cam.eye);
-    
-    float3 base = cam.right * x + cam.up * y;
-    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, 0.0);
-    
-    float3 U = cam.up * r1 * cam.apertureSize;
-    float3 V = cam.right * r2 * cam.apertureSize;
-    float3 UV = U+V;
-    
-    float3 origin = cam.eye + UV;
-    float3 direction = centered + cam.lookAt;
-    direction = (direction * cam.focalLength) - UV;
-    direction = normalize(direction);
-    
-    Ray outRay = {origin, direction};
-    return outRay;
-}
-
 Hit noHit(){
     Hit hit;
     hit.didHit = false;
@@ -167,9 +146,8 @@ Hit planeIntersection(Plane p, Ray ray, float distance);
 Hit planeIntersection(Plane p, Ray ray, float distance){
     float3 n = normalize(p.normal);
     float d = dot(n, p.position);
-    
     float denom = dot(n, ray.direction);
-    if (abs(denom) > EPSILON) {
+    if (-denom > EPSILON) {
         float t = (d - dot(n, ray.origin)) / denom;
         return getHit(distance, t, ray, p.normal, p.color, p.material);
     }
@@ -370,7 +348,7 @@ Ray bounce(Hit h, thread RandomSeed *seed){
 static constant struct Sphere spheres[] = {
     {float3(0.0,-0.75,0.0), 0.25, float3(0.25,0.0,0.75), DIFFUSE},
     {float3(0.5,-0.25,0.0), 0.25, float3(1.0,1.0,1.0), SPECULAR},
-    {float3(-0.5,0.25,0.0), 0.25, float3(0.0,0.5,0.25), DIFFUSE}
+    {float3(0.0,0.0,0.0), 0.25, float3(0.0,0.75,0.75), DIFFUSE}
 };
 
 static constant struct Plane planes[] = {
@@ -378,8 +356,8 @@ static constant struct Plane planes[] = {
     {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,1.0,0.0), DIFFUSE},
     {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,0.0,-5.0), float3(0.0,0.0,5.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,0.0,5.0), float3(0.0,0.0,-5.0), float3(0.75,0.75,0.75), DIFFUSE}
+    {float3(0.0,0.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE},
+    {float3(0.0,0.0,1.0), float3(0.0,0.0,-1.0), float3(0.75,0.75,0.75), DIFFUSE}
 };
 
 static constant struct Triangle triangles[] = {
@@ -387,7 +365,7 @@ static constant struct Triangle triangles[] = {
     {float3(0.5,0.99,0.5), float3(0.5,0.99,-0.5), float3(-0.5,0.99,-0.5), float3(5.0,5.0,5.0), LIGHT}
 };
 
-static constant float3 light = float3(0.0,0.0,-1.0);
+static constant float3 light = float3(0.0,0.0,-0.5);
 
 Hit getClosestHit(Ray r){
     Hit h = noHit();
@@ -475,6 +453,28 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
     currentSample -= currentSample / (float)sampleNumber;
     currentSample += newSample / (float)sampleNumber;
     return currentSample;
+}
+
+Ray makeRay(float x, float y, float r1, float r2, constant float3 *floatParams){
+    Camera cam;
+    cam.eye = floatParams[0];
+    cam.lookAt = -normalize(cam.eye);
+    cam.right = cross(cam.lookAt, cam.up);
+    
+    float3 base = cam.right * x + cam.up * y;
+    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, cam.right.z/2.0);
+    
+    float3 U = cam.up * r1 * cam.apertureSize;
+    float3 V = cam.right * r2 * cam.apertureSize;
+    float3 UV = U+V;
+    
+    float3 origin = cam.eye + UV;
+    float3 direction = centered + cam.lookAt;
+    direction = (direction * cam.focalLength) - UV;
+    direction = normalize(direction);
+    
+    Ray outRay = {origin, direction};
+    return outRay;
 }
 
 

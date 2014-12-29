@@ -82,6 +82,20 @@ struct Matrix{
 
 }
 
+func * (left: Matrix, right: Matrix) -> Matrix {
+    var m = Matrix();
+    for i in 0...3{
+        for j in 0...3{
+            var subt:Float = 0;
+            for k in 0...3{
+                subt += left.x[i][k] * right.x[k][j];
+                m.x[i][j] = subt;
+            }
+        }
+    }
+    return m;
+}
+
 func * (left: Matrix, right: Vector3D) -> Vector3D {
     var x:Float
     x = (right.x * left.x[0][0])

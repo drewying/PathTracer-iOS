@@ -212,9 +212,3 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
-
-/*void main() {
-    float3 newLight = light + uniformlyRandomVector(timeSinceStart - 53.0) * 0.1;
-    float3 texture = texture2D(texture, gl_FragCoord.xy / 512.0).rgb;
-    gl_FragColor = float4(mix(calculateColor(eye, initialRay, newLight), texture, textureWeight), 1.0);
-}*/

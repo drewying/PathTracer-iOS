@@ -27,7 +27,7 @@ class ViewController: UIViewController {
     var now = NSDate();
     var sampleNumber = 1;
     
-    var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:-3.0);
+    var cameraEye:Vector3D = Vector3D(x:3.0, y:0.0, z:0.0);
     
     var seed: Array<UInt32>! = nil; //[11111];
     var seedBuffer: MTLBuffer! = nil;
@@ -124,12 +124,8 @@ class ViewController: UIViewController {
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         self.sampleNumber = 1;
         
-        
-        
         var point = sender.velocityInView(self.imageView);
-        tempX = tempX + (Float(point.x-250.0));
-        NSLog("%f", tempX);
-        self.cameraEye = Matrix.transformPoint(Matrix.rotateX(Float(point.x/(6.0*500.0))), right: self.cameraEye);
+        self.cameraEye = Matrix.transformPoint(Matrix.rotateY(Float(point.x/(6.0*500.0))) * Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
         //self.cameraEye.y = sinCalc*(x) + cosCalc*(y);
         
         
