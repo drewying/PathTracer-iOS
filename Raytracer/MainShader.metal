@@ -16,9 +16,9 @@ using namespace metal;
 
 #define EPSILON 1.e-4
 
-static constant int sphereCount = 3;
+static constant int sphereCount = 5;
 static constant int planeCount = 6;
-static constant int triangleCount = 2;
+static constant int triangleCount = 0;
 static constant int bounceCount = 5;
 
 enum Material { DIFFUSE, SPECULAR, DIELECTRIC, LIGHT};
@@ -333,9 +333,15 @@ Ray bounce(Hit h, thread RandomSeed *seed){
         }
         
     } else if (h.material == SPECULAR){
+        outVector = reflect(h.ray.direction, normalize(h.normal));
+    } else if (h.material == DIELECTRIC){
+        float refractiveIndexAir = 1.0;
+        float refractiveIndexGlass = 1.5;
         float3 normal = normalize(h.normal);
-        float cosine = dot(h.ray.direction, normal);
-        outVector = h.ray.direction - (2.0 * normal * cosine);
+        float3 nl = dot(normal, h.ray.direction) < 0 ? normal : normal * -1.0;
+        float into = dot(nl, normal);
+        float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
+        outVector = refract(h.ray.direction, normal, refractiveIndexRatio);
     }
     
     
@@ -346,9 +352,11 @@ Ray bounce(Hit h, thread RandomSeed *seed){
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.0,-0.75,0.0), 0.25, float3(1.0,1.0,1.0), SPECULAR},
-    {float3(0.5,-0.25,0.0), 0.25, float3(0.5,0.5,0.5), DIFFUSE},
-    {float3(0.0,0.0,0.0), 0.25, float3(1.0,0.0,1.0), DIFFUSE}
+    {float3(0.0,0.0,0.0), 0.2, float3(0.5,0.5,0.5), DIFFUSE},
+    {float3(0.0,-0.8,0.0), 0.2, float3(1.0,1.0,1.0), SPECULAR},
+    {float3(0.0,-0.4,0.0), 0.2, float3(0.5,0.5,0.5), DIFFUSE},
+    {float3(0.0,0.4,0.0), 0.2, float3(1.0,1.0,1.0), DIFFUSE},
+    {float3(0.0,0.8,0.0), 0.2, float3(0.5,0.5,0.5), DIFFUSE}
 };
 
 static constant struct Plane planes[] = {
@@ -365,7 +373,7 @@ static constant struct Triangle triangles[] = {
     {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(1.0,1.0,1.0), DIFFUSE}
 };
 
-static constant float3 light = float3(0.0,0.0,-0.5);
+static constant float3 light = float3(0.25,0.75,-0.5);
 
 Hit getClosestHit(Ray r){
     Hit h = noHit();
@@ -398,6 +406,12 @@ Hit getClosestHit(Ray r){
 }
 
 float3 traceRay(Ray r, thread RandomSeed *seed){
+    float lightx = (rand(seed) * 0.05) - 0.025;
+    float lighty = (rand(seed) * 0.05) - 0.025;
+    float lightz = (rand(seed) * 0.05) - 0.025;
+    
+    float3 jitteredLight = float3(light.x + lightx, light.y + lighty, light.z + lightz);
+    
     float3 finalColor = float3(0.0,0.0,0.0);
     
     Hit h = getClosestHit(r);
@@ -405,14 +419,10 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
         return finalColor;
     }
     
-    /*while (h.material != DIFFUSE){
-        r = bounce(h, seed);
-        h = getClosestHit(r);
-    }*/
     
     float3 normal = normalize(h.normal);
-    float3 lightDirection = normalize(light - h.hitPosition);
-    float lightDistance = distance(light, h.hitPosition);
+    float3 lightDirection = normalize(jitteredLight - h.hitPosition);
+    float lightDistance = distance(jitteredLight, h.hitPosition);
     Ray shadowRay = {h.hitPosition, lightDirection};
     Hit shadowHit = getClosestHit(shadowRay);
     
@@ -430,6 +440,13 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
 }
 
 float3 tracePath(Ray r, thread RandomSeed *seed){
+    //Jitter the light
+    float lightx = (rand(seed) * 0.1) - 0.05;
+    float lighty = (rand(seed) * 0.1) - 0.05;
+    float lightz = (rand(seed) * 0.1) - 0.05;
+    
+    float3 jitteredLight = float3(light.x + lightx, light.y + lighty, light.z + lightz);
+    
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
@@ -440,13 +457,23 @@ float3 tracePath(Ray r, thread RandomSeed *seed){
         
         //Calculate direct lighting
         float3 normal = normalize(h.normal);
-        float3 lightDirection = normalize(light - h.hitPosition);
+        float3 lightDirection = normalize(jitteredLight - h.hitPosition);
         float cosphi = dot(normal, lightDirection);
         
+        
+        //Calculate shadow factor
+        
+        Ray shadowRay = {h.hitPosition, lightDirection};
+        Hit shadowHit = getClosestHit(shadowRay);
+        
+        float lightDistance = distance(jitteredLight, h.hitPosition);
+        float shadowFactor = 1.0;
+        if (shadowHit.didHit && shadowHit.distance <= lightDistance){
+            shadowFactor = 0.0;
+        }
+        
         reflectColor *= h.color;
-        accumulatedColor += reflectColor * cosphi;
-        
-        
+        accumulatedColor += reflectColor * cosphi * shadowFactor;
         
         r = bounce(h, seed);
     }
@@ -557,7 +584,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
     
-    float4 outColor = float4(traceRay(r, seed1), 1.0);
+    float4 outColor = float4(tracePath(r, seed1), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
