@@ -455,14 +455,15 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
     return currentSample;
 }
 
-Ray makeRay(float x, float y, float r1, float r2, constant float3 *floatParams){
+Ray makeRay(float x, float y, float r1, float r2, constant packed_float3 *cameraParams){
     Camera cam;
-    cam.eye = floatParams[0];
+    cam.eye = cameraParams[0];
+    cam.up = cameraParams[1];
     cam.lookAt = -normalize(cam.eye);
     cam.right = cross(cam.lookAt, cam.up);
     
     float3 base = cam.right * x + cam.up * y;
-    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, cam.right.z/2.0);
+    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up + cam.right).z/2.0);
     
     float3 U = cam.up * r1 * cam.apertureSize;
     float3 V = cam.right * r2 * cam.apertureSize;
@@ -483,7 +484,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
-                      constant float3 *floatParams [[buffer(1)]]){
+                      constant packed_float3 *cameraParams [[buffer(1)]]){
     
     uint gidIndex = gid.x * 500 + gid.y;
     uint sampleNumber = intParams[0];
@@ -524,9 +525,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);
 
     
-    Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, floatParams);
+    Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
     
-    float4 outColor = float4(tracePath(r, seed1), 1.0);
+    float4 outColor = float4(traceRay(r, seed1), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     

@@ -15,6 +15,12 @@ struct Vector3D{
     var y:Float = 0.0;
     var z:Float = 0.0;
     
+    init(x:Float, y:Float, z:Float){
+        self.x = x;
+        self.y = y;
+        self.z = z;
+    }
+    
     func normalized() -> Vector3D{
         let len = length();
         let scale = 1.0 / len;

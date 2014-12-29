@@ -27,7 +27,8 @@ class ViewController: UIViewController {
     var now = NSDate();
     var sampleNumber = 1;
     
-    var cameraEye:Vector3D = Vector3D(x:3.0, y:0.0, z:0.0);
+    var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:-3.0);
+    var cameraUp:Vector3D = Vector3D(x:0.0, y:1.0, z:0.0);
     
     var seed: Array<UInt32>! = nil; //[11111];
     var seedBuffer: MTLBuffer! = nil;
@@ -48,10 +49,6 @@ class ViewController: UIViewController {
         
         timer = CADisplayLink(target: self, selector: Selector("gameloop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-        
-        //self.cameraEye.x = cos(0.5);
-        //self.cameraEye.z = sin(0.5);
-        
     }
     
     func render() {
@@ -63,11 +60,11 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
-        let floatParams = [self.cameraEye];
+        let floatParams = [self.cameraEye, self.cameraUp];
         let intParams = [UInt32(self.sampleNumber), UInt32(NSDate().timeIntervalSince1970)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count+4, options:nil);
-        let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count+4, options:nil);
+        let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count, options:nil);
         
         
         //commandEncoder.setBuffer(seedBuffer, offset: 0, atIndex: 0);
@@ -82,21 +79,6 @@ class ViewController: UIViewController {
         self.inputTexture = self.outputTexture;
         self.sampleLabel.text = NSString(format: "%u", self.sampleNumber++);
         
-        /*var jitterIndex:UInt32 = UInt32(self.sampleNumber%100);
-        var xJitterPosition: UInt32 = UInt32(jitterIndex%10);
-        var yJitterPosition: UInt32 = UInt32(floor(CGFloat(jitterIndex)/10.0));
-        
-        var rand1 = CGFloat(Float(arc4random()) / Float(UINT32_MAX));
-        var rand2 = CGFloat(Float(arc4random()) / Float(UINT32_MAX));
-        
-        
-        var incX:CGFloat = 1.0/500;
-        var xOffset:CGFloat = (rand1 * CGFloat(incX)) + (CGFloat(xJitterPosition) * incX);
-        
-        var incY:CGFloat = 1.0/500;
-        var yOffset = (rand2 * CGFloat(incY)) + (CGFloat(yJitterPosition) * incY);*/
-        
-        //NSLog("Break");
     }
     
     func gameloop() {
@@ -115,27 +97,21 @@ class ViewController: UIViewController {
         self.render();
         self.imageView.image = UIImage(MTLTexture: self.inputTexture)
     }
-
-    var tempX:Float = 0;
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
-        //let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: true);
-        //inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         self.sampleNumber = 1;
         
         var point = sender.velocityInView(self.imageView);
-        self.cameraEye = Matrix.transformPoint(Matrix.rotateY(Float(point.x/(6.0*500.0))) * Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
-        //self.cameraEye.y = sinCalc*(x) + cosCalc*(y);
+        //self.cameraEye = Matrix.transformVector(Matrix.rotateY(Float(point.x/(6.0*500.0))) * Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
+        //self.cameraUp = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraUp);
         
+        //Vertical
+        //self.cameraEye = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
+        //self.cameraUp = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraUp);
         
-    }
-    
-    func generateRandom(){
-        self.seed = Array<UInt32>();
-        for i in 0..<(500*500){
-            self.seed.append(UInt32(arc4random()));
-        }
+        //Horizontal
+        self.cameraEye = Matrix.transformVector(Matrix.rotateY(Float(point.x/(6.0*500.0))), right: self.cameraEye);
     }
     
     @IBOutlet weak var button: UIButton!
