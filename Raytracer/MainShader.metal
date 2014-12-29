@@ -19,7 +19,7 @@ using namespace metal;
 static constant int sphereCount = 3;
 static constant int planeCount = 6;
 static constant int triangleCount = 2;
-static constant int bounceCount = 10;
+static constant int bounceCount = 5;
 
 enum Material { DIFFUSE, SPECULAR, DIELECTRIC, LIGHT};
 
@@ -346,14 +346,14 @@ Ray bounce(Hit h, thread RandomSeed *seed){
 }
 
 static constant struct Sphere spheres[] = {
-    {float3(0.0,-0.75,0.0), 0.25, float3(0.25,0.0,0.75), DIFFUSE},
-    {float3(0.5,-0.25,0.0), 0.25, float3(1.0,1.0,1.0), SPECULAR},
-    {float3(0.0,0.0,0.0), 0.25, float3(0.0,0.75,0.75), DIFFUSE}
+    {float3(0.0,-0.75,0.0), 0.25, float3(1.0,1.0,1.0), SPECULAR},
+    {float3(0.5,-0.25,0.0), 0.25, float3(0.5,0.5,0.5), DIFFUSE},
+    {float3(0.0,0.0,0.0), 0.25, float3(1.0,0.0,1.0), DIFFUSE}
 };
 
 static constant struct Plane planes[] = {
-    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(1.0,0.0,0.0), DIFFUSE},
-    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,1.0,0.0), DIFFUSE},
+    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE},
+    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,0.75,0.0), DIFFUSE},
     {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,0.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE},
@@ -361,8 +361,8 @@ static constant struct Plane planes[] = {
 };
 
 static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(5.0,5.0,5.0), LIGHT},
-    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(5.0,5.0,5.0), LIGHT}
+    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(1.0,1.0,1.0), DIFFUSE},
+    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(1.0,1.0,1.0), DIFFUSE}
 };
 
 static constant float3 light = float3(0.0,0.0,-0.5);
@@ -405,6 +405,11 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
         return finalColor;
     }
     
+    /*while (h.material != DIFFUSE){
+        r = bounce(h, seed);
+        h = getClosestHit(r);
+    }*/
+    
     float3 normal = normalize(h.normal);
     float3 lightDirection = normalize(light - h.hitPosition);
     float lightDistance = distance(light, h.hitPosition);
@@ -424,8 +429,33 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
     return finalColor * h.color;
 }
 
-
 float3 tracePath(Ray r, thread RandomSeed *seed){
+    float3 accumulatedColor = float3(0.0,0.0,0.0);
+    float3 reflectColor = float3(1.0,1.0,1.0);
+    for (int i=0; i < bounceCount; i++){
+        Hit h = getClosestHit(r);
+        if (!h.didHit){
+            return float3(0.0,0.0,0.0);
+        }
+        
+        //Calculate direct lighting
+        float3 normal = normalize(h.normal);
+        float3 lightDirection = normalize(light - h.hitPosition);
+        float cosphi = dot(normal, lightDirection);
+        
+        reflectColor *= h.color;
+        accumulatedColor += reflectColor * cosphi;
+        
+        
+        
+        r = bounce(h, seed);
+    }
+    
+    return accumulatedColor * 0.5;
+}
+
+
+float3 tracePathNoDirect(Ray r, thread RandomSeed *seed){
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
