@@ -27,6 +27,14 @@ struct Matrix{
         return m;
     }
     
+    static func translate(vector:Vector3D) -> Matrix{
+        var returnMatrix = identityMatrix();
+        returnMatrix.x[0][3] = vector.x;
+        returnMatrix.x[1][3] = vector.y;
+        returnMatrix.x[2][3] = vector.z;
+        return returnMatrix;
+    }
+    
     static func rotateX(angle:Float) -> Matrix {
         var returnMatrix = identityMatrix();
         let cosine:Float = cos(angle);

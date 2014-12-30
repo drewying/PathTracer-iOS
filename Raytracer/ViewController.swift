@@ -27,13 +27,18 @@ class ViewController: UIViewController {
     var now = NSDate();
     var sampleNumber = 1;
     
+    var cameraToggle:Bool = true;
     
-    var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:-3.0);
+    var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:3.0);
     var cameraUp:Vector3D = Vector3D(x:0.0, y:1.0, z:0.0);
+    var cameraRight:Vector3D = Vector3D(x: 1.0, y:0.0, z:0.0);
     
-    let spheres:[Sphere] = [
-        Sphere(center:Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.5, y: 0.5, z: 0.5), material: 1.0),
-        Sphere(center:Vector3D(x:0.0, y:0.5, z:0.0),radius:0.2, color:Vector3D(x: 0.5, y: 1.0, z: 0.5), material: 1.0),
+    var spheres:[Sphere] = [
+        Sphere(position:Vector3D(x:0.0, y:-0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position:Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 1.0, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position:Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position:Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position:Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0)
     ];
     
     var seed: Array<UInt32>! = nil; //[11111];
@@ -66,12 +71,12 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
-        let floatParams = [self.cameraEye, self.cameraUp];
+        let cameraParams = [self.cameraEye, self.cameraUp];
         let intParams = [UInt32(self.sampleNumber), UInt32(NSDate().timeIntervalSince1970)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count+4, options:nil);
-        let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count, options:nil);
-        let c = self.device.newBufferWithBytes(spheres, length: sizeofValue(spheres[0])*spheres.count, options:nil);
+        let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
+        let c = self.device.newBufferWithBytes(spheres, length: sizeofValue(spheres[0]) * spheres.count, options:nil);
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
@@ -100,15 +105,14 @@ class ViewController: UIViewController {
     }
 
     @IBAction func button(sender: AnyObject) {
-        self.render();
-        self.imageView.image = UIImage(MTLTexture: self.inputTexture)
+        self.cameraToggle = !cameraToggle;
     }
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
         self.sampleNumber = 1;
         
-        var point = sender.velocityInView(self.imageView);
+        //var point = sender.velocityInView(self.imageView);
         //self.cameraEye = Matrix.transformVector(Matrix.rotateY(Float(point.x/(6.0*500.0))) * Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
         //self.cameraUp = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraUp);
         
@@ -117,7 +121,30 @@ class ViewController: UIViewController {
         //self.cameraUp = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraUp);
         
         //Horizontal
-        self.cameraEye = Matrix.transformVector(Matrix.rotateY(Float(point.x/(6.0*500.0))), right: self.cameraEye);
+        
+        
+        //Adjust Sphere
+        //var s:Sphere = spheres[0];
+        //s.position.x = 0.5;
+        
+        var point = sender.locationInView(self.imageView);
+        var x = Float(((point.x/500.0) * 2.0) - 1.0);
+        var y = Float(((point.y/500.0) * 2.0) - 1.0) * -1.0;
+        
+        if (!cameraToggle){
+            var currentPosition:Vector3D = spheres[0].position;
+            
+            var lookAt = cameraEye.normalized() * -1.0;
+            var cameraRight = lookAt × cameraUp;
+            
+            var xPos:Vector3D = (cameraRight * x) - (cameraRight.abs() * currentPosition);
+            var yPos:Vector3D = (cameraUp * y) - (cameraUp * currentPosition);
+            spheres[0].position = (Matrix.translate(xPos)) * spheres[0].position;
+        } else{
+            var velocity = sender.velocityInView(self.imageView);
+            self.cameraEye = self.cameraEye * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
+        }
+        
     }
     
     @IBOutlet weak var button: UIButton!

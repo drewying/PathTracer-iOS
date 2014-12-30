@@ -38,6 +38,13 @@ struct Hit{
     bool didHit;
 };
 
+struct PackedSphere{
+    packed_float3 position;
+    float radius;
+    packed_float3 color;
+    Material material;
+};
+
 struct Sphere{
     float3 position;
     float radius;
@@ -154,8 +161,6 @@ Hit planeIntersection(Plane p, Ray ray, float distance){
     return noHit();
 }
 
-
-Hit sphereIntersection(Sphere s, Ray ray, float distance);
 Hit sphereIntersection(Sphere s, Ray ray, float distance){
     float3 v = s.position - ray.origin;
     float b = dot(v, ray.direction);
@@ -231,21 +236,6 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
         return noHit();
     }
 }
-
-/*float rand(device uint *seed)
- {
- //From Realistic Ray Tracing
- uint long_max = 4294967295;
- float float_max = 4294967295.0;
- uint mult = 62089911;
- uint next = *seed;
- next = mult * next;
- *seed = next;
- float returnValue = (float)(next % long_max) / float_max;
- 
- return returnValue;
- 
- }*/
 
 float rand(thread RandomSeed *seed)
 {
@@ -351,14 +341,6 @@ Ray bounce(Hit h, thread RandomSeed *seed){
     return outRay;
 }
 
-static constant struct Sphere spheres[] = {
-    {float3(0.0,0.0,0.0), 0.2, float3(0.5,0.5,0.5), DIFFUSE},
-    {float3(0.0,-0.8,0.0), 0.2, float3(1.0,1.0,1.0), SPECULAR},
-    {float3(0.0,-0.4,0.0), 0.2, float3(0.5,0.5,0.5), DIFFUSE},
-    {float3(0.0,0.4,0.0), 0.2, float3(1.0,1.0,1.0), DIFFUSE},
-    {float3(0.0,0.8,0.0), 0.2, float3(0.5,0.5,0.5), DIFFUSE}
-};
-
 static constant struct Plane planes[] = {
     {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE},
     {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,0.75,0.0), DIFFUSE},
@@ -373,9 +355,9 @@ static constant struct Triangle triangles[] = {
     {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(1.0,1.0,1.0), DIFFUSE}
 };
 
-static constant float3 light = float3(0.25,0.75,-0.5);
+static constant float3 light = float3(0.25,0.75,0.5);
 
-Hit getClosestHit(Ray r){
+Hit getClosestHit(Ray r, Sphere spheres[]){
     Hit h = noHit();
     
     for (int i=0; i<planeCount; i++){
@@ -387,8 +369,11 @@ Hit getClosestHit(Ray r){
     }
     
     for (int i=0; i<sphereCount; i++){
-        Sphere s = spheres[i];
-        Hit hit = sphereIntersection(s, r, h.distance);
+        //Unpack
+        
+
+
+        Hit hit = sphereIntersection(spheres[i], r, h.distance);
         if (hit.didHit){
             h = hit;
         }
@@ -405,7 +390,7 @@ Hit getClosestHit(Ray r){
     return h;
 }
 
-float3 traceRay(Ray r, thread RandomSeed *seed){
+float3 traceRay(Ray r, thread RandomSeed *seed, Sphere spheres[]){
     float lightx = (rand(seed) * 0.05) - 0.025;
     float lighty = (rand(seed) * 0.05) - 0.025;
     float lightz = (rand(seed) * 0.05) - 0.025;
@@ -414,7 +399,7 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
     
     float3 finalColor = float3(0.0,0.0,0.0);
     
-    Hit h = getClosestHit(r);
+    Hit h = getClosestHit(r, spheres);
     if (!h.didHit){
         return finalColor;
     }
@@ -424,7 +409,7 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
     float3 lightDirection = normalize(jitteredLight - h.hitPosition);
     float lightDistance = distance(jitteredLight, h.hitPosition);
     Ray shadowRay = {h.hitPosition, lightDirection};
-    Hit shadowHit = getClosestHit(shadowRay);
+    Hit shadowHit = getClosestHit(shadowRay, spheres);
     
     if (shadowHit.didHit && shadowHit.distance <= lightDistance){
         return finalColor;
@@ -439,7 +424,7 @@ float3 traceRay(Ray r, thread RandomSeed *seed){
     return finalColor * h.color;
 }
 
-float3 tracePath(Ray r, thread RandomSeed *seed){
+float3 tracePath(Ray r, thread RandomSeed *seed, Sphere spheres[]){
     //Jitter the light
     float lightx = (rand(seed) * 0.1) - 0.05;
     float lighty = (rand(seed) * 0.1) - 0.05;
@@ -450,7 +435,7 @@ float3 tracePath(Ray r, thread RandomSeed *seed){
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r);
+        Hit h = getClosestHit(r, spheres);
         if (!h.didHit){
             return float3(0.0,0.0,0.0);
         }
@@ -464,7 +449,7 @@ float3 tracePath(Ray r, thread RandomSeed *seed){
         //Calculate shadow factor
         
         Ray shadowRay = {h.hitPosition, lightDirection};
-        Hit shadowHit = getClosestHit(shadowRay);
+        Hit shadowHit = getClosestHit(shadowRay, spheres);
         
         float lightDistance = distance(jitteredLight, h.hitPosition);
         float shadowFactor = 1.0;
@@ -482,11 +467,11 @@ float3 tracePath(Ray r, thread RandomSeed *seed){
 }
 
 
-float3 tracePathNoDirect(Ray r, thread RandomSeed *seed){
+float3 tracePathNoDirect(Ray r, thread RandomSeed *seed, Sphere spheres[]){
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r);
+        Hit h = getClosestHit(r, spheres);
         if (!h.didHit){
             return float3(0.0,0.0,0.0);
         }
@@ -514,8 +499,8 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
 
 Ray makeRay(float x, float y, float r1, float r2, constant packed_float3 *cameraParams){
     Camera cam;
-    cam.eye = cameraParams[0];
-    cam.up = cameraParams[1];
+    cam.eye = float3(cameraParams[0]);
+    cam.up = float3(cameraParams[1]);
     cam.lookAt = -normalize(cam.eye);
     cam.right = cross(cam.lookAt, cam.up);
     
@@ -541,7 +526,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
-                      constant packed_float3 *cameraParams [[buffer(1)]]){
+                      constant packed_float3 *cameraParams [[buffer(1)]],
+                      constant PackedSphere *spheres [[buffer(2)]]
+                      ){
     
     uint gidIndex = gid.x * 500 + gid.y;
     uint sampleNumber = intParams[0];
@@ -584,7 +571,14 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
     
-    float4 outColor = float4(tracePath(r, seed1), 1.0);
+    //Unpack Sphere data
+    Sphere unpackedSpheres[5];
+    for (int i=0; i < 5; i++){
+        PackedSphere p = spheres[i];
+        unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), DIFFUSE};
+    }
+    
+    float4 outColor = float4(tracePath(r, seed1, unpackedSpheres), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     

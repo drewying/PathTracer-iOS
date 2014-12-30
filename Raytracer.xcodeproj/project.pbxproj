@@ -15,6 +15,7 @@
 		D130D6D01A314FD10096BFC7 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D130D6CE1A314FD10096BFC7 /* LaunchScreen.xib */; };
 		D130D6DC1A314FD10096BFC7 /* RaytracerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */; };
 		D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E71A3150A30096BFC7 /* Vector3D.swift */; };
+		D1327C861A528F03004B01ED /* BoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1327C851A528F03004B01ED /* BoundingBox.swift */; };
 		D138EFD01A40146800D13F11 /* PathTracerParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */; };
 		D175A9721A4F49EA00BBFA50 /* MainShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = D1C260801A3D146E0063CDF3 /* MainShader.metal */; };
 		D1C260751A3CFF230063CDF3 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C260741A3CFF230063CDF3 /* Material.swift */; };
@@ -48,6 +49,7 @@
 		D130D6DA1A314FD10096BFC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaytracerTests.swift; sourceTree = "<group>"; };
 		D130D6E71A3150A30096BFC7 /* Vector3D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3D.swift; sourceTree = "<group>"; };
+		D1327C851A528F03004B01ED /* BoundingBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingBox.swift; sourceTree = "<group>"; };
 		D138EFCD1A40092000D13F11 /* Shader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shader.metal; sourceTree = "<group>"; };
 		D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathTracerParameters.swift; sourceTree = "<group>"; };
 		D175A96B1A49556000BBFA50 /* WebGLShader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = WebGLShader.metal; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */,
 				D12560531A463C61000811BF /* Matrix.swift */,
 				D1C4D7E01A5222A1009232C4 /* Sphere.swift */,
+				D1327C851A528F03004B01ED /* BoundingBox.swift */,
 			);
 			path = Raytracer;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				D1C4D7E11A5222A1009232C4 /* Sphere.swift in Sources */,
 				D175A9721A4F49EA00BBFA50 /* MainShader.metal in Sources */,
 				D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */,
+				D1327C861A528F03004B01ED /* BoundingBox.swift in Sources */,
 				D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */,
 				D12560541A463C61000811BF /* Matrix.swift in Sources */,
 				D130D6C81A314FD10096BFC7 /* ViewController.swift in Sources */,

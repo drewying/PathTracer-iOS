@@ -27,6 +27,10 @@ struct Vector3D{
         return Vector3D(x: x*scale, y: y*scale, z: z*scale);
     }
     
+    func abs() -> Vector3D{
+        return Vector3D(x: fabsf(x), y: fabsf(y), z: fabsf(z));
+    }
+    
     func length() -> Float{
         return sqrt(x * x + y * y + z * z);
     }
@@ -58,6 +62,10 @@ func * (left: Vector3D, right: Vector3D) -> Vector3D{
 
 func * (left: Vector3D, right: Float) -> Vector3D{
     return Vector3D(x:left.x * right, y:left.y * right, z: left.z * right);
+}
+
+func * (left: Vector3D, right: Matrix) -> Vector3D{
+    return Matrix.transformVector(right, right: left);
 }
 
 func / (left: Vector3D, right: Vector3D) -> Vector3D{

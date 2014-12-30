@@ -9,8 +9,13 @@
 import Foundation
 
 struct Sphere{
-    var center:Vector3D;
+    var position:Vector3D;
     var radius:Float;
     var color:Vector3D;
     var material:Float;
+    
+    func getBounds() -> BoundingBox{
+        let diagonal = Vector3D(x: radius, y: radius, z: radius);
+        return BoundingBox(min: position-diagonal, max: position+diagonal);
+    }
 }
