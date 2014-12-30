@@ -8,6 +8,8 @@
 
 import UIKit
 
-class Material: NSObject {
-   
+enum Material{
+    case DIFFUSE
+    case SPECULAR
+    case DIELECTRIC
 }

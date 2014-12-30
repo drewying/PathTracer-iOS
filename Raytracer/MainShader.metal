@@ -575,10 +575,10 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint xJitterPosition = jitterIndex%10;
     uint yJitterPosition = floor(float(jitterIndex)/10.0);
     
-    float incX = 1.0/(xResolution*8);
+    float incX = 1.0/(xResolution*10);
     float xOffset = rand(seed1) * float(incX) + float(xJitterPosition) * float(incX);
     
-    float incY = 1.0/(yResolution*8);
+    float incY = 1.0/(yResolution*10);
     float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);
     
     

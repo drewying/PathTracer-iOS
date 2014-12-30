@@ -22,6 +22,7 @@
 		D1C2607F1A3D13A70063CDF3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C2607E1A3D13A70063CDF3 /* Metal.framework */; };
 		D1C260831A3D52C70063CDF3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C260821A3D52C70063CDF3 /* QuartzCore.framework */; };
 		D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */; };
+		D1C4D7E11A5222A1009232C4 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C4D7E01A5222A1009232C4 /* Sphere.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		D1C2608C1A3E97E30063CDF3 /* Raytracer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Raytracer-Bridging-Header.h"; sourceTree = "<group>"; };
 		D1C2608D1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+MBETextureUtilities.h"; sourceTree = "<group>"; };
 		D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+MBETextureUtilities.m"; sourceTree = "<group>"; };
+		D1C4D7E01A5222A1009232C4 /* Sphere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,7 @@
 				D1C2608E1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m */,
 				D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */,
 				D12560531A463C61000811BF /* Matrix.swift */,
+				D1C4D7E01A5222A1009232C4 /* Sphere.swift */,
 			);
 			path = Raytracer;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1C4D7E11A5222A1009232C4 /* Sphere.swift in Sources */,
 				D175A9721A4F49EA00BBFA50 /* MainShader.metal in Sources */,
 				D1C2608F1A3E97E30063CDF3 /* UIImage+MBETextureUtilities.m in Sources */,
 				D1C2607D1A3D0E8B0063CDF3 /* Scene.swift in Sources */,

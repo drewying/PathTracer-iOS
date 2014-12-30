@@ -27,8 +27,14 @@ class ViewController: UIViewController {
     var now = NSDate();
     var sampleNumber = 1;
     
+    
     var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:-3.0);
     var cameraUp:Vector3D = Vector3D(x:0.0, y:1.0, z:0.0);
+    
+    let spheres:[Sphere] = [
+        Sphere(center:Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.5, y: 0.5, z: 0.5), material: 1.0),
+        Sphere(center:Vector3D(x:0.0, y:0.5, z:0.0),radius:0.2, color:Vector3D(x: 0.5, y: 1.0, z: 0.5), material: 1.0),
+    ];
     
     var seed: Array<UInt32>! = nil; //[11111];
     var seedBuffer: MTLBuffer! = nil;
@@ -65,11 +71,11 @@ class ViewController: UIViewController {
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count+4, options:nil);
         let b = self.device.newBufferWithBytes(floatParams, length: sizeofValue(floatParams[0])*floatParams.count, options:nil);
+        let c = self.device.newBufferWithBytes(spheres, length: sizeofValue(spheres[0])*spheres.count, options:nil);
         
-        
-        //commandEncoder.setBuffer(seedBuffer, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
+        commandEncoder.setBuffer(c, offset: 0, atIndex: 2);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
