@@ -104,6 +104,10 @@ func * (left: Matrix, right: Matrix) -> Matrix {
     return m;
 }
 
+func * (left: Vector3D, right: Matrix) -> Vector3D {
+    return right * left;
+}
+
 func * (left: Matrix, right: Vector3D) -> Vector3D {
     var x:Float
     x = (right.x * left.x[0][0])

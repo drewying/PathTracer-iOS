@@ -27,15 +27,15 @@ class ViewController: UIViewController {
     var now = NSDate();
     var sampleNumber = 1;
     
-    var cameraToggle:Bool = true;
+    var cameraToggle:Bool = false;
     
     var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:3.0);
     var cameraUp:Vector3D = Vector3D(x:0.0, y:1.0, z:0.0);
-    var cameraRight:Vector3D = Vector3D(x: 1.0, y:0.0, z:0.0);
+    //var cameraRight:Vector3D = Vector3D(x: 1.0, y:0.0, z:0.0);
     
     var spheres:[Sphere] = [
         Sphere(position:Vector3D(x:0.0, y:-0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
-        Sphere(position:Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 1.0, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position:Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
         Sphere(position:Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
         Sphere(position:Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
         Sphere(position:Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0)
@@ -108,6 +108,8 @@ class ViewController: UIViewController {
         self.cameraToggle = !cameraToggle;
     }
     
+    var lastPoint:CGPoint = CGPointMake(0, 0);
+    
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
         self.sampleNumber = 1;
@@ -128,20 +130,17 @@ class ViewController: UIViewController {
         //s.position.x = 0.5;
         
         var point = sender.locationInView(self.imageView);
-        var x = Float(((point.x/500.0) * 2.0) - 1.0);
+        var velocity = sender.velocityInView(self.imageView);
+        var x = Float(((point.x/500.0) * 2.0) - 1.0) * -1.0;
         var y = Float(((point.y/500.0) * 2.0) - 1.0) * -1.0;
-        
+        var xDelta = Float((((point.x-lastPoint.x)/500.0) * 2.0) - 1.0) * -1.0;
+        lastPoint = point;
         if (!cameraToggle){
-            var currentPosition:Vector3D = spheres[0].position;
-            
-            var lookAt = cameraEye.normalized() * -1.0;
-            var cameraRight = lookAt × cameraUp;
-            
-            var xPos:Vector3D = (cameraRight * x) - (cameraRight.abs() * currentPosition);
-            var yPos:Vector3D = (cameraUp * y) - (cameraUp * currentPosition);
-            spheres[0].position = (Matrix.translate(xPos)) * spheres[0].position;
+            let currentPosition:Vector3D = spheres[0].position;
+            let cameraRight = cameraEye × cameraUp;
+            let xPos:Vector3D = cameraRight * x
+            spheres[0].position = xPos; //Matrix.transformPoint(Matrix.translate(cameraRight * xDelta), right: currentPosition);
         } else{
-            var velocity = sender.velocityInView(self.imageView);
             self.cameraEye = self.cameraEye * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
         }
         

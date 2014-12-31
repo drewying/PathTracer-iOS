@@ -502,7 +502,7 @@ Ray makeRay(float x, float y, float r1, float r2, constant packed_float3 *camera
     cam.eye = float3(cameraParams[0]);
     cam.up = float3(cameraParams[1]);
     cam.lookAt = -normalize(cam.eye);
-    cam.right = cross(cam.lookAt, cam.up);
+    cam.right = cross(normalize(cam.eye), cam.up);
     
     float3 base = cam.right * x + cam.up * y;
     float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up + cam.right).z/2.0);
