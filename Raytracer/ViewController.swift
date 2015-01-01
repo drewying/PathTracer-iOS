@@ -136,10 +136,10 @@ class ViewController: UIViewController {
         var xDelta = Float((((point.x-lastPoint.x)/500.0) * 2.0) - 1.0) * -1.0;
         lastPoint = point;
         if (!cameraToggle){
-            let currentPosition:Vector3D = spheres[0].position;
-            let cameraRight = cameraEye × cameraUp;
+            let currentPosition:Vector3D = spheres[2].position;
+            let cameraRight = cameraEye.normalized() × cameraUp
             let xPos:Vector3D = cameraRight * x
-            spheres[0].position = xPos; //Matrix.transformPoint(Matrix.translate(cameraRight * xDelta), right: currentPosition);
+            spheres[2].position = xPos; //Matrix.transformPoint(Matrix.translate(cameraRight * xDelta), right: currentPosition);
         } else{
             self.cameraEye = self.cameraEye * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
         }
