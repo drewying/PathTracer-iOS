@@ -26,19 +26,20 @@ class ViewController: UIViewController {
     var timer: CADisplayLink! = nil
     var now = NSDate();
     var sampleNumber = 1;
-    
+    var selectedSphere:Sphere! = nil;
     var cameraToggle:Bool = false;
     
-    var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:3.0);
-    var cameraUp:Vector3D = Vector3D(x:0.0, y:1.0, z:0.0);
-    //var cameraRight:Vector3D = Vector3D(x: 1.0, y:0.0, z:0.0);
+    //var cameraEye:Vector3D = Vector3D(x:0.0, y:0.0, z:3.0);
+    //var cameraUp:Vector3D = Vector3D(x:0.0, y:1.0, z:0.0);
+    
+    var camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0));
     
     var spheres:[Sphere] = [
-        Sphere(position:Vector3D(x:0.0, y:-0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
-        Sphere(position:Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
-        Sphere(position:Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
-        Sphere(position:Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
-        Sphere(position:Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0)
+        Sphere(position: Vector3D(x:-0.5, y:-0.8, z:0.5),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position: Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position: Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0),
+        Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0)
     ];
     
     var seed: Array<UInt32>! = nil; //[11111];
@@ -71,7 +72,7 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
-        let cameraParams = [self.cameraEye, self.cameraUp];
+        let cameraParams = [self.camera.cameraPosition, self.camera.cameraUp];
         let intParams = [UInt32(self.sampleNumber), UInt32(NSDate().timeIntervalSince1970)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count+4, options:nil);
@@ -108,7 +109,29 @@ class ViewController: UIViewController {
         self.cameraToggle = !cameraToggle;
     }
     
-    var lastPoint:CGPoint = CGPointMake(0, 0);
+    var lastX:Float = -0.5;
+
+    @IBAction func tapAction(sender: UITapGestureRecognizer) {
+        
+        var point = sender.locationInView(self.imageView);
+        
+        let dx:Float = 1.0 / 500.0;
+        let dy:Float = 1.0 / 500.0;
+        let x:Float = Float(500.0-point.x)  * dx;
+        let y:Float = Float(500.0-point.y)  * dy;
+        var ray:Ray = camera.getRay(x, y: y);
+        
+
+        for i in (0...spheres.count-1){
+            if (spheres[i].getBounds().intersectsWithRay(ray)){
+                spheres[i].color = Vector3D(x: 1.0, y: 0.0, z: 0.0);
+            } else{
+                spheres[i].color = Vector3D(x: 0.75, y: 0.75, z:0.75);
+            }
+        }
+        
+        self.sampleNumber = 1;
+    }
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
@@ -124,25 +147,21 @@ class ViewController: UIViewController {
         
         //Horizontal
         
-        
-        //Adjust Sphere
-        //var s:Sphere = spheres[0];
-        //s.position.x = 0.5;
-        
         var point = sender.locationInView(self.imageView);
         var velocity = sender.velocityInView(self.imageView);
-        var x = Float(((point.x/500.0) * 2.0) - 1.0) * -1.0;
-        var y = Float(((point.y/500.0) * 2.0) - 1.0) * -1.0;
-        var xDelta = Float((((point.x-lastPoint.x)/500.0) * 2.0) - 1.0) * -1.0;
-        lastPoint = point;
+        var x = Float((((500-point.x)/500.0) * 2.0) - 1.0) * -1.0;
+        var y = Float((((500-point.y)/500.0) * 2.0) - 1.0) * -1.0;
+        var xDelta = x - lastX; // Float(((point.x+lastPoint.x)/500.0) * 2.0);// - (1.0/500)); //point.x - lastPoint.x;
+    
         if (!cameraToggle){
-            let currentPosition:Vector3D = spheres[2].position;
-            let cameraRight = cameraEye.normalized() × cameraUp
-            let xPos:Vector3D = cameraRight * x
-            spheres[2].position = xPos; //Matrix.transformPoint(Matrix.translate(cameraRight * xDelta), right: currentPosition);
+            var currentPosition:Vector3D = spheres[0].position;
+            
+            //spheres[0].position = Matrix.transformPoint(Matrix.translate(self.camera.cameraRight * xDelta), right: currentPosition);
+            
         } else{
-            self.cameraEye = self.cameraEye * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
+            //self.cameraEye = self.cameraEye * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
         }
+        lastX = x;
         
     }
     

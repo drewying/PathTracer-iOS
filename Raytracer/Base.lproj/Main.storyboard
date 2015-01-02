@@ -44,6 +44,7 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="1ft-mH-1i8" secondAttribute="centerY" id="0DE-9j-9C5"/>
                             <constraint firstItem="lNS-cY-Cyy" firstAttribute="leading" secondItem="uFE-EO-tVQ" secondAttribute="trailing" constant="8" id="4Fi-wV-sZk"/>
@@ -58,6 +59,9 @@
                                 <exclude reference="ujo-DX-ltj"/>
                             </mask>
                         </variation>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="zf8-bs-Nu0" appends="YES" id="gKg-z6-bOb"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="button" destination="lNS-cY-Cyy" id="l54-Y2-tD9"/>
@@ -71,6 +75,11 @@
                         <action selector="dragAction:" destination="BYZ-38-t0r" id="UhD-yw-Y2j"/>
                     </connections>
                 </panGestureRecognizer>
+                <tapGestureRecognizer id="zf8-bs-Nu0">
+                    <connections>
+                        <action selector="tapAction:" destination="BYZ-38-t0r" id="IKg-Mi-doL"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
         </scene>
     </scenes>

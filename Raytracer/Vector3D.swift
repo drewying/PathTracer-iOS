@@ -34,6 +34,10 @@ struct Vector3D{
     func length() -> Float{
         return sqrt(x * x + y * y + z * z);
     }
+    
+    func toString() -> String{
+        return "(\(x),\(y),\(z)";
+    }
 }
 
 prefix func - (vector: Vector3D) -> Vector3D {

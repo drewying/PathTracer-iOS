@@ -80,12 +80,16 @@ struct Matrix{
     
     static func transformVector(left:Matrix, right:Vector3D) -> Vector3D{
         
-        let x = (right.x * left.x[0][0] + right.y * left.x[0][1] + right.z * left.x[0][2]);
-        let y = (right.x * left.x[1][0] + right.y * left.x[1][1] + right.z * left.x[1][2]);
-        let z = (right.x * left.x[2][0] + right.y * left.x[2][1] + right.z * left.x[2][2]);
-    
+        var x = (right.x * left.x[0][0] + right.y * left.x[0][1] + right.z * left.x[0][2]);
+        x += left.x[0][3];
+        var y = (right.x * left.x[1][0] + right.y * left.x[1][1] + right.z * left.x[1][2]);
+        y += left.x[1][3]
+        var z = (right.x * left.x[2][0] + right.y * left.x[2][1] + right.z * left.x[2][2]);
+        z += left.x[2][3]
+        var t = (right.x * left.x[3][0] + right.y * left.x[3][1] + right.z * left.x[3][2]);
+        t += left.x[3][3]
         let returnVector = Vector3D(x:x, y:y, z:z);
-        return returnVector;
+        return returnVector / t;
     }
 
 }

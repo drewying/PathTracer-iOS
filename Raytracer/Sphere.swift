@@ -9,10 +9,17 @@
 import Foundation
 
 struct Sphere{
-    var position:Vector3D;
-    var radius:Float;
-    var color:Vector3D;
-    var material:Float;
+    var position:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
+    var radius:Float = 0.0;
+    var color:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
+    var material:Float = 1.0;
+    
+    init(position:Vector3D, radius:Float, color:Vector3D, material:Float){
+        self.position = position;
+        self.radius = radius;
+        self.color = color;
+        self.material = material;
+    }
     
     func getBounds() -> BoundingBox{
         let diagonal = Vector3D(x: radius, y: radius, z: radius);
