@@ -550,11 +550,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float xResolution = 500.0;
     float yResolution = 500.0;
     float dx = 1.0 / xResolution;
-    float xmin = 0.0;
     float dy = 1.0 / yResolution;
-    float ymin = 0.0;
-    float x = xmin + gid.x  * dx;
-    float y = ymin + gid.y  * dy;
+    float x = gid.x  * dx;
+    float y = gid.y  * dy;
     
     
     //Jitter the ray
@@ -579,6 +577,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     }
     
     float4 outColor = float4(tracePath(r, seed1, unpackedSpheres), 1.0);
+    //float4 outColor = float4(traceRay(r, seed1, unpackedSpheres), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     

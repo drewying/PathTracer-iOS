@@ -102,8 +102,9 @@ class ViewController: UIViewController {
         self.cameraToggle = !cameraToggle;
     }
     
-    var lastX:Float = -0.5;
-
+    var lastX:Float = 0.0;
+    var lastY:Float = 0.0;
+    
     @IBAction func tapAction(sender: UITapGestureRecognizer) {
         
         var point = sender.locationInView(self.imageView);
@@ -115,6 +116,7 @@ class ViewController: UIViewController {
         selectedSphere = scene.getClosestHit(ray);
         if (selectedSphere > -1){
             lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
+            lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
             scene.spheres[selectedSphere].color = Vector3D(x:1.0, y:0.0, z:0.0);
         }
         
@@ -129,7 +131,7 @@ class ViewController: UIViewController {
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
-        self.sampleNumber = 1;
+        
         
         //var point = sender.velocityInView(self.imageView);
         //self.cameraEye = Matrix.transformVector(Matrix.rotateY(Float(point.x/(6.0*500.0))) * Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
@@ -144,16 +146,20 @@ class ViewController: UIViewController {
         var point = sender.locationInView(self.imageView);
         var velocity = sender.velocityInView(self.imageView);
         var x = Float((((500-point.x)/500.0) * 2.0) - 1.0);
-        var y = Float((((500-point.y)/500.0) * 2.0) - 1.0) * -1.0;
-        var xDelta = x - lastX; // Float(((point.x+lastPoint.x)/500.0) * 2.0);// - (1.0/500)); //point.x - lastPoint.x;
-    
+        var y = Float((((500-point.y)/500.0) * 2.0) - 1.0);
+        var xDelta:Float = x - lastX;
+        var yDelta:Float = y - lastY;
+        
         if (selectedSphere > -1){
             var currentPosition:Vector3D = scene.spheres[selectedSphere].position;
-            scene.spheres[selectedSphere].position = Matrix.transformPoint(Matrix.translate(scene.camera.cameraRight * xDelta), right: currentPosition);
+            var matrix:Matrix = Matrix.translate(scene.camera.cameraRight * xDelta) * Matrix.translate(scene.camera.cameraUp * yDelta);
+            scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
         } else{
             self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
         }
         lastX = x;
+        lastY = y;
+        self.sampleNumber = 1;
         
     }
     
