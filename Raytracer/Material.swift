@@ -12,4 +12,6 @@ enum Material:Int{
     case DIFFUSE = 0;
     case SPECULAR = 1;
     case DIELECTRIC = 2;
+    case TRANSPARENT = 3;
+    case LIGHT = 4;
 }

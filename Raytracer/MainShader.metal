@@ -21,7 +21,7 @@ static constant int planeCount = 6;
 static constant int triangleCount = 0;
 static constant int bounceCount = 5;
 
-enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, LIGHT = 3};
+enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
 
 struct Ray{
     float3 origin;
@@ -325,13 +325,38 @@ Ray bounce(Hit h, thread RandomSeed *seed){
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, normalize(h.normal));
     } else if (h.material == DIELECTRIC){
-        float refractiveIndexAir = 1.0;
-        float refractiveIndexGlass = 1.5;
         float3 normal = normalize(h.normal);
-        float3 nl = dot(normal, h.ray.direction) < 0 ? normal : normal * -1.0;
+        float3 incident = h.ray.direction;
+        float3 nl = dot(normal, incident) < 0 ? normal : normal * -1.0;
         float into = dot(nl, normal);
+        
+        float refractiveIndexAir = 1;
+        float refractiveIndexGlass = 1.5;
         float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
-        outVector = refract(h.ray.direction, normal, refractiveIndexRatio);
+        float cosI = dot(incident,nl);
+        float cos2t = 1 - refractiveIndexRatio * refractiveIndexRatio * (1 - cosI * cosI);
+        if (cos2t < 0) {
+            //Reflect
+            return Ray{h.hitPosition, incident - normal * (2 * dot(incident, normal))};
+        }
+        
+        float3 refractedDirection = incident * (refractiveIndexRatio) - (normal * (((into > 0) - (into < 0) * (cosI * refractiveIndexRatio + sqrt(cos2t)))));
+        refractedDirection = normalize(refractedDirection);
+        
+        float a = refractiveIndexGlass - refractiveIndexAir;
+        float b = refractiveIndexGlass + refractiveIndexAir;
+        float R0 = a * a / (b * b);
+        float c = 1 - (into > 0 ? -cosI : dot(refractedDirection,normal));
+        float Re = R0 + (1 - R0) * pow(c, 5);
+        float P = 0.1 + 0.5 * Re;
+        //Prob check?
+        if (rand(seed) < P){
+            return Ray{h.hitPosition, incident - normal * (2 * dot(incident, normal))};
+        } else{
+            return Ray{h.hitPosition, refractedDirection};
+        }
+    } else if (h.material == TRANSPARENT){
+        outVector = h.ray.direction;
     }
     
     

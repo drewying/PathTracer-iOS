@@ -50,7 +50,7 @@ class ViewController: UIViewController {
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.8, z:0.5),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
+        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
@@ -105,6 +105,9 @@ class ViewController: UIViewController {
     var lastX:Float = 0.0;
     var lastY:Float = 0.0;
     
+    
+    var currentSelectionMaterial = Material.DIFFUSE;
+    
     @IBAction func tapAction(sender: UITapGestureRecognizer) {
         
         var point = sender.locationInView(self.imageView);
@@ -113,38 +116,25 @@ class ViewController: UIViewController {
         let x:Float = Float(500.0-point.x)  * dx;
         let y:Float = Float(500.0-point.y)  * dy;
         var ray:Ray = scene.camera.getRay(x, y: y);
+        
+        if (selectedSphere > -1){
+            scene.spheres[selectedSphere].material = currentSelectionMaterial;
+        }
+        
         selectedSphere = scene.getClosestHit(ray);
+        
         if (selectedSphere > -1){
             lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
             lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
-            scene.spheres[selectedSphere].color = Vector3D(x:1.0, y:0.0, z:0.0);
+            currentSelectionMaterial = scene.spheres[selectedSphere].material;
+            scene.spheres[selectedSphere].material = Material.TRANSPARENT;
         }
-        
-        for i in (0...scene.spheres.count-1){
-            if (i != selectedSphere){
-                scene.spheres[i].color = Vector3D(x:0.75, y:0.75, z:0.75);
-            }
-        }
-        
         self.sampleNumber = 1;
     }
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
-        
-        
-        //var point = sender.velocityInView(self.imageView);
-        //self.cameraEye = Matrix.transformVector(Matrix.rotateY(Float(point.x/(6.0*500.0))) * Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
-        //self.cameraUp = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraUp);
-        
-        //Vertical
-        //self.cameraEye = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraEye);
-        //self.cameraUp = Matrix.transformVector(Matrix.rotateX(Float(point.y/(6.0*500.0))), right: self.cameraUp);
-        
-        //Horizontal
-        
         var point = sender.locationInView(self.imageView);
-        var velocity = sender.velocityInView(self.imageView);
         var x = Float((((500-point.x)/500.0) * 2.0) - 1.0);
         var y = Float((((500-point.y)/500.0) * 2.0) - 1.0);
         var xDelta:Float = x - lastX;
@@ -155,8 +145,10 @@ class ViewController: UIViewController {
             var matrix:Matrix = Matrix.translate(scene.camera.cameraRight * xDelta) * Matrix.translate(scene.camera.cameraUp * yDelta);
             scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
         } else{
+            var velocity = sender.velocityInView(self.imageView);
             self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
         }
+        
         lastX = x;
         lastY = y;
         self.sampleNumber = 1;
