@@ -16,9 +16,8 @@ using namespace metal;
 
 #define EPSILON 1.e-4
 
-static constant int sphereCount = 5;
 static constant int planeCount = 6;
-static constant int triangleCount = 2;
+static constant int triangleCount = 0;
 static constant int bounceCount = 5;
 
 enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
@@ -364,8 +363,7 @@ static constant struct Triangle triangles[] = {
     {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(5.0,5.0,5.0), LIGHT}
 };
 
-static constant float3 light = float3(0.25,0.75,0.5);
-
+static constant struct Sphere light = {float3(0.5,0.5,0.5), 0.0, float3(5.0,5.0,5.0), LIGHT};
 
 Hit getClosestHit(Ray r, Sphere spheres[]){
     Hit h = noHit();
@@ -378,7 +376,7 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
         }
     }
     
-    for (int i=0; i<sphereCount; i++){
+    for (int i=0; i<5; i++){
         //Unpack
         Hit hit = sphereIntersection(spheres[i], r, h.distance);
         if (hit.didHit){
@@ -401,78 +399,10 @@ float3 getLight(thread uint *seed){
     float lightx = (rand(seed) * 0.1) - 0.05;
     float lighty = (rand(seed) * 0.1) - 0.05;
     float lightz = (rand(seed) * 0.1) - 0.05;
-    return float3(light.x + lightx, light.y + lighty, light.z + lightz);
-}
-    
-float3 traceRay(Ray r, thread uint *seed, Sphere spheres[]){
-    //Jitter the light
-    float3 jitteredLight = getLight(seed);
-    
-    float3 finalColor = float3(0.0,0.0,0.0);
-    
-    Hit h = getClosestHit(r, spheres);
-    if (!h.didHit){
-        return finalColor;
-    }
-    
-    
-    float3 normal = normalize(h.normal);
-    float3 lightDirection = normalize(jitteredLight - h.hitPosition);
-    float lightDistance = distance(jitteredLight, h.hitPosition);
-    Ray shadowRay = {h.hitPosition, lightDirection};
-    Hit shadowHit = getClosestHit(shadowRay, spheres);
-    
-    if (shadowHit.didHit && shadowHit.distance <= lightDistance){
-        return finalColor;
-    }
-    
-    float cosphi = dot(normal, lightDirection);
-    
-    if (cosphi > 0){
-        finalColor = float3(1.0,1.0,1.0) * cosphi;
-    }
-    
-    return finalColor * h.color;
-}
-    
-float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
-    float3 accumulatedColor = float3(0.0,0.0,0.0);
-    float3 reflectColor = float3(1.0,1.0,1.0);
-    for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r, spheres);
-        if (!h.didHit){
-            return float3(0.0,0.0,0.0);
-        }
-        
-        reflectColor *= h.color;
-        
-        //Direct lighting
-        float3 jitteredLight = getLight(seed);
-        float3 normal = normalize(h.normal);
-        float3 lightDirection = normalize(jitteredLight - h.hitPosition);
-        float cosphi = dot(normal, lightDirection);
-        
-        
-        //Calculate shadow factor
-        Ray shadowRay = {h.hitPosition, lightDirection};
-        Hit shadowHit = getClosestHit(shadowRay, spheres);
-        
-        float lightDistance = distance(jitteredLight, h.hitPosition);
-        float shadowFactor = 1.0;
-        if (shadowHit.didHit && shadowHit.distance <= lightDistance){
-            shadowFactor = 0.0;
-        }
-        
-        accumulatedColor += reflectColor * cosphi * shadowFactor;
-        
-        r = bounce(h, seed);
-    }
-    
-    return accumulatedColor * 0.5;
+    return float3(light.position.x + lightx, light.position.y + lighty, light.position.z + lightz);
 }
 
-
-float3 tracePathNoDirect(Ray r, thread uint *seed, Sphere spheres[]){
+float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], bool includeDirectLighting, bool includeIndirectLighting){
     float3 reflectColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     for (int i=0; i < bounceCount; i++){
@@ -481,31 +411,39 @@ float3 tracePathNoDirect(Ray r, thread uint *seed, Sphere spheres[]){
             return float3(0.0,0.0,0.0);
         }
         
+        if (includeIndirectLighting && light.radius > 0){
+            Hit lightHit = sphereIntersection(light, r, DBL_MAX);
+            if (lightHit.didHit){
+                return reflectColor * lightHit.color;
+            }
+        }
+        
         reflectColor *= h.color;
         
-        if (h.material == LIGHT){
-            return reflectColor;
+        if (includeDirectLighting){
+            //Direct Lighting
+            float3 jitteredLight = getLight(seed);
+            float3 normal = normalize(h.normal);
+            float3 lightDirection = normalize(jitteredLight - h.hitPosition);
+            float cosphi = dot(normal, lightDirection);
+            
+            
+            //Calculate shadow factor
+            Ray shadowRay = {h.hitPosition, lightDirection};
+            Hit shadowHit = getClosestHit(shadowRay, spheres);
+            
+            float lightDistance = distance(jitteredLight, h.hitPosition);
+            float shadowFactor = 1.0;
+            if (shadowHit.didHit && shadowHit.distance <= lightDistance){
+                shadowFactor = 0.0;
+            }
+            
+            accumulatedColor += reflectColor * cosphi * shadowFactor;
+            
+            if (!includeIndirectLighting){
+                return accumulatedColor;
+            }
         }
-        
-        //Direct Lighting
-        float3 jitteredLight = getLight(seed);
-        float3 normal = normalize(h.normal);
-        float3 lightDirection = normalize(jitteredLight - h.hitPosition);
-        float cosphi = dot(normal, lightDirection);
-        
-        
-        //Calculate shadow factor
-        Ray shadowRay = {h.hitPosition, lightDirection};
-        Hit shadowHit = getClosestHit(shadowRay, spheres);
-        
-        float lightDistance = distance(jitteredLight, h.hitPosition);
-        float shadowFactor = 1.0;
-        if (shadowHit.didHit && shadowHit.distance <= lightDistance){
-            shadowFactor = 0.0;
-        }
-        
-        accumulatedColor += reflectColor * cosphi * shadowFactor;
-        
         r = bounce(h, seed);
     }
     
@@ -563,6 +501,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint gidIndex = gid.x * 500 + gid.y;
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
+    uint sphereCount = intParams[2];
     
     uint seedMemory = hashSeed(gidIndex * sysTime * sampleNumber);
     
@@ -595,17 +534,14 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
     
     //Unpack Sphere data
+    int t = 5;
     Sphere unpackedSpheres[5];
     for (int i=0; i < 5; i++){
         PackedSphere p = spheres[i];
         unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
     }
     
-    float4 outColor = float4(tracePathNoDirect(r, seed, unpackedSpheres), 1.0);
-    //float4 outColor = float4(tracePath(r, seed, unpackedSpheres), 1.0);
-    //float4 outColor = float4(traceRay(r, seed, unpackedSpheres), 1.0);
-    
-    //float4 outColor = float4(1.0,1.0,1.0,1.0);
+    float4 outColor = float4(tracePath(r, seed, unpackedSpheres, true, true), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
