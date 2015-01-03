@@ -8,8 +8,8 @@
 
 import UIKit
 
-enum Material{
-    case DIFFUSE
-    case SPECULAR
-    case DIELECTRIC
+enum Material:Int{
+    case DIFFUSE = 0;
+    case SPECULAR = 1;
+    case DIELECTRIC = 2;
 }

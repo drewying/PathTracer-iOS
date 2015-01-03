@@ -21,7 +21,7 @@ static constant int planeCount = 6;
 static constant int triangleCount = 0;
 static constant int bounceCount = 5;
 
-enum Material { DIFFUSE, SPECULAR, DIELECTRIC, LIGHT};
+enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, LIGHT = 3};
 
 struct Ray{
     float3 origin;
@@ -391,9 +391,10 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
 }
 
 float3 traceRay(Ray r, thread RandomSeed *seed, Sphere spheres[]){
-    float lightx = (rand(seed) * 0.05) - 0.025;
-    float lighty = (rand(seed) * 0.05) - 0.025;
-    float lightz = (rand(seed) * 0.05) - 0.025;
+    //Jitter the light
+    float lightx = (rand(seed) * 0.1) - 0.05;
+    float lighty = (rand(seed) * 0.1) - 0.05;
+    float lightz = (rand(seed) * 0.1) - 0.05;
     
     float3 jitteredLight = float3(light.x + lightx, light.y + lighty, light.z + lightz);
     
@@ -573,7 +574,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     Sphere unpackedSpheres[5];
     for (int i=0; i < 5; i++){
         PackedSphere p = spheres[i];
-        unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), DIFFUSE};
+        unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
     }
     
     float4 outColor = float4(tracePath(r, seed1, unpackedSpheres), 1.0);

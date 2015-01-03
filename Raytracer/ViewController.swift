@@ -49,11 +49,11 @@ class ViewController: UIViewController {
         timer = CADisplayLink(target: self, selector: Selector("gameloop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         
-        scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.8, z:0.5),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: 1.0));
+        scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.8, z:0.5),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
+        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
+        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.SPECULAR));
+        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
+        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
     }
     
     func render() {
@@ -70,7 +70,7 @@ class ViewController: UIViewController {
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeofValue(intParams[0])*intParams.count+4, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
-        let c = self.device.newBufferWithBytes(scene.spheres, length: sizeofValue(scene.spheres[0]) * scene.spheres.count, options:nil);
+        let c = self.device.newBufferWithBytes(scene.spheres, length: (sizeof(Sphere) + 3) * scene.spheres.count, options:nil);
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
