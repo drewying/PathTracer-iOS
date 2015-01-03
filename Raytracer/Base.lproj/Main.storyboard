@@ -43,18 +43,51 @@
                                     <barButtonItem title="Item" id="BEH-BU-d9y"/>
                                 </items>
                             </toolbar>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="kM4-se-Hec">
+                                <rect key="frame" x="0.0" y="-15" width="118" height="31"/>
+                                <connections>
+                                    <action selector="radiusSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="ixO-IT-2BU"/>
+                                </connections>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstAttribute="centerX" secondItem="uFE-EO-tVQ" secondAttribute="centerX" id="0eS-Px-ios"/>
+                            <constraint firstAttribute="centerX" secondItem="uFE-EO-tVQ" secondAttribute="centerX" id="0eS-Px-ios">
+                                <variation key="heightClass=regular" constant="75"/>
+                            </constraint>
+                            <constraint firstItem="kM4-se-Hec" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="3Ud-oM-89a"/>
                             <constraint firstAttribute="trailingMargin" secondItem="3i3-to-PZy" secondAttribute="trailing" constant="-16" id="6Ru-zT-uop"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="8em-rW-OvZ"/>
                             <constraint firstAttribute="centerX" secondItem="1ft-mH-1i8" secondAttribute="centerX" id="EhW-sm-Coc"/>
-                            <constraint firstItem="uFE-EO-tVQ" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="YSK-Sj-mCQ"/>
+                            <constraint firstItem="uFE-EO-tVQ" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="YSK-Sj-mCQ">
+                                <variation key="heightClass=regular" constant="-521"/>
+                            </constraint>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="3i3-to-PZy" secondAttribute="bottom" id="aMB-CM-vtp"/>
+                            <constraint firstItem="kM4-se-Hec" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="34" id="hM4-Fy-mmR"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="jEj-VF-n4G"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="kM4-se-Hec" secondAttribute="trailing" constant="34" id="vey-1j-Te5"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="kM4-se-Hec"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="3Ud-oM-89a"/>
+                                <exclude reference="hM4-Fy-mmR"/>
+                                <exclude reference="vey-1j-Te5"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular">
+                            <mask key="subviews">
+                                <include reference="kM4-se-Hec"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="3Ud-oM-89a"/>
+                                <include reference="hM4-Fy-mmR"/>
+                                <include reference="vey-1j-Te5"/>
+                            </mask>
+                        </variation>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="zf8-bs-Nu0" appends="YES" id="gKg-z6-bOb"/>
                         </connections>
@@ -62,6 +95,7 @@
                     <connections>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
                         <outlet property="sampleLabel" destination="uFE-EO-tVQ" id="q9n-2x-5wA"/>
+                        <outlet property="slider" destination="kM4-se-Hec" id="5hY-sS-IKB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -76,6 +110,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
+            <point key="canvasLocation" x="140" y="135.75"/>
         </scene>
     </scenes>
 </document>

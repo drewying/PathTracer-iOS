@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     
     @IBOutlet weak var sampleLabel: UILabel!
+    @IBOutlet weak var slider: UISlider!
     
     var device: MTLDevice! = nil;
     var defaultLibrary: MTLLibrary! = nil;
@@ -31,6 +32,12 @@ class ViewController: UIViewController {
     var cameraToggle:Bool = false;
     
     var scene: Scene! = Scene(camera: Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0)));
+    
+    @IBAction func radiusSlider(sender: UISlider) {
+        
+        self.scene.spheres[selectedSphere].radius = sender.value;
+        self.sampleNumber = 1;
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
