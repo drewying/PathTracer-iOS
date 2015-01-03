@@ -395,9 +395,6 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
     
     for (int i=0; i<sphereCount; i++){
         //Unpack
-        
-
-
         Hit hit = sphereIntersection(spheres[i], r, h.distance);
         if (hit.didHit){
             h = hit;

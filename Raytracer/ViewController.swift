@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     var inputTexture: MTLTexture! = nil;
     var outputTexture: MTLTexture! = nil;
     var timer: CADisplayLink! = nil
-    var now = NSDate();
+    var start = NSDate();
     var sampleNumber = 1;
     
     var selectedSphere:Int = -1;
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
     @IBAction func radiusSlider(sender: UISlider) {
         
         self.scene.spheres[selectedSphere].radius = sender.value;
-        self.sampleNumber = 1;
+        self.resetDisplay();
     }
     
     override func viewDidLoad() {
@@ -53,7 +53,7 @@ class ViewController: UIViewController {
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = device.newTextureWithDescriptor(textureDescriptor);
         
-        timer = CADisplayLink(target: self, selector: Selector("gameloop"))
+        timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.8, z:0.5),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
@@ -87,26 +87,27 @@ class ViewController: UIViewController {
         commandEncoder.endEncoding();
         commandBuffer.commit();
         commandBuffer.waitUntilCompleted();
-        
         self.inputTexture = self.outputTexture;
-        self.sampleLabel.text = NSString(format: "%u", self.sampleNumber++);
-        
     }
     
-    func gameloop() {
+    func renderLoop() {
         autoreleasepool {
-            self.render()
+            self.render();
+            self.sampleNumber++;
+            var fps:Float = Float(self.sampleNumber)/Float(self.start.timeIntervalSinceNow * -1);
+            self.sampleLabel.text = NSString(format: "FPS:%.1f", Float(fps));
             self.imageView.image = UIImage(MTLTexture: self.inputTexture)
         }
+    }
+    
+    func resetDisplay() {
+        self.sampleNumber = 1;
+        self.start = NSDate();
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    @IBAction func button(sender: AnyObject) {
-        self.cameraToggle = !cameraToggle;
     }
     
     var lastX:Float = 0.0;
@@ -136,7 +137,7 @@ class ViewController: UIViewController {
             currentSelectionMaterial = scene.spheres[selectedSphere].material;
             scene.spheres[selectedSphere].material = Material.TRANSPARENT;
         }
-        self.sampleNumber = 1;
+        self.resetDisplay();
     }
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
@@ -158,7 +159,7 @@ class ViewController: UIViewController {
         
         lastX = x;
         lastY = y;
-        self.sampleNumber = 1;
+        self.resetDisplay();
         
     }
     
