@@ -412,6 +412,13 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
     return h;
 }
 
+float3 getLight(thread RandomSeed *seed){
+    float lightx = (rand(seed) * 0.1) - 0.05;
+    float lighty = (rand(seed) * 0.1) - 0.05;
+    float lightz = (rand(seed) * 0.1) - 0.05;
+    return float3(light.x + lightx, light.y + lighty, light.z + lightz);
+}
+    
 float3 traceRay(Ray r, thread RandomSeed *seed, Sphere spheres[]){
     //Jitter the light
     float3 jitteredLight = getLight(seed);
@@ -441,13 +448,6 @@ float3 traceRay(Ray r, thread RandomSeed *seed, Sphere spheres[]){
     }
     
     return finalColor * h.color;
-}
-
-float3 getLight(thread RandomSeed *seed){
-    float lightx = (rand(seed) * 0.1) - 0.05;
-    float lighty = (rand(seed) * 0.1) - 0.05;
-    float lightz = (rand(seed) * 0.1) - 0.05;
-    return float3(light.x + lightx, light.y + lighty, light.z + lightz);
 }
     
 float3 tracePath(Ray r, thread RandomSeed *seed, Sphere spheres[]){
