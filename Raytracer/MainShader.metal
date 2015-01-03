@@ -18,7 +18,7 @@ using namespace metal;
 
 static constant int sphereCount = 5;
 static constant int planeCount = 6;
-static constant int triangleCount = 0;
+static constant int triangleCount = 2;
 static constant int bounceCount = 5;
 
 enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
@@ -360,8 +360,8 @@ static constant struct Plane planes[] = {
 };
 
 static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(1.0,1.0,1.0), DIFFUSE},
-    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(1.0,1.0,1.0), DIFFUSE}
+    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(10.0,10.0,10.0), LIGHT},
+    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(10.0,10.0,10.0), LIGHT}
 };
 
 static constant float3 light = float3(0.25,0.75,0.5);
@@ -452,7 +452,6 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
         
         
         //Calculate shadow factor
-        
         Ray shadowRay = {h.hitPosition, lightDirection};
         Hit shadowHit = getClosestHit(shadowRay, spheres);
         
@@ -473,7 +472,6 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
 
 
 float3 tracePathNoDirect(Ray r, thread uint *seed, Sphere spheres[]){
-    float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(r, spheres);
@@ -482,13 +480,10 @@ float3 tracePathNoDirect(Ray r, thread uint *seed, Sphere spheres[]){
         }
         
         reflectColor *= h.color;
-        accumulatedColor += reflectColor;
         
         if (h.material == LIGHT){
             return reflectColor;
-            //return accumulatedColor;
         }
-        
         
         r = bounce(h, seed);
     }
@@ -585,7 +580,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
         unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
     }
     
-    float4 outColor = float4(tracePath(r, seed, unpackedSpheres), 1.0);
+    float4 outColor = float4(tracePathNoDirect(r, seed, unpackedSpheres), 1.0);
+    //float4 outColor = float4(tracePath(r, seed, unpackedSpheres), 1.0);
     //float4 outColor = float4(traceRay(r, seed, unpackedSpheres), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
