@@ -85,13 +85,6 @@ struct Camera{
     float focalLength = 1.0;
 };
 
-struct RandomSeed{
-    uint a;
-    uint b;
-    uint c;
-    uint d;
-};
-
 inline Hit noHit(){
     Hit hit;
     hit.didHit = false;
@@ -237,35 +230,18 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
     }
 }
 
-float rand(thread RandomSeed *seed)
+float rand(thread uint *seed)
 {
-    
-    uint z1 = seed->a;
-    uint z2 = seed->b;
-    uint z3 = seed->c;
-    uint z4 = seed->d;
-    
-    
-    uint b;
-    b  = ((z1 << 6) ^ z1) >> 13;
-    z1 = ((z1 & 4294967294) << 18) ^ b;
-    b  = ((z2 << 2) ^ z2) >> 27;
-    z2 = ((z2 & 4294967288) << 2) ^ b;
-    b  = ((z3 << 13) ^ z3) >> 21;
-    z3 = ((z3 & 4294967280) << 7) ^ b;
-    b  = ((z4 << 3) ^ z4) >> 12;
-    z4 = ((z4 & 4294967168) << 13) ^ b;
-    
-    seed->a = z1;
-    seed->b = z2;
-    seed->c = z3;
-    seed->d = z4;
-    
-    uint returnValue = (z1 ^ z2 ^ z3 ^ z4);
-    return float(returnValue)/4294967295.0;
+    uint long_max = 4294967295;
+    float float_max = 4294967295.0;
+    uint mult = 62089911;
+    uint next = *seed;
+    next = mult * next;
+    *seed = next;
+    return (float)(next % long_max) / float_max;
 }
 
-float3 uniformSampleDirection(thread RandomSeed *seed){
+float3 uniformSampleDirection(thread uint *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
     
@@ -279,7 +255,7 @@ float3 uniformSampleDirection(thread RandomSeed *seed){
     return normalize(float3(x,y,z));
 }
 
-float3 bookSampleDirection(thread RandomSeed *seed){
+float3 bookSampleDirection(thread uint *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
     
@@ -294,7 +270,7 @@ float3 bookSampleDirection(thread RandomSeed *seed){
 }
 
 
-float3 cosineWeightedDirection(thread RandomSeed *seed){
+float3 cosineWeightedDirection(thread uint *seed){
     float u1 = rand(seed);
     float u2 = rand(seed);
     
@@ -307,7 +283,7 @@ float3 cosineWeightedDirection(thread RandomSeed *seed){
     return normalize(float3(x,y,z));
 }
 
-Ray bounce(Hit h, thread RandomSeed *seed){
+Ray bounce(Hit h, thread uint *seed){
     
     float3 outVector;
     
@@ -412,14 +388,14 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
     return h;
 }
 
-float3 getLight(thread RandomSeed *seed){
+float3 getLight(thread uint *seed){
     float lightx = (rand(seed) * 0.1) - 0.05;
     float lighty = (rand(seed) * 0.1) - 0.05;
     float lightz = (rand(seed) * 0.1) - 0.05;
     return float3(light.x + lightx, light.y + lighty, light.z + lightz);
 }
     
-float3 traceRay(Ray r, thread RandomSeed *seed, Sphere spheres[]){
+float3 traceRay(Ray r, thread uint *seed, Sphere spheres[]){
     //Jitter the light
     float3 jitteredLight = getLight(seed);
     
@@ -450,7 +426,7 @@ float3 traceRay(Ray r, thread RandomSeed *seed, Sphere spheres[]){
     return finalColor * h.color;
 }
     
-float3 tracePath(Ray r, thread RandomSeed *seed, Sphere spheres[]){
+float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
     //Jitter the light
     float3 jitteredLight = getLight(seed);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
@@ -488,7 +464,7 @@ float3 tracePath(Ray r, thread RandomSeed *seed, Sphere spheres[]){
 }
 
 
-float3 tracePathNoDirect(Ray r, thread RandomSeed *seed, Sphere spheres[]){
+float3 tracePathNoDirect(Ray r, thread uint *seed, Sphere spheres[]){
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
@@ -555,14 +531,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
     
+    uint seedMemory = gidIndex * sysTime * sampleNumber;
     
-    RandomSeed seedMemory;
-    seedMemory.a = gidIndex * sysTime * sampleNumber;
-    seedMemory.b = gidIndex * gidIndex * sysTime * sysTime * sampleNumber * sampleNumber;
-    seedMemory.c = gidIndex * gidIndex * sysTime * sampleNumber;
-    seedMemory.d = gidIndex * gidIndex * gidIndex * sysTime * sampleNumber;
-    
-    thread RandomSeed *seed1 = &seedMemory;
+    thread uint *seed = &seedMemory;
     
     //Get the inColor
     uint2 textureIndex(gid.x, gid.y);
@@ -582,10 +553,10 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint yJitterPosition = floor(float(jitterIndex)/10.0);
     
     float incX = 1.0/(xResolution*10);
-    float xOffset = rand(seed1) * float(incX) + float(xJitterPosition) * float(incX);
+    float xOffset = rand(seed) * float(incX) + float(xJitterPosition) * float(incX);
     
     float incY = 1.0/(yResolution*10);
-    float yOffset = rand(seed1) * float(incY) + float(yJitterPosition) * float(incY);
+    float yOffset = rand(seed) * float(incY) + float(yJitterPosition) * float(incY);
     
     
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
@@ -597,8 +568,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
         unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
     }
     
-    float4 outColor = float4(tracePath(r, seed1, unpackedSpheres), 1.0);
-    //float4 outColor = float4(traceRay(r, seed1, unpackedSpheres), 1.0);
+    float4 outColor = float4(tracePath(r, seed, unpackedSpheres), 1.0);
+    //float4 outColor = float4(traceRay(r, seed, unpackedSpheres), 1.0);
     
     //float4 outColor = float4(1.0,1.0,1.0,1.0);
     
