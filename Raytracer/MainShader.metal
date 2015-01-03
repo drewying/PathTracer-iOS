@@ -232,13 +232,21 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
 
 float rand(thread uint *seed)
 {
-    uint long_max = 4294967295;
-    float float_max = 4294967295.0;
-    uint mult = 62089911;
-    uint next = *seed;
-    next = mult * next;
-    *seed = next;
-    return (float)(next % long_max) / float_max;
+    //LCG which is faster
+    //http://www.reedbeta.com/blog/2013/01/12/quick-and-easy-gpu-random-numbers-in-d3d11/
+    
+    /*uint x = *seed;
+    x = 1664525 * x + 1013904223;
+    *seed = x;
+    return float(x) / 4294967295.0;*/
+    
+    //While a xor_shift... produces better results
+    uint x = *seed;
+    x ^= (x << 13);
+    x ^= (x >> 17);
+    x ^= (x << 5);
+    *seed = x;
+    return float(x) / 4294967295.0;
 }
 
 float3 uniformSampleDirection(thread uint *seed){
@@ -517,6 +525,15 @@ Ray makeRay(float x, float y, float r1, float r2, constant packed_float3 *camera
     return outRay;
 }
 
+    
+uint hashSeed(uint seed){
+    seed = (seed ^ 61) ^ (seed >> 16);
+    seed *= 9;
+    seed = seed ^ (seed >> 4);
+    seed *= 0x27d4eb2d;
+    seed = seed ^ (seed >> 15);
+    return seed;
+}
 
 kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
@@ -531,7 +548,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
     
-    uint seedMemory = gidIndex * sysTime * sampleNumber;
+    uint seedMemory = hashSeed(gidIndex * sysTime * sampleNumber);
     
     thread uint *seed = &seedMemory;
     
