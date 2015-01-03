@@ -360,11 +360,12 @@ static constant struct Plane planes[] = {
 };
 
 static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(10.0,10.0,10.0), LIGHT},
-    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(10.0,10.0,10.0), LIGHT}
+    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(5.0,5.0,5.0), LIGHT},
+    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(5.0,5.0,5.0), LIGHT}
 };
 
 static constant float3 light = float3(0.25,0.75,0.5);
+
 
 Hit getClosestHit(Ray r, Sphere spheres[]){
     Hit h = noHit();
@@ -435,8 +436,6 @@ float3 traceRay(Ray r, thread uint *seed, Sphere spheres[]){
 }
     
 float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
-    //Jitter the light
-    float3 jitteredLight = getLight(seed);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 reflectColor = float3(1.0,1.0,1.0);
     for (int i=0; i < bounceCount; i++){
@@ -445,7 +444,10 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
             return float3(0.0,0.0,0.0);
         }
         
-        //Calculate direct lighting
+        reflectColor *= h.color;
+        
+        //Direct lighting
+        float3 jitteredLight = getLight(seed);
         float3 normal = normalize(h.normal);
         float3 lightDirection = normalize(jitteredLight - h.hitPosition);
         float cosphi = dot(normal, lightDirection);
@@ -461,7 +463,6 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
             shadowFactor = 0.0;
         }
         
-        reflectColor *= h.color;
         accumulatedColor += reflectColor * cosphi * shadowFactor;
         
         r = bounce(h, seed);
@@ -473,6 +474,7 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[]){
 
 float3 tracePathNoDirect(Ray r, thread uint *seed, Sphere spheres[]){
     float3 reflectColor = float3(1.0,1.0,1.0);
+    float3 accumulatedColor = float3(0.0,0.0,0.0);
     for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(r, spheres);
         if (!h.didHit){
@@ -485,10 +487,29 @@ float3 tracePathNoDirect(Ray r, thread uint *seed, Sphere spheres[]){
             return reflectColor;
         }
         
+        //Direct Lighting
+        float3 jitteredLight = getLight(seed);
+        float3 normal = normalize(h.normal);
+        float3 lightDirection = normalize(jitteredLight - h.hitPosition);
+        float cosphi = dot(normal, lightDirection);
+        
+        
+        //Calculate shadow factor
+        Ray shadowRay = {h.hitPosition, lightDirection};
+        Hit shadowHit = getClosestHit(shadowRay, spheres);
+        
+        float lightDistance = distance(jitteredLight, h.hitPosition);
+        float shadowFactor = 1.0;
+        if (shadowHit.didHit && shadowHit.distance <= lightDistance){
+            shadowFactor = 0.0;
+        }
+        
+        accumulatedColor += reflectColor * cosphi * shadowFactor;
+        
         r = bounce(h, seed);
     }
     
-    return float3(0.0,0.0,0.0);
+    return accumulatedColor * 0.5;
 }
 
 float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
