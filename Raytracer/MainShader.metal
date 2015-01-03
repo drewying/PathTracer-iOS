@@ -377,7 +377,6 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
     }
     
     for (int i=0; i<5; i++){
-        //Unpack
         Hit hit = sphereIntersection(spheres[i], r, h.distance);
         if (hit.didHit){
             h = hit;
@@ -411,14 +410,14 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], bool includeDirectL
             return float3(0.0,0.0,0.0);
         }
         
+        reflectColor *= h.color;
+        
         if (includeIndirectLighting && light.radius > 0){
             Hit lightHit = sphereIntersection(light, r, DBL_MAX);
             if (lightHit.didHit){
-                return reflectColor * lightHit.color;
+                return reflectColor;
             }
         }
-        
-        reflectColor *= h.color;
         
         if (includeDirectLighting){
             //Direct Lighting
@@ -501,8 +500,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint gidIndex = gid.x * 500 + gid.y;
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
-    uint sphereCount = intParams[2];
-    
+    int sphereCount = 5;//intParams[2];
+
     uint seedMemory = hashSeed(gidIndex * sysTime * sampleNumber);
     
     thread uint *seed = &seedMemory;
@@ -534,9 +533,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
     
     //Unpack Sphere data
-    int t = 5;
     Sphere unpackedSpheres[5];
-    for (int i=0; i < 5; i++){
+    for (int i=0; i < sphereCount; i++){
         PackedSphere p = spheres[i];
         unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
     }

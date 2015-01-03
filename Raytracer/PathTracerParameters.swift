@@ -10,6 +10,7 @@ import Foundation
 
 struct PathTracerParameters
 {
-    var sampleNumber: Int;
-    var timeSinceStart: Int;
+    var sampleNumber: UInt32;
+    var timeSinceStart: UInt32;
+    var sphereCount: UInt32;
 };
