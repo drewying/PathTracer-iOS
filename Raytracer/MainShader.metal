@@ -296,8 +296,8 @@ Ray bounce(Hit h, thread uint *seed){
     
     if (h.material == DIFFUSE){
         //outVector = uniformSampleDirection(seed);
-        //outVector = cosineWeightedDirection(seed);
-        outVector = bookSampleDirection(seed);
+        outVector = cosineWeightedDirection(seed);
+        //outVector = bookSampleDirection(seed);
         float3 normal = h.normal;
         
         // if the point is in the wrong hemisphere, mirror it

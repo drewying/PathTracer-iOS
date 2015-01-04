@@ -53,8 +53,8 @@ class ViewController: UIViewController {
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = device.newTextureWithDescriptor(textureDescriptor);
         
-        scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.8, z:0.5),radius:0.2, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
+        scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
+        scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
