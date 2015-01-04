@@ -19,6 +19,7 @@ using namespace metal;
 static constant int planeCount = 6;
 static constant int triangleCount = 0;
 static constant int bounceCount = 5;
+static constant int maxSpheres = 5;
 
 enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
 
@@ -376,7 +377,7 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
         }
     }
     
-    for (int i=0; i<5; i++){
+    for (int i=0; i<maxSpheres; i++){
         Hit hit = sphereIntersection(spheres[i], r, h.distance);
         if (hit.didHit){
             h = hit;
@@ -500,8 +501,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint gidIndex = gid.x * 500 + gid.y;
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
-    int sphereCount = 5;//intParams[2];
-
+    int resolution = intParams[2];
+    
     uint seedMemory = hashSeed(gidIndex * sysTime * sampleNumber);
     
     thread uint *seed = &seedMemory;
@@ -510,8 +511,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint2 textureIndex(gid.x, gid.y);
     float4 inColor = inTexture.read(textureIndex).rgba;
     
-    float xResolution = 500.0;
-    float yResolution = 500.0;
+    float xResolution = float(resolution);
+    float yResolution = float(resolution);
     float dx = 1.0 / xResolution;
     float dy = 1.0 / yResolution;
     float x = gid.x  * dx;
@@ -533,8 +534,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
     
     //Unpack Sphere data
-    Sphere unpackedSpheres[5];
-    for (int i=0; i < sphereCount; i++){
+    Sphere unpackedSpheres[maxSpheres];
+    for (int i=0; i < maxSpheres; i++){
         PackedSphere p = spheres[i];
         unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
     }

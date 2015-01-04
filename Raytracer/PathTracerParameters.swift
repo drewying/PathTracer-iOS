@@ -12,5 +12,7 @@ struct PathTracerParameters
 {
     var sampleNumber: UInt32;
     var timeSinceStart: UInt32;
-    var sphereCount: UInt32;
+    var xResolution: UInt32;
+    var yResolution: UInt32;
+    
 };

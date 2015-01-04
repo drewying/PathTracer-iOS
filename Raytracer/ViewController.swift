@@ -73,11 +73,11 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
         let cameraParams = self.scene.camera.getParameterArray();
-        let intParams = [UInt32(self.sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(5)];
+        let intParams = [UInt32(self.sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(500)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
-        let c = self.device.newBufferWithBytes(scene.spheres, length: (sizeof(Sphere) + 3) * scene.spheres.count, options:nil);
+        let c = self.device.newBufferWithBytes(&scene.spheres, length: (sizeof(Sphere) + 3) * 15, options:nil);
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
@@ -86,6 +86,7 @@ class ViewController: UIViewController {
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
         commandBuffer.commit();
+        commandQueue.insertDebugCaptureBoundary();
         commandBuffer.waitUntilCompleted();
         self.inputTexture = self.outputTexture;
     }
@@ -94,8 +95,7 @@ class ViewController: UIViewController {
         autoreleasepool {
             self.render();
             self.sampleNumber++;
-            var fps:Float = Float(self.sampleNumber)/Float(self.start.timeIntervalSinceNow * -1);
-            self.sampleLabel.text = NSString(format: "FPS:%.1f", Float(fps));
+            self.sampleLabel.text = NSString(format: "%i", self.sampleNumber);
             self.imageView.image = UIImage(MTLTexture: self.inputTexture)
         }
     }
