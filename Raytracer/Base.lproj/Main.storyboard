@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -20,10 +21,6 @@
                             <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1ft-mH-1i8">
                                 <rect key="frame" x="50" y="20" width="500" height="500"/>
                                 <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="500" id="SOW-nw-RVA"/>
-                                    <constraint firstAttribute="height" constant="500" id="jda-Eb-zQP"/>
-                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="50r-TN-zaZ" appends="YES" id="1Cw-ht-JU7"/>
                                 </connections>
@@ -56,26 +53,36 @@
                             <constraint firstAttribute="centerX" secondItem="uFE-EO-tVQ" secondAttribute="centerX" id="0eS-Px-ios">
                                 <variation key="heightClass=regular" constant="75"/>
                             </constraint>
-                            <constraint firstItem="kM4-se-Hec" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="3Ud-oM-89a"/>
                             <constraint firstAttribute="trailingMargin" secondItem="3i3-to-PZy" secondAttribute="trailing" constant="-16" id="6Ru-zT-uop"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="8em-rW-OvZ"/>
+                            <constraint firstItem="1ft-mH-1i8" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="9hZ-xs-4Jr"/>
                             <constraint firstAttribute="centerX" secondItem="1ft-mH-1i8" secondAttribute="centerX" id="EhW-sm-Coc"/>
+                            <constraint firstItem="kM4-se-Hec" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="HdU-eC-4Zh"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="144" id="OoI-cL-uhc"/>
                             <constraint firstItem="uFE-EO-tVQ" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="YSK-Sj-mCQ">
                                 <variation key="heightClass=regular" constant="-521"/>
                             </constraint>
+                            <constraint firstAttribute="trailingMargin" secondItem="1ft-mH-1i8" secondAttribute="trailing" constant="-16" id="Zep-dI-wHT"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="3i3-to-PZy" secondAttribute="bottom" id="aMB-CM-vtp"/>
                             <constraint firstItem="kM4-se-Hec" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="34" id="hM4-Fy-mmR"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="jEj-VF-n4G"/>
+                            <constraint firstItem="y3c-jy-aDJ" firstAttribute="top" secondItem="uFE-EO-tVQ" secondAttribute="bottom" constant="-1" id="pnR-aC-PyB"/>
                             <constraint firstAttribute="trailingMargin" secondItem="kM4-se-Hec" secondAttribute="trailing" constant="34" id="vey-1j-Te5"/>
+                            <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="x0F-cW-esq"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="kM4-se-Hec"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="3Ud-oM-89a"/>
+                                <exclude reference="9hZ-xs-4Jr"/>
+                                <exclude reference="Zep-dI-wHT"/>
+                                <exclude reference="x0F-cW-esq"/>
+                                <exclude reference="pnR-aC-PyB"/>
+                                <exclude reference="HdU-eC-4Zh"/>
                                 <exclude reference="hM4-Fy-mmR"/>
                                 <exclude reference="vey-1j-Te5"/>
+                                <exclude reference="OoI-cL-uhc"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular">
@@ -83,9 +90,17 @@
                                 <include reference="kM4-se-Hec"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="3Ud-oM-89a"/>
+                                <include reference="9hZ-xs-4Jr"/>
+                                <exclude reference="EhW-sm-Coc"/>
+                                <include reference="Zep-dI-wHT"/>
+                                <exclude reference="jEj-VF-n4G"/>
+                                <include reference="x0F-cW-esq"/>
+                                <include reference="pnR-aC-PyB"/>
+                                <exclude reference="YSK-Sj-mCQ"/>
+                                <include reference="HdU-eC-4Zh"/>
                                 <include reference="hM4-Fy-mmR"/>
                                 <include reference="vey-1j-Te5"/>
+                                <include reference="OoI-cL-uhc"/>
                             </mask>
                         </variation>
                         <connections>

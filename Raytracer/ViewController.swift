@@ -27,6 +27,8 @@ class ViewController: UIViewController {
     var timer: CADisplayLink! = nil
     var start = NSDate();
     var sampleNumber = 1;
+    var xResolution:Int = 0;
+    var yResolution:Int = 0;
     
     var selectedSphere:Int = -1;
     var cameraToggle:Bool = false;
@@ -42,13 +44,20 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+    }
+    
+    
+    override func viewDidAppear(animated: Bool) {
+        let size:CGSize = self.imageView.frame.size;
+        xResolution = Int(size.width);
+        yResolution = Int(size.height);
         device = MTLCreateSystemDefaultDevice()
         defaultLibrary = device.newDefaultLibrary()
         commandQueue = device.newCommandQueue();
         let kernalProgram = defaultLibrary!.newFunctionWithName("pathtrace");
         pipelineState = self.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
         
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 500, height: 500, mipmapped: false);
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = device.newTextureWithDescriptor(textureDescriptor);
@@ -61,11 +70,12 @@ class ViewController: UIViewController {
         
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+
     }
     
     func render() {
         let threadgroupCounts = MTLSizeMake(16, 16, 1);
-        let threadgroups = MTLSizeMake(500 / threadgroupCounts.width, 500 / threadgroupCounts.height, 1);
+        let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
         let commandBuffer = commandQueue.commandBuffer();
         let commandEncoder = commandBuffer.computeCommandEncoder();
         commandEncoder.setComputePipelineState(pipelineState);
@@ -73,7 +83,7 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
         let cameraParams = self.scene.camera.getParameterArray();
-        let intParams = [UInt32(self.sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(500)];
+        let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
@@ -119,10 +129,10 @@ class ViewController: UIViewController {
     @IBAction func tapAction(sender: UITapGestureRecognizer) {
         
         var point = sender.locationInView(self.imageView);
-        let dx:Float = 1.0 / 500.0;
-        let dy:Float = 1.0 / 500.0;
-        let x:Float = Float(500.0-point.x)  * dx;
-        let y:Float = Float(500.0-point.y)  * dy;
+        let dx:Float = 1.0 / Float(xResolution);
+        let dy:Float = 1.0 / Float(yResolution);
+        let x:Float = Float(CGFloat(xResolution)-point.x)  * dx;
+        let y:Float = Float(CGFloat(yResolution)-point.y)  * dy;
         var ray:Ray = scene.camera.getRay(x, y: y);
         
         if (selectedSphere > -1){
@@ -143,8 +153,8 @@ class ViewController: UIViewController {
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
         var point = sender.locationInView(self.imageView);
-        var x = Float((((500-point.x)/500.0) * 2.0) - 1.0);
-        var y = Float((((500-point.y)/500.0) * 2.0) - 1.0);
+        var x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0);
+        var y = Float((((CGFloat(xResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
         var xDelta:Float = x - lastX;
         var yDelta:Float = y - lastY;
         
@@ -154,7 +164,7 @@ class ViewController: UIViewController {
             scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
         } else{
             var velocity = sender.velocityInView(self.imageView);
-            self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * Matrix.rotateY(Float(velocity.x/(6.0*500.0)));
+            self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * Matrix.rotateY(Float(velocity.x/(6.0*500)));
         }
         
         lastX = x;

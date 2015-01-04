@@ -456,12 +456,13 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
     return currentSample;
 }
 
-Ray makeRay(float x, float y, float r1, float r2, constant packed_float3 *cameraParams){
+Ray makeRay(float x, float y, float r1, float r2, float aspectRatio, constant packed_float3 *cameraParams){
     Camera cam;
     cam.eye = float3(cameraParams[0]);
     cam.up = float3(cameraParams[1]);
     cam.lookAt = -normalize(cam.eye);
     cam.right = cross(-normalize(cam.eye), cam.up);
+    cam.right *= aspectRatio;
     
     float3 base = cam.right * x + cam.up * y;
     float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up + cam.right).z/2.0);
@@ -498,10 +499,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
                       constant PackedSphere *spheres [[buffer(2)]]
                       ){
     
-    uint gidIndex = gid.x * 500 + gid.y;
+    uint gidIndex = gid.x * intParams[2] + gid.y;
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
-    int resolution = intParams[2];
     
     uint seedMemory = hashSeed(gidIndex * sysTime * sampleNumber);
     
@@ -511,8 +511,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint2 textureIndex(gid.x, gid.y);
     float4 inColor = inTexture.read(textureIndex).rgba;
     
-    float xResolution = float(resolution);
-    float yResolution = float(resolution);
+    float xResolution = float(intParams[2]);
+    float yResolution = float(intParams[3]);
     float dx = 1.0 / xResolution;
     float dy = 1.0 / yResolution;
     float x = gid.x  * dx;
@@ -530,8 +530,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float incY = 1.0/(yResolution*10);
     float yOffset = rand(seed) * float(incY) + float(yJitterPosition) * float(incY);
     
+    float aspect_ratio = xResolution/yResolution;
     
-    Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, cameraParams);
+    Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, aspect_ratio, cameraParams);
     
     //Unpack Sphere data
     Sphere unpackedSpheres[maxSpheres];
