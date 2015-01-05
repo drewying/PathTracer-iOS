@@ -16,7 +16,15 @@ class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     
     @IBOutlet weak var sampleLabel: UILabel!
-    @IBOutlet weak var slider: UISlider!
+    
+    
+    @IBOutlet weak var sphereRedSlider: UISlider!
+    @IBOutlet weak var sphereGreenSlider: UISlider!
+    @IBOutlet weak var sphereBlueSlider: UISlider!
+    @IBOutlet weak var sphereMaterialSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var sphereSizeSlider: UISlider!
+    
+    @IBOutlet weak var sphereEditView: UIView!
     
     var device: MTLDevice! = nil;
     var defaultLibrary: MTLLibrary! = nil;
@@ -41,6 +49,28 @@ class ViewController: UIViewController {
         self.resetDisplay();
     }
     
+    @IBAction func colorSlider(sender: UISlider) {
+        if (sender == sphereRedSlider){
+            self.scene.spheres[selectedSphere].color.x = sender.value;
+        }
+        if (sender == sphereGreenSlider){
+            self.scene.spheres[selectedSphere].color.y = sender.value;
+        }
+        if (sender == sphereBlueSlider){
+            self.scene.spheres[selectedSphere].color.z = sender.value;
+        }
+        self.resetDisplay();
+    }
+    
+    @IBAction func sphereMaterialSegmentedControl(sender: UISegmentedControl) {
+        switch (sender.selectedSegmentIndex){
+        case 0:self.scene.spheres[selectedSphere].material = Material.DIFFUSE;
+        case 1:self.scene.spheres[selectedSphere].material = Material.SPECULAR;
+        case 2:self.scene.spheres[selectedSphere].material = Material.DIELECTRIC;
+        default:self.scene.spheres[selectedSphere].material = Material.DIFFUSE;
+        }
+        self.resetDisplay();
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -126,6 +156,46 @@ class ViewController: UIViewController {
     
     var currentSelectionMaterial = Material.DIFFUSE;
     
+    
+    func selectSphere(sphereIndex:Int){
+        if (selectedSphere > -1){
+            if (scene.spheres[selectedSphere].material == Material.TRANSPARENT){
+                scene.spheres[selectedSphere].material = currentSelectionMaterial;
+            }
+        }
+        selectedSphere = sphereIndex;
+        if (selectedSphere > -1){
+            lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
+            lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
+            currentSelectionMaterial = scene.spheres[selectedSphere].material;
+            
+            
+            
+            //Configure editView
+            var s:Sphere = scene.spheres[selectedSphere];
+            sphereRedSlider.value = s.color.x;
+            sphereGreenSlider.value = s.color.y;
+            sphereBlueSlider.value = s.color.z;
+            sphereSizeSlider.value = s.radius;
+            switch (s.material){
+            case Material.DIFFUSE:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
+            case Material.SPECULAR:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 1;
+            case Material.DIELECTRIC:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 2;
+            default:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
+            }
+            
+            scene.spheres[selectedSphere].material = Material.TRANSPARENT;
+            
+            self.sphereEditView.hidden = false;
+            
+        } else {
+            self.sphereEditView.hidden = true;
+        }
+        
+        self.resetDisplay();
+    }
+    
+    
     @IBAction func tapAction(sender: UITapGestureRecognizer) {
         
         var point = sender.locationInView(self.imageView);
@@ -135,20 +205,11 @@ class ViewController: UIViewController {
         let y:Float = Float(CGFloat(yResolution)-point.y)  * dy;
         var ray:Ray = scene.camera.getRay(x, y: y);
         
-        if (selectedSphere > -1){
-            scene.spheres[selectedSphere].material = currentSelectionMaterial;
-        }
+        selectSphere(scene.getClosestHit(ray));
         
-        selectedSphere = scene.getClosestHit(ray);
-        
-        if (selectedSphere > -1){
-            lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
-            lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
-            currentSelectionMaterial = scene.spheres[selectedSphere].material;
-            scene.spheres[selectedSphere].material = Material.TRANSPARENT;
-        }
-        self.resetDisplay();
     }
+    
+    
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
@@ -173,6 +234,5 @@ class ViewController: UIViewController {
         
     }
     
-    @IBOutlet weak var button: UIButton!
 }
 
