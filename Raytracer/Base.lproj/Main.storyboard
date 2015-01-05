@@ -19,11 +19,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="1000" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uFE-EO-tVQ" userLabel="SampleCountLabel">
+                                <rect key="frame" x="279" y="528" width="42" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1ft-mH-1i8" userLabel="MainView">
                                 <rect key="frame" x="50" y="20" width="500" height="500"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="50r-TN-zaZ" appends="YES" id="1Cw-ht-JU7"/>
+                                    <outletCollection property="gestureRecognizers" destination="Gdd-6h-Ajn" appends="YES" id="6sX-td-vv4"/>
                                 </connections>
                             </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="3i3-to-PZy">
@@ -37,7 +45,11 @@
                                             <action selector="addSphere" destination="BYZ-38-t0r" id="Acr-Du-aUU"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Edit Lighting" id="7U9-wt-BS4"/>
+                                    <barButtonItem title="Edit Lighting" id="7U9-wt-BS4">
+                                        <connections>
+                                            <action selector="editLighting" destination="BYZ-38-t0r" id="KSX-dw-vkU"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Dv-CD-vSj" userLabel="SphereEditView">
@@ -366,13 +378,6 @@
                                     </mask>
                                 </variation>
                             </view>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="1000" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uFE-EO-tVQ" userLabel="SampleCountLabel">
-                                <rect key="frame" x="279" y="528" width="42" height="21"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
@@ -496,9 +501,6 @@
                                 <include reference="OoI-cL-uhc"/>
                             </mask>
                         </variation>
-                        <connections>
-                            <outletCollection property="gestureRecognizers" destination="zf8-bs-Nu0" appends="YES" id="gKg-z6-bOb"/>
-                        </connections>
                     </view>
                     <connections>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
@@ -523,9 +525,9 @@
                         <action selector="dragAction:" destination="BYZ-38-t0r" id="UhD-yw-Y2j"/>
                     </connections>
                 </panGestureRecognizer>
-                <tapGestureRecognizer id="zf8-bs-Nu0">
+                <tapGestureRecognizer id="Gdd-6h-Ajn">
                     <connections>
-                        <action selector="tapAction:" destination="BYZ-38-t0r" id="IKg-Mi-doL"/>
+                        <action selector="tapAction:" destination="BYZ-38-t0r" id="Dzm-2D-lOW"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
