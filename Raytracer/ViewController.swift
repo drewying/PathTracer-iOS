@@ -50,7 +50,7 @@ class ViewController: UIViewController {
     var cameraToggle:Bool = false;
     
     var scene: Scene! = nil;
-    var light:Sphere = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
+    var light:Sphere = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT);
 
     
     
@@ -81,14 +81,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func colorSlider(sender: UISlider) {
-        if (sender == sphereRedSlider){
-            self.scene.spheres[selectedSphere].color.x = sender.value;
-        }
-        if (sender == sphereGreenSlider){
-            self.scene.spheres[selectedSphere].color.y = sender.value;
-        }
-        if (sender == sphereBlueSlider){
-            self.scene.spheres[selectedSphere].color.z = sender.value;
+        switch (sender){
+        case sphereRedSlider:scene.spheres[selectedSphere].color.x = sender.value;
+        case sphereGreenSlider:scene.spheres[selectedSphere].color.y = sender.value;
+        case sphereBlueSlider:scene.spheres[selectedSphere].color.z = sender.value;
+        default:scene.spheres[selectedSphere].color.x = sender.value;
         }
         self.resetDisplay();
     }
@@ -103,6 +100,14 @@ class ViewController: UIViewController {
         self.resetDisplay();
     }
     
+    @IBAction func editLighting(){
+        self.lightXSlider.value = self.light.position.x;
+        self.lightYSlider.value = self.light.position.y;
+        self.lightZSlider.value = self.light.position.z;
+        self.lightSizeSlider.value = self.light.radius;
+        self.lightEditView.hidden = !self.lightEditView.hidden;
+        
+    }
     
     @IBAction func addSphere(){
         let yPosition:Float = 0.4 * Float(scene.spheres.count-2);
@@ -201,6 +206,7 @@ class ViewController: UIViewController {
     
     
     func selectSphere(sphereIndex:Int){
+        self.lightEditView.hidden = true;
         if (selectedSphere > -1){
             if (scene.spheres[selectedSphere].material == Material.TRANSPARENT){
                 scene.spheres[selectedSphere].material = currentSelectionMaterial;

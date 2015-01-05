@@ -411,14 +411,14 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool 
             return float3(0.0,0.0,0.0);
         }
         
-        reflectColor *= h.color;
-        
         if (includeIndirectLighting && light.radius > 0){
             Hit lightHit = sphereIntersection(light, r, h.distance);
             if (lightHit.didHit){
                 return reflectColor * lightHit.color;
             }
         }
+        
+        reflectColor *= h.color;
         
         if (includeDirectLighting){
             //Direct Lighting
