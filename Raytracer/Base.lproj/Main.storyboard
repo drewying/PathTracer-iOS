@@ -37,6 +37,7 @@
                                             <action selector="addSphere" destination="BYZ-38-t0r" id="Acr-Du-aUU"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem title="Edit Lighting" id="7U9-wt-BS4"/>
                                 </items>
                             </toolbar>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Dv-CD-vSj" userLabel="SphereEditView">
@@ -183,10 +184,13 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ziz-Bc-yiu" userLabel="LightEditView">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <subviews>
-                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="oUe-kj-khE" userLabel="X Slider">
+                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="oUe-kj-khE" userLabel="X Slider">
                                         <rect key="frame" x="0.0" y="-15" width="118" height="31"/>
                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="maximumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="l4h-CE-oCg"/>
+                                        </connections>
                                     </slider>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LWF-RG-Dre" userLabel="X">
                                         <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -194,10 +198,13 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="VLf-Jo-jDE" userLabel="Y Slider">
+                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="VLf-Jo-jDE" userLabel="Y Slider">
                                         <rect key="frame" x="0.0" y="-15" width="118" height="31"/>
                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="thumbTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="qVV-GZ-d6A"/>
+                                        </connections>
                                     </slider>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Y" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fG5-DV-wI4" userLabel="Y">
                                         <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -205,8 +212,11 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="ebF-a1-vA4" userLabel="Z Slider">
+                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="ebF-a1-vA4" userLabel="Z Slider">
                                         <rect key="frame" x="0.0" y="-15" width="118" height="31"/>
+                                        <connections>
+                                            <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="Xcn-yI-uQO"/>
+                                        </connections>
                                     </slider>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Z" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pp3-6W-OWX" userLabel="Z">
                                         <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -214,14 +224,23 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Ejh-wt-xRo">
+                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="Ejh-wt-xRo">
                                         <rect key="frame" x="-61" y="-14" width="123" height="29"/>
                                         <segments>
                                             <segment title="Direct"/>
                                             <segment title="Indirect"/>
                                             <segment title="Both"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="lightModeSegmentedControl:" destination="BYZ-38-t0r" eventType="valueChanged" id="K00-4b-WGR"/>
+                                        </connections>
                                     </segmentedControl>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="vv0-Go-d93" userLabel="Size">
+                                        <rect key="frame" x="0.0" y="-15" width="118" height="31"/>
+                                        <connections>
+                                            <action selector="lightSizeSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="CHd-JB-YvD"/>
+                                        </connections>
+                                    </slider>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -259,11 +278,18 @@
                                         <variation key="heightClass=regular" constant="8"/>
                                     </constraint>
                                     <constraint firstItem="LWF-RG-Dre" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="e6T-G8-h7C"/>
+                                    <constraint firstItem="vv0-Go-d93" firstAttribute="width" secondItem="Ejh-wt-xRo" secondAttribute="width" id="g48-f6-Bal"/>
                                     <constraint firstItem="Pp3-6W-OWX" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="iY1-QY-vzL"/>
                                     <constraint firstAttribute="centerY" secondItem="fG5-DV-wI4" secondAttribute="centerY" constant="7" id="jyc-wy-UCg">
                                         <variation key="heightClass=regular" constant="0.0"/>
                                     </constraint>
                                     <constraint firstItem="Ejh-wt-xRo" firstAttribute="leading" secondItem="oUe-kj-khE" secondAttribute="trailing" constant="341" id="mkG-re-Y9V">
+                                        <variation key="heightClass=regular" constant="8"/>
+                                    </constraint>
+                                    <constraint firstItem="vv0-Go-d93" firstAttribute="top" secondItem="Ejh-wt-xRo" secondAttribute="bottom" constant="38" id="oCf-qI-CVb">
+                                        <variation key="heightClass=regular" constant="8"/>
+                                    </constraint>
+                                    <constraint firstAttribute="trailing" secondItem="vv0-Go-d93" secondAttribute="trailing" constant="37" id="qBI-IS-ELR">
                                         <variation key="heightClass=regular" constant="8"/>
                                     </constraint>
                                 </constraints>
@@ -276,6 +302,7 @@
                                         <exclude reference="ebF-a1-vA4"/>
                                         <exclude reference="Pp3-6W-OWX"/>
                                         <exclude reference="Ejh-wt-xRo"/>
+                                        <exclude reference="vv0-Go-d93"/>
                                     </mask>
                                     <mask key="constraints">
                                         <exclude reference="Z2x-ra-qsN"/>
@@ -297,6 +324,9 @@
                                         <exclude reference="Yfo-Aa-AP5"/>
                                         <exclude reference="cb8-Ly-VXA"/>
                                         <exclude reference="mkG-re-Y9V"/>
+                                        <exclude reference="g48-f6-Bal"/>
+                                        <exclude reference="oCf-qI-CVb"/>
+                                        <exclude reference="qBI-IS-ELR"/>
                                     </mask>
                                 </variation>
                                 <variation key="heightClass=regular">
@@ -308,6 +338,7 @@
                                         <include reference="ebF-a1-vA4"/>
                                         <include reference="Pp3-6W-OWX"/>
                                         <include reference="Ejh-wt-xRo"/>
+                                        <include reference="vv0-Go-d93"/>
                                     </mask>
                                     <mask key="constraints">
                                         <include reference="Z2x-ra-qsN"/>
@@ -329,6 +360,9 @@
                                         <include reference="Yfo-Aa-AP5"/>
                                         <include reference="cb8-Ly-VXA"/>
                                         <include reference="mkG-re-Y9V"/>
+                                        <include reference="g48-f6-Bal"/>
+                                        <include reference="oCf-qI-CVb"/>
+                                        <include reference="qBI-IS-ELR"/>
                                     </mask>
                                 </variation>
                             </view>
@@ -468,6 +502,12 @@
                     </view>
                     <connections>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
+                        <outlet property="lightEditView" destination="ziz-Bc-yiu" id="8ga-4E-OWh"/>
+                        <outlet property="lightModeSegmentedControl" destination="Ejh-wt-xRo" id="2Eh-Om-Xi4"/>
+                        <outlet property="lightSizeSlider" destination="vv0-Go-d93" id="pMW-St-P0l"/>
+                        <outlet property="lightXSlider" destination="oUe-kj-khE" id="srq-B6-nCx"/>
+                        <outlet property="lightYSlider" destination="VLf-Jo-jDE" id="8EQ-8h-z93"/>
+                        <outlet property="lightZSlider" destination="ebF-a1-vA4" id="dGU-Ye-Nc2"/>
                         <outlet property="sampleLabel" destination="uFE-EO-tVQ" id="q9n-2x-5wA"/>
                         <outlet property="sphereBlueSlider" destination="pVy-fe-U37" id="0lv-LF-oiI"/>
                         <outlet property="sphereEditView" destination="6Dv-CD-vSj" id="q7r-Fe-d43"/>

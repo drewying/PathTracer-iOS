@@ -26,6 +26,14 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var sphereEditView: UIView!
     
+    @IBOutlet weak var lightEditView: UIView!
+ 
+    @IBOutlet weak var lightModeSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var lightSizeSlider: UISlider!
+    @IBOutlet weak var lightXSlider: UISlider!
+    @IBOutlet weak var lightYSlider: UISlider!
+    @IBOutlet weak var lightZSlider: UISlider!
+    
     var device: MTLDevice! = nil;
     var defaultLibrary: MTLLibrary! = nil;
     var commandQueue: MTLCommandQueue! = nil
@@ -42,8 +50,31 @@ class ViewController: UIViewController {
     var cameraToggle:Bool = false;
     
     var scene: Scene! = nil;
-    var light:Sphere = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT);
+    var light:Sphere = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
 
+    
+    
+    
+    @IBAction func lightPositionSlider(sender: UISlider) {
+        switch(sender){
+        case lightXSlider:light.position.x = sender.value;
+        case lightYSlider:light.position.y = sender.value;
+        case lightZSlider:light.position.z = sender.value;
+        default:light.position.x = sender.value;
+        }
+        self.resetDisplay();
+    }
+    
+    
+    @IBAction func lightModeSegmentedControl(sender: UISegmentedControl) {
+        self.resetDisplay();
+    }
+    
+    @IBAction func lightSizeSlider(sender: UISlider) {
+        self.light.radius = sender.value;
+        self.resetDisplay();
+    }
+    
     @IBAction func radiusSlider(sender: UISlider) {
         self.scene.spheres[selectedSphere].radius = sender.value;
         self.resetDisplay();
@@ -122,7 +153,7 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
         let cameraParams = self.scene.camera.getParameterArray();
-        let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(3)];
+        let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1)];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
