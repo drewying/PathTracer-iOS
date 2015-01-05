@@ -32,7 +32,11 @@
                                     <constraint firstAttribute="height" constant="44" id="Ghp-B2-9Yf"/>
                                 </constraints>
                                 <items>
-                                    <barButtonItem title="Item" id="BEH-BU-d9y"/>
+                                    <barButtonItem title="Add Sphere" id="BEH-BU-d9y">
+                                        <connections>
+                                            <action selector="addSphere" destination="BYZ-38-t0r" id="Acr-Du-aUU"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Dv-CD-vSj" userLabel="SphereEditView">
@@ -88,7 +92,7 @@
                                         </connections>
                                     </segmentedControl>
                                 </subviews>
-                                <color key="backgroundColor" red="0.098039215686274508" green="0.19607843137254902" blue="0.29411764705882354" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="LDJ-Rn-T72" secondAttribute="width" multiplier="3" id="82n-vR-2R7"/>
                                     <constraint firstItem="XUs-eT-Kuj" firstAttribute="width" secondItem="6Dv-CD-vSj" secondAttribute="width" multiplier="0.33" id="EPK-VX-aA2"/>
@@ -184,6 +188,7 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="uFE-EO-tVQ" secondAttribute="centerX" id="0eS-Px-ios">

@@ -41,7 +41,7 @@ class ViewController: UIViewController {
     var selectedSphere:Int = -1;
     var cameraToggle:Bool = false;
     
-    var scene: Scene! = Scene(camera: Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0)));
+    var scene: Scene! = nil;
     
     @IBAction func radiusSlider(sender: UISlider) {
         
@@ -71,6 +71,14 @@ class ViewController: UIViewController {
         }
         self.resetDisplay();
     }
+    
+    
+    @IBAction func addSphere(){
+        let yPosition:Float = 0.4 * Float(scene.spheres.count-2);
+        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:yPosition, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
+        self.resetDisplay();
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -81,6 +89,7 @@ class ViewController: UIViewController {
         let size:CGSize = self.imageView.frame.size;
         xResolution = Int(size.width);
         yResolution = Int(size.height);
+        scene = Scene(camera: Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height)));
         device = MTLCreateSystemDefaultDevice()
         defaultLibrary = device.newDefaultLibrary()
         commandQueue = device.newCommandQueue();
@@ -94,9 +103,9 @@ class ViewController: UIViewController {
         
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.0, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
+    
+        //scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
+        //scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
         
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
@@ -215,7 +224,7 @@ class ViewController: UIViewController {
         
         var point = sender.locationInView(self.imageView);
         var x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0);
-        var y = Float((((CGFloat(xResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
+        var y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
         var xDelta:Float = x - lastX;
         var yDelta:Float = y - lastY;
         
