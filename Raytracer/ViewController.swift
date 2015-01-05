@@ -42,9 +42,9 @@ class ViewController: UIViewController {
     var cameraToggle:Bool = false;
     
     var scene: Scene! = nil;
-    
+    var light:Sphere = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT);
+
     @IBAction func radiusSlider(sender: UISlider) {
-        
         self.scene.spheres[selectedSphere].radius = sender.value;
         self.resetDisplay();
     }
@@ -101,7 +101,7 @@ class ViewController: UIViewController {
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = device.newTextureWithDescriptor(textureDescriptor);
         
-        scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
+        scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
     
         //scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
@@ -127,10 +127,13 @@ class ViewController: UIViewController {
         let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
         let c = self.device.newBufferWithBytes(&scene.spheres, length: (sizeof(Sphere) + 3) * 15, options:nil);
+        let d = self.device.newBufferWithBytes(&light, length: (sizeof(Sphere) + 3), options:nil);
+        
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
         commandEncoder.setBuffer(c, offset: 0, atIndex: 2);
+        commandEncoder.setBuffer(d, offset: 0, atIndex: 3);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
