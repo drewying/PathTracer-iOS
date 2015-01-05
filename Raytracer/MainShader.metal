@@ -541,7 +541,26 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
         unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
     }
     
-    float4 outColor = float4(tracePath(r, seed, unpackedSpheres, true, true), 1.0);
+    
+    uint lightingMode = intParams[4];
+    
+    bool includeDirect = false;
+    bool includeIndirect = false;
+    
+    switch (lightingMode){
+        case 1:
+            includeDirect = true;
+            break;
+        case 2:
+            includeIndirect = true;
+            break;
+        case 3:
+            includeDirect = true;
+            includeIndirect = true;
+            break;
+    }
+    
+    float4 outColor = float4(tracePath(r, seed, unpackedSpheres, includeDirect, includeIndirect), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
