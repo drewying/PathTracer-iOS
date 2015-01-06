@@ -317,28 +317,8 @@ Ray bounce(Hit h, thread uint *seed){
         float refractiveIndexAir = 1;
         float refractiveIndexGlass = 1.5;
         float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
-        float cosI = dot(incident,nl);
-        float cos2t = 1 - refractiveIndexRatio * refractiveIndexRatio * (1 - cosI * cosI);
-        if (cos2t < 0) {
-            //Reflect
-            return Ray{h.hitPosition, incident - normal * (2 * dot(incident, normal))};
-        }
-        
-        float3 refractedDirection = incident * (refractiveIndexRatio) - (normal * (((into > 0) - (into < 0) * (cosI * refractiveIndexRatio + sqrt(cos2t)))));
-        refractedDirection = normalize(refractedDirection);
-        
-        float a = refractiveIndexGlass - refractiveIndexAir;
-        float b = refractiveIndexGlass + refractiveIndexAir;
-        float R0 = a * a / (b * b);
-        float c = 1 - (into > 0 ? -cosI : dot(refractedDirection,normal));
-        float Re = R0 + (1 - R0) * pow(c, 5);
-        float P = 0.1 + 0.5 * Re;
-        //Prob check?
-        if (rand(seed) < P){
-            return Ray{h.hitPosition, incident - normal * (2 * dot(incident, normal))};
-        } else{
-            return Ray{h.hitPosition, refractedDirection};
-        }
+        normal *= ((into > 0) - (into < 0));
+        outVector = refract(incident, normal, refractiveIndexRatio);
     } else if (h.material == TRANSPARENT){
         outVector = h.ray.direction;
     }
