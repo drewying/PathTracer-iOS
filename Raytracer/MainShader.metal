@@ -414,7 +414,8 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool 
         if (includeIndirectLighting && light.radius > 0){
             Hit lightHit = sphereIntersection(light, r, h.distance);
             if (lightHit.didHit){
-                return reflectColor * lightHit.color;
+                accumulatedColor += reflectColor * lightHit.color;
+                return accumulatedColor * 0.5;
             }
         }
         
@@ -447,7 +448,13 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool 
         r = bounce(h, seed);
     }
     
-    return accumulatedColor * 0.5;
+    if (includeDirectLighting){
+        return accumulatedColor * 0.5;
+    } else{
+        return float3(0.0,0.0,0.0);
+    }
+    
+    
 }
 
 float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
