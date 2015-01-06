@@ -440,7 +440,7 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool 
             
             accumulatedColor += reflectColor * cosphi * shadowFactor;
             
-            if (!includeIndirectLighting){
+            if (!includeIndirectLighting && h.material == DIFFUSE){
                 return accumulatedColor;
             }
         }
