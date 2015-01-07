@@ -443,13 +443,22 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
     return currentSample;
 }
 
-Ray makeRay(float x, float y, float r1, float r2, float aspectRatio, constant packed_float3 *cameraParams){
+Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant packed_float3 *cameraParams){
     Camera cam;
     cam.eye = float3(cameraParams[0]);
     cam.up = float3(cameraParams[1]);
+    cam.focalLength = float3(cameraParams[2]).x;
     cam.lookAt = -normalize(cam.eye);
     cam.right = cross(-normalize(cam.eye), cam.up);
     cam.right *= aspectRatio;
+    
+    float r1 = 0;
+    float r2 = 0;
+    
+    if (cam.apertureSize > 0){
+        r1 = (rand(seed) * 2.0) - 1.0;
+        r2 = (rand(seed) * 2.0) - 1.0;
+    }
     
     float3 base = cam.right * x + cam.up * y;
     float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up + cam.right).z/2.0);
@@ -508,7 +517,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     
     //Jitter the ray
-    uint jitterIndex = sampleNumber%100;
+    /*uint jitterIndex = sampleNumber%100;
     uint xJitterPosition = jitterIndex%10;
     uint yJitterPosition = floor(float(jitterIndex)/10.0);
     
@@ -516,11 +525,14 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float xOffset = rand(seed) * float(incX) + float(xJitterPosition) * float(incX);
     
     float incY = 1.0/(yResolution*10);
-    float yOffset = rand(seed) * float(incY) + float(yJitterPosition) * float(incY);
+    float yOffset = rand(seed) * float(incY) + float(yJitterPosition) * float(incY);*/
     
     float aspect_ratio = xResolution/yResolution;
     
-    Ray r = makeRay(x + xOffset, y + yOffset, 0.0, 0.0, aspect_ratio, cameraParams);
+    float xOffset = ((rand(seed) * 2.0) - 1.0)/xResolution;
+    float yOffset = ((rand(seed) * 2.0) - 1.0)/yResolution;
+    
+    Ray r = makeRay(seed, x + xOffset, y + yOffset, aspect_ratio, cameraParams);
     
     //Unpack Sphere data
     Sphere unpackedSpheres[maxSpheres];
