@@ -54,6 +54,48 @@ class ViewController: UIViewController {
 
     
     
+    @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
+        self.scene.camera.cameraPosition = Matrix.transformPoint(Matrix.translate( self.scene.camera.cameraPosition * (Float(sender.velocity) * 0.1)), right: self.scene.camera.cameraPosition);
+        sender.scale = 1.0;
+        self.resetDisplay();
+    }
+    @IBAction func tapAction(sender: UITapGestureRecognizer) {
+        
+        var point = sender.locationInView(self.imageView);
+        let dx:Float = 1.0 / Float(xResolution);
+        let dy:Float = 1.0 / Float(yResolution);
+        let x:Float = Float(CGFloat(xResolution)-point.x)  * dx;
+        let y:Float = Float(CGFloat(yResolution)-point.y)  * dy;
+        var ray:Ray = scene.camera.getRay(x, y: y);
+        
+        selectSphere(scene.getClosestHit(ray));
+        
+    }
+    
+    
+    
+    @IBAction func dragAction(sender: UIPanGestureRecognizer) {
+        
+        var point = sender.locationInView(self.imageView);
+        var x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0);
+        var y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
+        var xDelta:Float = x - lastX;
+        var yDelta:Float = y - lastY;
+        
+        if (selectedSphere > -1){
+            var currentPosition:Vector3D = scene.spheres[selectedSphere].position;
+            var matrix:Matrix = Matrix.translate(scene.camera.cameraRight * xDelta) * Matrix.translate(scene.camera.cameraUp * yDelta);
+            scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
+        } else{
+            var velocity = sender.velocityInView(self.imageView);
+            self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * Matrix.rotateY(Float(velocity.x/(6.0*500)));
+        }
+        
+        lastX = x;
+        lastY = y;
+        self.resetDisplay();
+        
+    }
     
     @IBAction func lightPositionSlider(sender: UISlider) {
         switch(sender){
@@ -239,45 +281,5 @@ class ViewController: UIViewController {
         
         self.resetDisplay();
     }
-    
-    
-    @IBAction func tapAction(sender: UITapGestureRecognizer) {
-        
-        var point = sender.locationInView(self.imageView);
-        let dx:Float = 1.0 / Float(xResolution);
-        let dy:Float = 1.0 / Float(yResolution);
-        let x:Float = Float(CGFloat(xResolution)-point.x)  * dx;
-        let y:Float = Float(CGFloat(yResolution)-point.y)  * dy;
-        var ray:Ray = scene.camera.getRay(x, y: y);
-        
-        selectSphere(scene.getClosestHit(ray));
-        
-    }
-    
-    
-    
-    @IBAction func dragAction(sender: UIPanGestureRecognizer) {
-        
-        var point = sender.locationInView(self.imageView);
-        var x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0);
-        var y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
-        var xDelta:Float = x - lastX;
-        var yDelta:Float = y - lastY;
-        
-        if (selectedSphere > -1){
-            var currentPosition:Vector3D = scene.spheres[selectedSphere].position;
-            var matrix:Matrix = Matrix.translate(scene.camera.cameraRight * xDelta) * Matrix.translate(scene.camera.cameraUp * yDelta);
-            scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
-        } else{
-            var velocity = sender.velocityInView(self.imageView);
-            self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * Matrix.rotateY(Float(velocity.x/(6.0*500)));
-        }
-        
-        lastX = x;
-        lastY = y;
-        self.resetDisplay();
-        
-    }
-    
 }
 

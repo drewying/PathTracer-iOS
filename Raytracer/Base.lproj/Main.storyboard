@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
@@ -33,6 +33,7 @@
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="50r-TN-zaZ" appends="YES" id="1Cw-ht-JU7"/>
                                     <outletCollection property="gestureRecognizers" destination="Gdd-6h-Ajn" appends="YES" id="6sX-td-vv4"/>
+                                    <outletCollection property="gestureRecognizers" destination="ZeO-YG-kaT" appends="YES" id="t55-R5-Gv6"/>
                                 </connections>
                             </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="3i3-to-PZy">
@@ -531,6 +532,11 @@
                         <action selector="tapAction:" destination="BYZ-38-t0r" id="Dzm-2D-lOW"/>
                     </connections>
                 </tapGestureRecognizer>
+                <pinchGestureRecognizer id="ZeO-YG-kaT">
+                    <connections>
+                        <action selector="pinchAction:" destination="BYZ-38-t0r" id="fej-5d-6Xr"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="140" y="135.75"/>
         </scene>
