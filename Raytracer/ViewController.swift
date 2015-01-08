@@ -173,7 +173,7 @@ class ViewController: UIViewController {
         commandQueue = device.newCommandQueue();
         let kernalProgram = defaultLibrary!.newFunctionWithName("pathtrace");
         pipelineState = self.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
-        
+  
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);

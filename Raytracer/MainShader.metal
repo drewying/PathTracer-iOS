@@ -16,10 +16,8 @@ using namespace metal;
 
 #define EPSILON 1.e-4
 
-static constant int planeCount = 6;
 static constant int boxCount = 6;
 
-static constant int triangleCount = 0;
 static constant int bounceCount = 5;
 static constant int maxSpheres = 5;
 
@@ -120,15 +118,12 @@ inline Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, 
     
 Hit boxIntersection(Box b, Ray ray, float distance){
     
-    
-    
     float3 tMin = (b.min - ray.origin) / ray.direction;
     float3 tMax = (b.max - ray.origin) / ray.direction;
     float3 t1 = min(tMin, tMax);
     float3 t2 = max(tMin, tMax);
     float tNear = max(max(t1.x, t1.y), t1.z);
     float tFar = min(min(t2.x, t2.y), t2.z);
-    
     
     
     if (tNear > tFar){
@@ -307,8 +302,8 @@ Ray bounce(Hit h, thread uint *seed){
     
     if (h.material == DIFFUSE){
         //outVector = uniformSampleDirection(seed);
-        outVector = cosineWeightedDirection(seed);
-        //outVector = bookSampleDirection(seed);
+        //outVector = cosineWeightedDirection(seed);
+        outVector = bookSampleDirection(seed);
         float3 normal = h.normal;
         
         // if the point is in the wrong hemisphere, mirror it
@@ -379,9 +374,9 @@ Hit getClosestHit(Ray r, Sphere spheres[], thread uint *seed){
 }
 
 float3 jitterLightPosition(thread uint *seed, float3 position){
-    float lightx = (rand(seed) * 0.1) - 0.05;
-    float lighty = (rand(seed) * 0.1) - 0.05;
-    float lightz = (rand(seed) * 0.1) - 0.05;
+    float lightx = (rand(seed) * 0.2) - 0.1;
+    float lighty = (rand(seed) * 0.2) - 0.1;
+    float lightz = (rand(seed) * 0.2) - 0.1;
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
 
