@@ -235,7 +235,7 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
     }
 }
 
-float rand(thread uint *seed)
+inline float rand(thread uint *seed)
 {
     //LCG which is faster
     //http://www.reedbeta.com/blog/2013/01/12/quick-and-easy-gpu-random-numbers-in-d3d11/
@@ -345,7 +345,7 @@ static constant struct Box boxes[] = {
 };
     
 
-Hit getClosestHit(Ray r, Sphere spheres[], thread uint *seed){
+inline Hit getClosestHit(Ray r, Sphere spheres[], thread uint *seed){
     Hit h = noHit();
 
     for (int i=0; i<boxCount; i++){
