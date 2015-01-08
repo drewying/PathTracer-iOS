@@ -12,13 +12,17 @@ struct Sphere{
     var position:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
     var radius:Float = 0.0;
     var color:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
+    //var selected:UInt32 = 0;
     var material:Material = Material.DIFFUSE;
+    
 
     init(position:Vector3D, radius:Float, color:Vector3D, material:Material){
         self.position = position;
         self.radius = radius;
         self.color = color;
+        //self.selected = 0;
         self.material = material;
+        
     }
     
     func getBounds() -> BoundingBox{

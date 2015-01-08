@@ -139,7 +139,7 @@ class ViewController: UIViewController {
         
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
-    
+   
         //scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
         //scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
         
@@ -183,7 +183,7 @@ class ViewController: UIViewController {
         autoreleasepool {
             self.render();
             self.sampleNumber++;
-            self.sampleLabel.text = NSString(format: "%i", self.sampleNumber);
+            self.sampleLabel.text = NSString(format: "Pass:%i", self.sampleNumber);
             self.imageView.image = UIImage(MTLTexture: self.inputTexture)
         }
     }
@@ -201,22 +201,18 @@ class ViewController: UIViewController {
     var lastX:Float = 0.0;
     var lastY:Float = 0.0;
     
-    
-    var currentSelectionMaterial = Material.DIFFUSE;
-    
-    
     func selectSphere(sphereIndex:Int){
         self.lightEditView.hidden = true;
+        //Deselect the last sphere
         if (selectedSphere > -1){
-            if (scene.spheres[selectedSphere].material == Material.TRANSPARENT){
-                scene.spheres[selectedSphere].material = currentSelectionMaterial;
-            }
+            //scene.spheres[selectedSphere].selected = 0;
         }
+        
+        //Select the new one
         selectedSphere = sphereIndex;
         if (selectedSphere > -1){
             lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
             lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
-            currentSelectionMaterial = scene.spheres[selectedSphere].material;
             
             
             
@@ -233,7 +229,7 @@ class ViewController: UIViewController {
             default:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
             }
             
-            scene.spheres[selectedSphere].material = Material.TRANSPARENT;
+            //scene.spheres[selectedSphere].selected = 1;
             
             self.sphereEditView.hidden = false;
             

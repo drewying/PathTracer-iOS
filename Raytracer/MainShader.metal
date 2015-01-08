@@ -42,6 +42,7 @@ struct PackedSphere{
     packed_float3 position;
     float radius;
     packed_float3 color;
+    //uint selected;
     Material material;
 };
 
@@ -49,7 +50,9 @@ struct Sphere{
     float3 position;
     float radius;
     float3 color;
+    //uint selected;
     Material material;
+    
 };
 
 struct Plane{
@@ -332,21 +335,15 @@ Ray bounce(Hit h, thread uint *seed){
 
 static constant struct Plane planes[] = {
     {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE},
-    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,0.75,0.0), DIFFUSE},
+    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,0.0,0.75), DIFFUSE},
     {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,0.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE},
     {float3(0.0,0.0,1.0), float3(0.0,0.0,-1.0), float3(0.75,0.75,0.75), DIFFUSE}
 };
 
-static constant struct Triangle triangles[] = {
-    {float3(-0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,0.5), float3(5.0,5.0,5.0), LIGHT},
-    {float3( 0.5,0.99999,0.5), float3(-0.5,0.99999,-0.5), float3(0.5,0.99999,-0.5), float3(5.0,5.0,5.0), LIGHT}
-};
 
-//static constant struct Sphere light = {float3(0.5,0.5,0.5), 0.0, float3(5.0,5.0,5.0), LIGHT};
-
-Hit getClosestHit(Ray r, Sphere spheres[]){
+Hit getClosestHit(Ray r, Sphere spheres[], thread uint *seed){
     Hit h = noHit();
     
     for (int i=0; i<planeCount; i++){
@@ -360,14 +357,13 @@ Hit getClosestHit(Ray r, Sphere spheres[]){
     for (int i=0; i<maxSpheres; i++){
         Hit hit = sphereIntersection(spheres[i], r, h.distance);
         if (hit.didHit){
-            h = hit;
-        }
-    }
-    
-    for (int i=0; i<triangleCount; i++){
-        Triangle t = triangles[i];
-        Hit hit = triangleIntersection(t, r, h.distance);
-        if (hit.didHit){
+            /*if (spheres[i].selected == 0){
+                h = hit;
+            } else{
+                if (h.normal.x > 0.3){
+                    h = hit;
+                }
+            }*/
             h = hit;
         }
     }
@@ -385,8 +381,9 @@ float3 jitterLightPosition(thread uint *seed, float3 position){
 float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool includeDirectLighting, bool includeIndirectLighting){
     float3 reflectColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
+    float3 jitteredLight = jitterLightPosition(seed, light.position);
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r, spheres);
+        Hit h = getClosestHit(r, spheres, seed);
         if (!h.didHit){
             return float3(0.0,0.0,0.0);
         }
@@ -403,7 +400,6 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool 
         
         if (includeDirectLighting){
             //Direct Lighting
-            float3 jitteredLight = jitterLightPosition(seed, light.position);
             float3 normal = normalize(h.normal);
             float3 lightDirection = normalize(jitteredLight - h.hitPosition);
             float cosphi = dot(normal, lightDirection);
@@ -411,7 +407,7 @@ float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool 
             
             //Calculate shadow factor
             Ray shadowRay = {h.hitPosition, lightDirection};
-            Hit shadowHit = getClosestHit(shadowRay, spheres);
+            Hit shadowHit = getClosestHit(shadowRay, spheres, seed);
             
             float lightDistance = distance(jitteredLight, h.hitPosition);
             float shadowFactor = 1.0;
@@ -447,7 +443,7 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
     Camera cam;
     cam.eye = float3(cameraParams[0]);
     cam.up = float3(cameraParams[1]);
-    cam.focalLength = float3(cameraParams[2]).x;
+    //cam.focalLength = float3(cameraParams[2]).x;
     cam.lookAt = -normalize(cam.eye);
     cam.right = cross(-normalize(cam.eye), cam.up);
     cam.right *= aspectRatio;
@@ -455,7 +451,7 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
     float r1 = 0;
     float r2 = 0;
     
-    if (cam.apertureSize > 0){
+    if (cam.apertureSize > 0.0){
         r1 = (rand(seed) * 2.0) - 1.0;
         r2 = (rand(seed) * 2.0) - 1.0;
     }
@@ -529,8 +525,8 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     
     float aspect_ratio = xResolution/yResolution;
     
-    float xOffset = ((rand(seed) * 2.0) - 1.0)/xResolution;
-    float yOffset = ((rand(seed) * 2.0) - 1.0)/yResolution;
+    float xOffset = ((rand(seed) * 2.0) - 1.0)/(xResolution*2);
+    float yOffset = ((rand(seed) * 2.0) - 1.0)/(yResolution*2);
     
     Ray r = makeRay(seed, x + xOffset, y + yOffset, aspect_ratio, cameraParams);
     
