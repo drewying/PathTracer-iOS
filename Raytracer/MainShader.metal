@@ -17,6 +17,8 @@ using namespace metal;
 #define EPSILON 1.e-4
 
 static constant int planeCount = 6;
+static constant int boxCount = 6;
+
 static constant int triangleCount = 0;
 static constant int bounceCount = 5;
 static constant int maxSpheres = 5;
@@ -65,10 +67,10 @@ struct Plane{
 struct Box{
     float3 min;
     float3 max;
+    float3 normal;
     float3 color;
     Material material;
 };
-
 
 
 struct Triangle{
@@ -114,14 +116,26 @@ inline Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, 
     
     
 }
-
+    
+    
 Hit boxIntersection(Box b, Ray ray, float distance){
+    
+    if (dot(b.normal, ray.direction) > 0){
+        return noHit();
+    }
+    
     float3 tMin = (b.min - ray.origin) / ray.direction;
     float3 tMax = (b.max - ray.origin) / ray.direction;
     float3 t1 = min(tMin, tMax);
     float3 t2 = max(tMin, tMax);
     float tNear = max(max(t1.x, t1.y), t1.z);
     float tFar = min(min(t2.x, t2.y), t2.z);
+    
+    
+    
+    if (tNear > tFar){
+        return noHit();
+    }
     
     float t;
     if (tNear <= EPSILON) {
@@ -130,20 +144,12 @@ Hit boxIntersection(Box b, Ray ray, float distance){
         t = tFar;
     }
     
-    float3 hit = ray.origin + ray.direction * t;
+
     
-    //Get Normal
-    float3 normal;
-    
-    if(hit.x < b.min.x + 0.0001) normal = float3(-1.0, 0.0, 0.0);
-    else if(hit.x > b.max.x - 0.0001) normal = float3(1.0, 0.0, 0.0);
-    else if(hit.y < b.min.y + 0.0001) normal = float3(0.0, -1.0, 0.0);
-    else if(hit.y > b.max.y - 0.0001) normal = float3(0.0, 1.0, 0.0);
-    else if(hit.z < b.min.z + 0.0001) normal = float3(0.0, 0.0, -1.0);
-    else normal = float3(0.0, 0.0, 1.0);
-    
-    return getHit(distance, t, ray, normal, b.color, b.material);
+    return getHit(distance, t, ray, b.normal, b.color, b.material);
 }
+    
+
 
 Hit planeIntersection(Plane p, Ray ray, float distance);
 Hit planeIntersection(Plane p, Ray ray, float distance){
@@ -152,6 +158,7 @@ Hit planeIntersection(Plane p, Ray ray, float distance){
     float denom = dot(n, ray.direction);
     if (-denom > EPSILON) {
         float t = (d - dot(n, ray.origin)) / denom;
+        float3 hitpos = ray.origin + ray.direction * t;
         return getHit(distance, t, ray, p.normal, p.color, p.material);
     }
     return noHit();
@@ -333,22 +340,22 @@ Ray bounce(Hit h, thread uint *seed){
     return outRay;
 }
 
-static constant struct Plane planes[] = {
-    {float3(-1.0,0.0,0.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE},
-    {float3(1.0,0.0,0.0), float3(-1.0,0.0,0.0), float3(0.0,0.0,0.75), DIFFUSE},
-    {float3(0.0,-1.0,0.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,1.0,0.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,0.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE},
-    {float3(0.0,0.0,1.0), float3(0.0,0.0,-1.0), float3(0.75,0.75,0.75), DIFFUSE}
+static constant struct Box boxes[] = {
+    {float3(-1.0,1.0,-1.0), float3(-1.0,-1.0,1.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE}, //Left
+    {float3(1.0,1.0,-1.0), float3(1.0,-1.0,1.0), float3(-1.0,0.0,0.0), float3(0.0,0.0,0.75), DIFFUSE}, //Right
+    {float3(1.0,1.0,-1.0), float3(-1.0,-1.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Back
+    {float3(1.0,1.0,1.0), float3(-1.0,-1.0,1.0), float3(0.0,0.0,-1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Front
+    {float3(1.0,1.0,1.0), float3(-1.0,1.0,-1.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE}, //Top
+    {float3(1.0,-1.0,1.0), float3(-1.0,-1.0,-1.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE} //Bottom
 };
-
+    
 
 Hit getClosestHit(Ray r, Sphere spheres[], thread uint *seed){
     Hit h = noHit();
-    
-    for (int i=0; i<planeCount; i++){
-        Plane p = planes[i];
-        Hit hit = planeIntersection(p, r, h.distance);
+
+    for (int i=0; i<boxCount; i++){
+        Box b = boxes[i];
+        Hit hit = boxIntersection(b, r, h.distance);
         if (hit.didHit){
             h = hit;
         }
