@@ -120,9 +120,7 @@ inline Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, 
     
 Hit boxIntersection(Box b, Ray ray, float distance){
     
-    if (dot(b.normal, ray.direction) > 0){
-        return noHit();
-    }
+    
     
     float3 tMin = (b.min - ray.origin) / ray.direction;
     float3 tMax = (b.max - ray.origin) / ray.direction;
@@ -137,14 +135,16 @@ Hit boxIntersection(Box b, Ray ray, float distance){
         return noHit();
     }
     
+    if (dot(b.normal, ray.direction) > 0){
+        return noHit();
+    }
+    
     float t;
     if (tNear <= EPSILON) {
         t = tNear;
     } else{
         t = tFar;
     }
-    
-
     
     return getHit(distance, t, ray, b.normal, b.color, b.material);
 }
