@@ -19,7 +19,7 @@ using namespace metal;
 static constant int boxCount = 6;
 
 static constant int bounceCount = 5;
-static constant int maxSpheres = 5;
+static constant int maxSpheres = 2;
 
 enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
 
@@ -81,9 +81,9 @@ struct Triangle{
 
 struct Camera{
     float3 eye;
-    float3 lookAt = float3(0.0,0.0,1.0);
+    float3 lookAt;
     float3 up = float3(0.0, 1.0, 0.0);
-    float3 right = float3(1.0, 0.0, 0.0);
+    float3 right;
     float apertureSize = 0.0;
     float focalLength = 1.0;
 };
@@ -314,16 +314,21 @@ Ray bounce(Hit h, thread uint *seed){
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, normalize(h.normal));
     } else if (h.material == DIELECTRIC){
-        float3 normal = normalize(h.normal);
-        float3 incident = h.ray.direction;
-        float3 nl = dot(normal, incident) < 0 ? normal : normal * -1.0;
-        float into = dot(nl, normal);
+        if (rand(seed) > 0.9){
+            outVector = reflect(h.ray.direction, normalize(h.normal));
+        } else{
+            float3 normal = normalize(h.normal);
+            float3 incident = h.ray.direction;
+            float3 nl = dot(normal, incident) < 0 ? normal : normal * -1.0;
+            float into = dot(nl, normal);
+            
+            float refractiveIndexAir = 1;
+            float refractiveIndexGlass = 1.5;
+            float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
+            normal *= ((into > 0) - (into < 0));
+            outVector = refract(incident, normal, refractiveIndexRatio);
+        }
         
-        float refractiveIndexAir = 1;
-        float refractiveIndexGlass = 1.5;
-        float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
-        normal *= ((into > 0) - (into < 0));
-        outVector = refract(incident, normal, refractiveIndexRatio);
     } else if (h.material == TRANSPARENT){
         outVector = h.ray.direction;
     }
@@ -503,8 +508,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     thread uint *seed = &seedMemory;
     
     //Get the inColor
-    uint2 textureIndex(gid.x, gid.y);
-    float4 inColor = inTexture.read(textureIndex).rgba;
+    float4 inColor = inTexture.read(gid).rgba;
     
     float xResolution = float(intParams[2]);
     float yResolution = float(intParams[3]);
