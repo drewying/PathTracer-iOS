@@ -19,7 +19,7 @@ using namespace metal;
 static constant int boxCount = 6;
 
 static constant int bounceCount = 5;
-static constant int maxSpheres = 5;
+static constant int maxSpheres = 4;
 
 enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
 
@@ -38,7 +38,7 @@ struct Hit{
     bool didHit;
 };
 
-struct PackedSphere{
+struct Sphere{
     packed_float3 position;
     float radius;
     packed_float3 color;
@@ -46,14 +46,6 @@ struct PackedSphere{
     Material material;
 };
 
-struct Sphere{
-    float3 position;
-    float radius;
-    float3 color;
-    //uint selected;
-    Material material;
-    
-};
 
 struct Plane{
     float3 position;
@@ -350,7 +342,7 @@ static constant struct Box boxes[] = {
 };
     
 
-inline Hit getClosestHit(Ray r, Sphere spheres[], thread uint *seed){
+inline Hit getClosestHit(Ray r, constant Sphere *spheres, thread uint *seed){
     Hit h = noHit();
 
     for (int i=0; i<boxCount; i++){
@@ -385,7 +377,7 @@ float3 jitterLightPosition(thread uint *seed, float3 position){
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
 
-float3 tracePath(Ray r, thread uint *seed, Sphere spheres[], Sphere light, bool includeDirectLighting, bool includeIndirectLighting){
+float3 tracePath(Ray r, thread uint *seed, constant Sphere *spheres, Sphere light, bool includeDirectLighting, bool includeIndirectLighting){
     float3 reflectColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 jitteredLight = jitterLightPosition(seed, light.position);
@@ -495,8 +487,8 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
                       constant packed_float3 *cameraParams [[buffer(1)]],
-                      constant PackedSphere *spheres [[buffer(2)]],
-                      constant PackedSphere *light [[buffer(3)]]
+                      constant Sphere *spheres [[buffer(2)]],
+                      constant Sphere *light [[buffer(3)]]
                       ){
     
     uint gidIndex = gid.x * intParams[2] + gid.y;
@@ -538,15 +530,6 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Ray r = makeRay(seed, x + xOffset, y + yOffset, aspect_ratio, cameraParams);
     
-    //Unpack Sphere data
-    Sphere unpackedSpheres[10];
-    for (int i=0; i < maxSpheres; i++){
-        PackedSphere p = spheres[i];
-        unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
-    }
-    
-    Sphere unpackedLight = {float3(light[0].position), light[0].radius, float3(light[0].color), light[0].material};
-    
     uint lightingMode = intParams[4];
     
     bool includeDirect = false;
@@ -565,7 +548,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    float4 outColor = float4(tracePath(r, seed, unpackedSpheres, unpackedLight, includeDirect, includeIndirect), 1.0);
+    float4 outColor = float4(tracePath(r, seed, spheres, *light, includeDirect, includeIndirect), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
     //outTexture.write(outColor,gid);

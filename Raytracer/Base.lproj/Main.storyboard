@@ -212,7 +212,7 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="VLf-Jo-jDE" userLabel="Y Slider">
+                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="2" translatesAutoresizingMaskIntoConstraints="NO" id="VLf-Jo-jDE" userLabel="Y Slider">
                                         <rect key="frame" x="0.0" y="-15" width="118" height="31"/>
                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="thumbTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
