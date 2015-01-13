@@ -83,6 +83,7 @@ struct Camera{
 struct Scene{
     Sphere light;
     constant Sphere *spheres;
+    int sphereCount;
     float xResolution;
     float yResolution;
 };
@@ -490,7 +491,6 @@ uint hashSeed(uint seed){
 
 kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
-                      texture2d<float, access::write> imageTexture [[texture(2)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
@@ -556,7 +556,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    Scene scene = Scene{*light, spheres, xResolution, yResolution};
+    Scene scene = Scene{*light, spheres, sphereCount, xResolution, yResolution};
     
     float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     

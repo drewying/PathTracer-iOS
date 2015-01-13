@@ -57,7 +57,7 @@ class ViewController: UIViewController {
     
     
     @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
-        self.scene.camera.cameraPosition = Matrix.transformPoint(Matrix.translate( self.scene.camera.cameraPosition * (Float(sender.velocity) * 0.1)), right: self.scene.camera.cameraPosition);
+        self.scene.camera.cameraPosition = Matrix.transformPoint(Matrix.translate( self.scene.camera.cameraPosition * (Float(sender.velocity) * -0.1)), right: self.scene.camera.cameraPosition);
         sender.scale = 1.0;
         self.resetDisplay();
     }
@@ -224,7 +224,7 @@ class ViewController: UIViewController {
         commandEncoder.setComputePipelineState(pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
-        commandEncoder.setTexture(imageTexture, atIndex:2);
+        //commandEncoder.setTexture(imageTexture, atIndex:2);
         
         let cameraParams = self.scene.camera.getParameterArray();
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1), 2];
