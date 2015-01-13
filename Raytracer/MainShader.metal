@@ -19,7 +19,7 @@ using namespace metal;
 static constant int boxCount = 6;
 
 static constant int bounceCount = 5;
-static constant int maxSpheres = 2;
+static constant int maxSpheres = 5;
 
 enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
 
@@ -489,7 +489,7 @@ uint hashSeed(uint seed){
     return seed;
 }
 
-kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
+kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
@@ -502,6 +502,9 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     uint gidIndex = gid.x * intParams[2] + gid.y;
     uint sampleNumber = intParams[0];
     uint sysTime = intParams[1];
+    float xResolution = float(intParams[2]);
+    float yResolution = float(intParams[3]);
+    int sphereCount = int(intParams[4]);
     
     uint seedMemory = hashSeed(gidIndex * sysTime * sampleNumber);
     
@@ -510,8 +513,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     //Get the inColor
     float4 inColor = inTexture.read(gid).rgba;
     
-    float xResolution = float(intParams[2]);
-    float yResolution = float(intParams[3]);
+    
     float dx = 1.0 / xResolution;
     float dy = 1.0 / yResolution;
     float x = gid.x  * dx;
@@ -537,7 +539,7 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     Ray r = makeRay(seed, x + xOffset, y + yOffset, aspect_ratio, cameraParams);
     
     //Unpack Sphere data
-    Sphere unpackedSpheres[maxSpheres];
+    Sphere unpackedSpheres[10];
     for (int i=0; i < maxSpheres; i++){
         PackedSphere p = spheres[i];
         unpackedSpheres[i] = {float3(p.position), p.radius, float3(p.color), p.material};
@@ -566,4 +568,5 @@ kernel void pathtrace(texture2d<float, access::read> inTexture [[texture(0)]],
     float4 outColor = float4(tracePath(r, seed, unpackedSpheres, unpackedLight, includeDirect, includeIndirect), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    //outTexture.write(outColor,gid);
 }

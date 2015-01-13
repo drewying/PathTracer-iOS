@@ -171,36 +171,34 @@ class ViewController: UIViewController {
         device = MTLCreateSystemDefaultDevice()
         defaultLibrary = device.newDefaultLibrary()
         commandQueue = device.newCommandQueue();
-        let kernalProgram = defaultLibrary!.newFunctionWithName("pathtrace");
+        let kernalProgram = defaultLibrary!.newFunctionWithName("mainProgram");
         pipelineState = self.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
   
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        
         inputTexture = device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = device.newTextureWithDescriptor(textureDescriptor);
         
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
    
-        //scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.4, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
-        //scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.8, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE));
-        
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
 
     }
     
     func render() {
-        let threadgroupCounts = MTLSizeMake(16, 16, 1);
+        commandQueue.insertDebugCaptureBoundary();
+        let threadgroupCounts = MTLSizeMake(16,16, 1);
         let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
         let commandBuffer = commandQueue.commandBuffer();
         let commandEncoder = commandBuffer.computeCommandEncoder();
+        
         commandEncoder.setComputePipelineState(pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
         let cameraParams = self.scene.camera.getParameterArray();
-        let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1)];
+        let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1), 2];
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
@@ -216,8 +214,9 @@ class ViewController: UIViewController {
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
         commandBuffer.commit();
-        commandQueue.insertDebugCaptureBoundary();
+        //commandBuffer.waitUntilScheduled();
         commandBuffer.waitUntilCompleted();
+        //self.inputTexture.replaceRegion(MTLRegionMake2D(0, 0, self.xResolution, self.yResolution), mipmapLevel: 0, withBytes: &self.outputTexture, bytesPerRow: 4*self.xResolution);
         self.inputTexture = self.outputTexture;
     }
     
@@ -233,6 +232,7 @@ class ViewController: UIViewController {
     func resetDisplay() {
         self.sampleNumber = 1;
         self.start = NSDate();
+        //self.renderLoop();
     }
     
     override func didReceiveMemoryWarning() {
