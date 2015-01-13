@@ -40,6 +40,8 @@ class ViewController: UIViewController {
     var pipelineState: MTLComputePipelineState! = nil
     var inputTexture: MTLTexture! = nil;
     var outputTexture: MTLTexture! = nil;
+    var imageTexture: MTLTexture! = nil;
+    
     var timer: CADisplayLink! = nil
     var start = NSDate();
     var sampleNumber = 1;
@@ -181,9 +183,35 @@ class ViewController: UIViewController {
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
    
+        
+        
+        
+        let bytesPerPixel = UInt(4)
+        let bitsPerComponent = UInt(8)
+        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+        
+        let image = UIImage(named: "texture.jpg")
+        let imageRef = image?.CGImage
+        let imageWidth = CGImageGetWidth(imageRef)
+        let imageHeight = CGImageGetHeight(imageRef)
+        let bytesPerRow = bytesPerPixel * imageWidth
+        
+        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: 0)
+        
+        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
+        
+        let context = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
+        
+        CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
+        
+        let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
+        
+        imageTexture = device.newTextureWithDescriptor(imageTextureDescriptor)
+        let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
+        imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
+
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-
     }
     
     func render() {
@@ -196,6 +224,7 @@ class ViewController: UIViewController {
         commandEncoder.setComputePipelineState(pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
+        commandEncoder.setTexture(imageTexture, atIndex:2);
         
         let cameraParams = self.scene.camera.getParameterArray();
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1), 2];

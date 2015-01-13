@@ -79,6 +79,13 @@ struct Camera{
     float apertureSize = 0.0;
     float focalLength = 1.0;
 };
+    
+struct Scene{
+    Sphere light;
+    constant Sphere *spheres;
+    float xResolution;
+    float yResolution;
+};
 
 inline Hit noHit(){
     Hit hit;
@@ -377,18 +384,18 @@ float3 jitterLightPosition(thread uint *seed, float3 position){
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
 
-float3 tracePath(Ray r, thread uint *seed, constant Sphere *spheres, Sphere light, bool includeDirectLighting, bool includeIndirectLighting){
+float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting){
     float3 reflectColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
-    float3 jitteredLight = jitterLightPosition(seed, light.position);
+    float3 jitteredLight = jitterLightPosition(seed, scene.light.position);
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r, spheres, seed);
+        Hit h = getClosestHit(r, scene.spheres, seed);
         if (!h.didHit){
             return float3(0.0,0.0,0.0);
         }
         
-        if (includeIndirectLighting && light.radius > 0){
-            Hit lightHit = sphereIntersection(light, r, h.distance);
+        if (includeIndirectLighting && scene.light.radius > 0){
+            Hit lightHit = sphereIntersection(scene.light, r, h.distance);
             if (lightHit.didHit){
                 accumulatedColor += reflectColor * lightHit.color;
                 return accumulatedColor * 0.5;
@@ -406,7 +413,7 @@ float3 tracePath(Ray r, thread uint *seed, constant Sphere *spheres, Sphere ligh
             
             //Calculate shadow factor
             Ray shadowRay = {h.hitPosition, lightDirection};
-            Hit shadowHit = getClosestHit(shadowRay, spheres, seed);
+            Hit shadowHit = getClosestHit(shadowRay, scene.spheres, seed);
             
             float lightDistance = distance(jitteredLight, h.hitPosition);
             float shadowFactor = 1.0;
@@ -483,6 +490,7 @@ uint hashSeed(uint seed){
 
 kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
+                      texture2d<float, access::write> imageTexture [[texture(2)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
@@ -548,7 +556,9 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    float4 outColor = float4(tracePath(r, seed, spheres, *light, includeDirect, includeIndirect), 1.0);
+    Scene scene = Scene{*light, spheres, xResolution, yResolution};
+    
+    float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
     //outTexture.write(outColor,gid);
