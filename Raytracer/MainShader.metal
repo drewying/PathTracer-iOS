@@ -314,7 +314,7 @@ Ray bounce(Hit h, thread uint *seed){
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, normalize(h.normal));
     } else if (h.material == DIELECTRIC){
-        if (rand(seed) > 0.9){
+        if (rand(seed) > 0.95){
             outVector = reflect(h.ray.direction, normalize(h.normal));
         } else{
             float3 normal = normalize(h.normal);

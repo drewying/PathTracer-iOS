@@ -78,19 +78,30 @@ class ViewController: UIViewController {
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
-        var point = sender.locationInView(self.imageView);
-        var x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0);
-        var y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
-        var xDelta:Float = x - lastX;
-        var yDelta:Float = y - lastY;
+        let point = sender.locationInView(self.imageView);
+        let x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0);
+        let y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
+        let xDelta:Float = x - lastX;
+        let yDelta:Float = y - lastY;
         
         if (selectedSphere > -1){
-            var currentPosition:Vector3D = scene.spheres[selectedSphere].position;
-            var matrix:Matrix = Matrix.translate(scene.camera.cameraRight * xDelta) * Matrix.translate(scene.camera.cameraUp * yDelta);
+            let currentPosition:Vector3D = scene.spheres[selectedSphere].position;
+            let matrix:Matrix = Matrix.translate(scene.camera.cameraRight * xDelta) * Matrix.translate(scene.camera.cameraUp * yDelta);
             scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
         } else{
-            var velocity = sender.velocityInView(self.imageView);
-            self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * Matrix.rotateY(Float(velocity.x/(6.0*500)));
+            let velocity = sender.velocityInView(self.imageView);
+            let xVelocity = Float(velocity.x/(CGFloat(M_PI) * CGFloat(xResolution)));
+            let yVelocity = Float(velocity.y/(CGFloat(M_PI) * CGFloat(yResolution)));
+            
+            /*if (abs(xDelta) < abs(yDelta)){
+                let yMatrix:Matrix = Matrix.rotate(self.scene.camera.cameraUp, angle: yDelta);
+                self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * yMatrix;
+                self.scene.camera.cameraUp = self.scene.camera.cameraUp * yMatrix;
+            } else{*/
+                let xMatrix:Matrix = Matrix.rotateY(xVelocity);
+                self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * xMatrix;
+            //}
+            
         }
         
         lastX = x;
