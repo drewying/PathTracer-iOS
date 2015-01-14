@@ -255,13 +255,20 @@ class ViewController: UIViewController {
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
-        let c = self.device.newBufferWithBytes(&light, length: (sizeof(Sphere) + 3), options:nil);
-        let d = self.device.newBufferWithBytes(&scene.spheres, length: (sizeof(Sphere) + 3) * scene.spheres.count, options:nil);
+        
+        
+        var s:[Sphere] = [];
+        s.append(light);
+        for sphere:Sphere in scene.spheres{
+            s.append(sphere);
+        }
+        
+        let c = self.device.newBufferWithBytes(&s, length: (sizeof(Sphere) + 3) * (scene.spheres.count + 1), options:nil);
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
         commandEncoder.setBuffer(c, offset: 0, atIndex: 2);
-        commandEncoder.setBuffer(d, offset: 0, atIndex: 3);
+        //commandEncoder.setBuffer(d, offset: 0, atIndex: 3);
         
         
         

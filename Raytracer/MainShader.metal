@@ -495,8 +495,8 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
                       constant packed_float3 *cameraParams [[buffer(1)]],
-                      constant Sphere *light [[buffer(2)]],
-                      constant Sphere *spheres [[buffer(3)]]
+                      constant Sphere *spheres [[buffer(2)]]
+                      //constant Sphere *spheres [[buffer(3)]]
                       
                       ){
     
@@ -557,7 +557,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    Scene scene = Scene{*light, spheres, sphereCount, xResolution, yResolution};
+    Scene scene = Scene{spheres[0], spheres+1, sphereCount, xResolution, yResolution};
     
     float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     
