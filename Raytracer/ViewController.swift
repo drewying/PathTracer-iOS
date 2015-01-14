@@ -74,6 +74,12 @@ class ViewController: UIViewController {
         
     }
     
+   
+    
+    @IBAction func deleteSphere(sender: AnyObject) {
+        self.scene.spheres.removeAtIndex(self.selectedSphere);
+        self.selectedSphere = -1;
+    }
     
     
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
