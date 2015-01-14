@@ -350,7 +350,7 @@ static constant struct Box boxes[] = {
 };
     
 
-inline Hit getClosestHit(Ray r, constant Sphere *spheres, thread uint *seed){
+inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
     Hit h = noHit();
 
     for (int i=0; i<boxCount; i++){
@@ -362,7 +362,7 @@ inline Hit getClosestHit(Ray r, constant Sphere *spheres, thread uint *seed){
     }
     
     for (int i=0; i<maxSpheres; i++){
-        Hit hit = sphereIntersection(spheres[i], r, h.distance);
+        Hit hit = sphereIntersection(scene.spheres[i], r, h.distance);
         if (hit.didHit){
             /*if (spheres[i].selected == 0){
                 h = hit;
@@ -390,7 +390,7 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 jitteredLight = jitterLightPosition(seed, scene.light.position);
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r, scene.spheres, seed);
+        Hit h = getClosestHit(r, scene, seed);
         if (!h.didHit){
             return float3(0.0,0.0,0.0);
         }
@@ -414,7 +414,7 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
             
             //Calculate shadow factor
             Ray shadowRay = {h.hitPosition, lightDirection};
-            Hit shadowHit = getClosestHit(shadowRay, scene.spheres, seed);
+            Hit shadowHit = getClosestHit(shadowRay, scene, seed);
             
             float lightDistance = distance(jitteredLight, h.hitPosition);
             float shadowFactor = 1.0;
@@ -495,8 +495,9 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
                       constant packed_float3 *cameraParams [[buffer(1)]],
-                      constant Sphere *spheres [[buffer(2)]],
-                      constant Sphere *light [[buffer(3)]]
+                      constant Sphere *light [[buffer(2)]],
+                      constant Sphere *spheres [[buffer(3)]]
+                      
                       ){
     
     uint gidIndex = gid.x * intParams[2] + gid.y;

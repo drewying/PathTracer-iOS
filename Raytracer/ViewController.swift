@@ -48,7 +48,16 @@ class ViewController: UIViewController {
     var xResolution:Int = 0;
     var yResolution:Int = 0;
     
-    var selectedSphere:Int = -1;
+    var selectedSphere:Int = -1 {
+        didSet {
+            if (selectedSphere > -1){
+                showSphereEditView();
+            } else{
+                hideSphereEditView();
+            }
+        }
+    }
+    
     var cameraToggle:Bool = false;
     
     var scene: Scene! = nil;
@@ -69,19 +78,11 @@ class ViewController: UIViewController {
         let x:Float = Float(CGFloat(xResolution)-point.x)  * dx;
         let y:Float = Float(CGFloat(yResolution)-point.y)  * dy;
         var ray:Ray = scene.camera.getRay(x, y: y);
-        
-        selectSphere(scene.getClosestHit(ray));
-        
+        selectedSphere = scene.getClosestHit(ray);
+        lightEditView.hidden = true;
     }
     
    
-    
-    @IBAction func deleteSphere(sender: AnyObject) {
-        self.scene.spheres.removeAtIndex(self.selectedSphere);
-        self.selectedSphere = -1;
-    }
-    
-    
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
         let point = sender.locationInView(self.imageView);
@@ -176,6 +177,12 @@ class ViewController: UIViewController {
         self.resetDisplay();
     }
     
+    @IBAction func deleteSphere(sender: AnyObject) {
+        self.scene.spheres.removeAtIndex(self.selectedSphere);
+        self.selectedSphere = -1;
+        self.resetDisplay();
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -248,14 +255,18 @@ class ViewController: UIViewController {
         
         let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
-        let c = self.device.newBufferWithBytes(&scene.spheres, length: (sizeof(Sphere) + 3) * 15, options:nil);
-        let d = self.device.newBufferWithBytes(&light, length: (sizeof(Sphere) + 3), options:nil);
-        
+        let c = self.device.newBufferWithBytes(&light, length: (sizeof(Sphere) + 3), options:nil);
+        let d = self.device.newBufferWithBytes(&scene.spheres, length: (sizeof(Sphere) + 3) * scene.spheres.count, options:nil);
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
         commandEncoder.setBuffer(c, offset: 0, atIndex: 2);
         commandEncoder.setBuffer(d, offset: 0, atIndex: 3);
+        
+        
+        
+        
+        
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();
@@ -289,43 +300,28 @@ class ViewController: UIViewController {
     var lastX:Float = 0.0;
     var lastY:Float = 0.0;
     
-    func selectSphere(sphereIndex:Int){
-        self.lightEditView.hidden = true;
-        //Deselect the last sphere
-        if (selectedSphere > -1){
-            //scene.spheres[selectedSphere].selected = 0;
-        }
         
-        //Select the new one
-        selectedSphere = sphereIndex;
-        if (selectedSphere > -1){
-            lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
-            lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
-            
-            
-            
-            //Configure editView
-            var s:Sphere = scene.spheres[selectedSphere];
-            sphereRedSlider.value = s.color.x;
-            sphereGreenSlider.value = s.color.y;
-            sphereBlueSlider.value = s.color.z;
-            sphereSizeSlider.value = s.radius;
-            switch (s.material){
-            case Material.DIFFUSE:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
-            case Material.SPECULAR:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 1;
-            case Material.DIELECTRIC:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 2;
-            default:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
-            }
-            
-            //scene.spheres[selectedSphere].selected = 1;
-            
-            self.sphereEditView.hidden = false;
-            
-        } else {
-            self.sphereEditView.hidden = true;
-        }
+    func hideSphereEditView(){
+        self.sphereEditView.hidden = true;
+    }
         
-        self.resetDisplay();
+    func showSphereEditView(){
+        lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
+        lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
+        
+        //Configure editView
+        var s:Sphere = scene.spheres[selectedSphere];
+        sphereRedSlider.value = s.color.x;
+        sphereGreenSlider.value = s.color.y;
+        sphereBlueSlider.value = s.color.z;
+        sphereSizeSlider.value = s.radius;
+        switch (s.material){
+        case Material.DIFFUSE:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
+        case Material.SPECULAR:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 1;
+        case Material.DIELECTRIC:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 2;
+        default:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
+        }
+        self.sphereEditView.hidden = false;
     }
 }
 
