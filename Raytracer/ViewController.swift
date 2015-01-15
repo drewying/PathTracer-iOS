@@ -287,7 +287,7 @@ class ViewController: UIViewController {
     func resetDisplay() {
         self.sampleNumber = 1;
         self.start = NSDate();
-        //scene.resetBuffer();
+        scene.resetBuffer();
         //self.renderLoop();
     }
     

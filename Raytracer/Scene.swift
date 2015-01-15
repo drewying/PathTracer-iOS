@@ -24,7 +24,8 @@ class Scene : NSObject {
     }
     
     func resetBuffer(){
-        sphereData = [light];
+        sphereData = [];
+        sphereData.append(light);
         for sphere:Sphere in spheres{
             sphereData.append(sphere);
         }
