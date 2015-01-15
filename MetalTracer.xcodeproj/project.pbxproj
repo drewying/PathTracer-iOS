@@ -13,7 +13,6 @@
 		D130D6CB1A314FD10096BFC7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D130D6C91A314FD10096BFC7 /* Main.storyboard */; };
 		D130D6CD1A314FD10096BFC7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D130D6CC1A314FD10096BFC7 /* Images.xcassets */; };
 		D130D6D01A314FD10096BFC7 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D130D6CE1A314FD10096BFC7 /* LaunchScreen.xib */; };
-		D130D6DC1A314FD10096BFC7 /* RaytracerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */; };
 		D130D6E81A3150A30096BFC7 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D130D6E71A3150A30096BFC7 /* Vector3D.swift */; };
 		D1327C861A528F03004B01ED /* BoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1327C851A528F03004B01ED /* BoundingBox.swift */; };
 		D138EFD01A40146800D13F11 /* PathTracerParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */; };
@@ -26,32 +25,20 @@
 		D1C4D7E11A5222A1009232C4 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C4D7E01A5222A1009232C4 /* Sphere.swift */; };
 		D1C55C3B1A64F9CE007B61B7 /* texture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C55C3A1A64F9CE007B61B7 /* texture.jpg */; };
 		D1D407071A678E5200CA07E0 /* MetalContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D407061A678E5200CA07E0 /* MetalContext.swift */; };
+		D1D407091A67ABA600CA07E0 /* Raytracer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D407081A67ABA600CA07E0 /* Raytracer.swift */; };
 		D1EB5ABD1A560E2100C1F555 /* Ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EB5ABC1A560E2100C1F555 /* Ray.swift */; };
 		D1EB5ABF1A560EBA00C1F555 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EB5ABE1A560EBA00C1F555 /* Camera.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		D130D6D61A314FD10096BFC7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D130D6B81A314FD10096BFC7 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D130D6BF1A314FD10096BFC7;
-			remoteInfo = Raytracer;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		D12560531A463C61000811BF /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
-		D130D6C01A314FD10096BFC7 /* Raytracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Raytracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D130D6C01A314FD10096BFC7 /* MetalTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D130D6C41A314FD10096BFC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D130D6C51A314FD10096BFC7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D130D6C71A314FD10096BFC7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D130D6CA1A314FD10096BFC7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D130D6CC1A314FD10096BFC7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D130D6CF1A314FD10096BFC7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		D130D6D51A314FD10096BFC7 /* RaytracerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RaytracerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D130D6DA1A314FD10096BFC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaytracerTests.swift; sourceTree = "<group>"; };
 		D130D6E71A3150A30096BFC7 /* Vector3D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3D.swift; sourceTree = "<group>"; };
 		D1327C851A528F03004B01ED /* BoundingBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingBox.swift; sourceTree = "<group>"; };
 		D138EFCF1A40146800D13F11 /* PathTracerParameters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathTracerParameters.swift; sourceTree = "<group>"; };
@@ -66,6 +53,7 @@
 		D1C4D7E01A5222A1009232C4 /* Sphere.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
 		D1C55C3A1A64F9CE007B61B7 /* texture.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = texture.jpg; sourceTree = "<group>"; };
 		D1D407061A678E5200CA07E0 /* MetalContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalContext.swift; sourceTree = "<group>"; };
+		D1D407081A67ABA600CA07E0 /* Raytracer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Raytracer.swift; sourceTree = "<group>"; };
 		D1EB5ABC1A560E2100C1F555 /* Ray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ray.swift; sourceTree = "<group>"; };
 		D1EB5ABE1A560EBA00C1F555 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,13 +68,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D130D6D21A314FD10096BFC7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -95,8 +76,7 @@
 			children = (
 				D1C260821A3D52C70063CDF3 /* QuartzCore.framework */,
 				D1C2607E1A3D13A70063CDF3 /* Metal.framework */,
-				D130D6C21A314FD10096BFC7 /* Raytracer */,
-				D130D6D81A314FD10096BFC7 /* RaytracerTests */,
+				D130D6C21A314FD10096BFC7 /* MetalTracer */,
 				D130D6C11A314FD10096BFC7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -104,13 +84,12 @@
 		D130D6C11A314FD10096BFC7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D130D6C01A314FD10096BFC7 /* Raytracer.app */,
-				D130D6D51A314FD10096BFC7 /* RaytracerTests.xctest */,
+				D130D6C01A314FD10096BFC7 /* MetalTracer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D130D6C21A314FD10096BFC7 /* Raytracer */ = {
+		D130D6C21A314FD10096BFC7 /* MetalTracer */ = {
 			isa = PBXGroup;
 			children = (
 				D1C260881A3E37770063CDF3 /* Metal */,
@@ -134,7 +113,9 @@
 				D1EB5ABC1A560E2100C1F555 /* Ray.swift */,
 				D1EB5ABE1A560EBA00C1F555 /* Camera.swift */,
 				D1D407061A678E5200CA07E0 /* MetalContext.swift */,
+				D1D407081A67ABA600CA07E0 /* Raytracer.swift */,
 			);
+			name = MetalTracer;
 			path = Raytracer;
 			sourceTree = "<group>";
 		};
@@ -142,23 +123,6 @@
 			isa = PBXGroup;
 			children = (
 				D130D6C41A314FD10096BFC7 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		D130D6D81A314FD10096BFC7 /* RaytracerTests */ = {
-			isa = PBXGroup;
-			children = (
-				D130D6DB1A314FD10096BFC7 /* RaytracerTests.swift */,
-				D130D6D91A314FD10096BFC7 /* Supporting Files */,
-			);
-			path = RaytracerTests;
-			sourceTree = "<group>";
-		};
-		D130D6D91A314FD10096BFC7 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				D130D6DA1A314FD10096BFC7 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -174,9 +138,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D130D6BF1A314FD10096BFC7 /* Raytracer */ = {
+		D130D6BF1A314FD10096BFC7 /* MetalTracer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D130D6DF1A314FD10096BFC7 /* Build configuration list for PBXNativeTarget "Raytracer" */;
+			buildConfigurationList = D130D6DF1A314FD10096BFC7 /* Build configuration list for PBXNativeTarget "MetalTracer" */;
 			buildPhases = (
 				D130D6BC1A314FD10096BFC7 /* Sources */,
 				D130D6BD1A314FD10096BFC7 /* Frameworks */,
@@ -186,28 +150,10 @@
 			);
 			dependencies = (
 			);
-			name = Raytracer;
+			name = MetalTracer;
 			productName = Raytracer;
-			productReference = D130D6C01A314FD10096BFC7 /* Raytracer.app */;
+			productReference = D130D6C01A314FD10096BFC7 /* MetalTracer.app */;
 			productType = "com.apple.product-type.application";
-		};
-		D130D6D41A314FD10096BFC7 /* RaytracerTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D130D6E21A314FD10096BFC7 /* Build configuration list for PBXNativeTarget "RaytracerTests" */;
-			buildPhases = (
-				D130D6D11A314FD10096BFC7 /* Sources */,
-				D130D6D21A314FD10096BFC7 /* Frameworks */,
-				D130D6D31A314FD10096BFC7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D130D6D71A314FD10096BFC7 /* PBXTargetDependency */,
-			);
-			name = RaytracerTests;
-			productName = RaytracerTests;
-			productReference = D130D6D51A314FD10096BFC7 /* RaytracerTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -222,13 +168,9 @@
 						CreatedOnToolsVersion = 6.1;
 						DevelopmentTeam = 4DCQ4JU9B3;
 					};
-					D130D6D41A314FD10096BFC7 = {
-						CreatedOnToolsVersion = 6.1;
-						TestTargetID = D130D6BF1A314FD10096BFC7;
-					};
 				};
 			};
-			buildConfigurationList = D130D6BB1A314FD10096BFC7 /* Build configuration list for PBXProject "Raytracer" */;
+			buildConfigurationList = D130D6BB1A314FD10096BFC7 /* Build configuration list for PBXProject "MetalTracer" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -241,8 +183,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D130D6BF1A314FD10096BFC7 /* Raytracer */,
-				D130D6D41A314FD10096BFC7 /* RaytracerTests */,
+				D130D6BF1A314FD10096BFC7 /* MetalTracer */,
 			);
 		};
 /* End PBXProject section */
@@ -259,13 +200,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D130D6D31A314FD10096BFC7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -273,6 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1D407091A67ABA600CA07E0 /* Raytracer.swift in Sources */,
 				D1C4D7E11A5222A1009232C4 /* Sphere.swift in Sources */,
 				D1D407071A678E5200CA07E0 /* MetalContext.swift in Sources */,
 				D175A9721A4F49EA00BBFA50 /* MainShader.metal in Sources */,
@@ -290,23 +225,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D130D6D11A314FD10096BFC7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D130D6DC1A314FD10096BFC7 /* RaytracerTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		D130D6D71A314FD10096BFC7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D130D6BF1A314FD10096BFC7 /* Raytracer */;
-			targetProxy = D130D6D61A314FD10096BFC7 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D130D6C91A314FD10096BFC7 /* Main.storyboard */ = {
@@ -416,7 +335,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Raytracer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MetalTracer;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Raytracer/Raytracer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -432,50 +351,16 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Raytracer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MetalTracer;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Raytracer/Raytracer-Bridging-Header.h";
-			};
-			name = Release;
-		};
-		D130D6E31A314FD10096BFC7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = RaytracerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Raytracer.app/Raytracer";
-			};
-			name = Debug;
-		};
-		D130D6E41A314FD10096BFC7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = RaytracerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Raytracer.app/Raytracer";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D130D6BB1A314FD10096BFC7 /* Build configuration list for PBXProject "Raytracer" */ = {
+		D130D6BB1A314FD10096BFC7 /* Build configuration list for PBXProject "MetalTracer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D130D6DD1A314FD10096BFC7 /* Debug */,
@@ -484,20 +369,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D130D6DF1A314FD10096BFC7 /* Build configuration list for PBXNativeTarget "Raytracer" */ = {
+		D130D6DF1A314FD10096BFC7 /* Build configuration list for PBXNativeTarget "MetalTracer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D130D6E01A314FD10096BFC7 /* Debug */,
 				D130D6E11A314FD10096BFC7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D130D6E21A314FD10096BFC7 /* Build configuration list for PBXNativeTarget "RaytracerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D130D6E31A314FD10096BFC7 /* Debug */,
-				D130D6E41A314FD10096BFC7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

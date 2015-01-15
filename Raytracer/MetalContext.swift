@@ -10,4 +10,16 @@ import UIKit
 
 class MetalContext: NSObject {
     let device:MTLDevice = MTLCreateSystemDefaultDevice();
+    let defaultLibrary: MTLLibrary;
+    let commandQueue: MTLCommandQueue;
+    let pipelineState: MTLComputePipelineState!;
+    
+    
+    init(device:MTLDevice){
+        self.device = device;
+        defaultLibrary = device.newDefaultLibrary()!;
+        commandQueue = device.newCommandQueue();
+        let kernalProgram:MTLFunction! = defaultLibrary.newFunctionWithName("mainProgram");
+        pipelineState = device.newComputePipelineStateWithFunction(kernalProgram, error: nil);
+    }
 }

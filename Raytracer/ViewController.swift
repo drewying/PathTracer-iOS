@@ -34,14 +34,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var lightYSlider: UISlider!
     @IBOutlet weak var lightZSlider: UISlider!
     
-    var context:MetalContext = MetalContext();
-    
-    var defaultLibrary: MTLLibrary! = nil;
-    var commandQueue: MTLCommandQueue! = nil
-    var pipelineState: MTLComputePipelineState! = nil
+    var context:MetalContext = MetalContext(device: MTLCreateSystemDefaultDevice());
     var inputTexture: MTLTexture! = nil;
     var outputTexture: MTLTexture! = nil;
     var imageTexture: MTLTexture! = nil;
+
     
     var timer: CADisplayLink! = nil
     var start = NSDate();
@@ -195,10 +192,7 @@ class ViewController: UIViewController {
         let light = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
         let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
         scene = Scene(camera:camera, light:light, context:self.context);
-        defaultLibrary = context.device.newDefaultLibrary()
-        commandQueue = context.device.newCommandQueue();
-        let kernalProgram = defaultLibrary!.newFunctionWithName("mainProgram");
-        pipelineState = context.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
+        
   
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         inputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
@@ -238,13 +232,13 @@ class ViewController: UIViewController {
     }
     
     func render() {
-        commandQueue.insertDebugCaptureBoundary();
+        context.commandQueue.insertDebugCaptureBoundary();
         let threadgroupCounts = MTLSizeMake(16,16, 1);
         let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
-        let commandBuffer = commandQueue.commandBuffer();
+        let commandBuffer = context.commandQueue.commandBuffer();
         let commandEncoder = commandBuffer.computeCommandEncoder();
         
-        commandEncoder.setComputePipelineState(pipelineState);
+        commandEncoder.setComputePipelineState(context.pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         //commandEncoder.setTexture(imageTexture, atIndex:2);
@@ -259,11 +253,8 @@ class ViewController: UIViewController {
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
         commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
-        //commandEncoder.setBuffer(d, offset: 0, atIndex: 3);
-        
-        
-        
-        
+    
+    
         
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);

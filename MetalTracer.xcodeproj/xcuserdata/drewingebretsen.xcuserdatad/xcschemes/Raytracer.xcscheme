@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D130D6BF1A314FD10096BFC7"
-               BuildableName = "Raytracer.app"
-               BlueprintName = "Raytracer"
-               ReferencedContainer = "container:Raytracer.xcodeproj">
+               BuildableName = "MetalTracer.app"
+               BlueprintName = "MetalTracer"
+               ReferencedContainer = "container:MetalTracer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D130D6D41A314FD10096BFC7"
-               BuildableName = "RaytracerTests.xctest"
-               BlueprintName = "RaytracerTests"
-               ReferencedContainer = "container:Raytracer.xcodeproj">
+               BuildableName = "MetalTracerTests.xctest"
+               BlueprintName = "MetalTracerTests"
+               ReferencedContainer = "container:MetalTracer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D130D6D41A314FD10096BFC7"
-               BuildableName = "RaytracerTests.xctest"
-               BlueprintName = "RaytracerTests"
-               ReferencedContainer = "container:Raytracer.xcodeproj">
+               BuildableName = "MetalTracerTests.xctest"
+               BlueprintName = "MetalTracerTests"
+               ReferencedContainer = "container:MetalTracer.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D130D6BF1A314FD10096BFC7"
-            BuildableName = "Raytracer.app"
-            BlueprintName = "Raytracer"
-            ReferencedContainer = "container:Raytracer.xcodeproj">
+            BuildableName = "MetalTracer.app"
+            BlueprintName = "MetalTracer"
+            ReferencedContainer = "container:MetalTracer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -77,9 +77,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D130D6BF1A314FD10096BFC7"
-            BuildableName = "Raytracer.app"
-            BlueprintName = "Raytracer"
-            ReferencedContainer = "container:Raytracer.xcodeproj">
+            BuildableName = "MetalTracer.app"
+            BlueprintName = "MetalTracer"
+            ReferencedContainer = "container:MetalTracer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -96,9 +96,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D130D6BF1A314FD10096BFC7"
-            BuildableName = "Raytracer.app"
-            BlueprintName = "Raytracer"
-            ReferencedContainer = "container:Raytracer.xcodeproj">
+            BuildableName = "MetalTracer.app"
+            BlueprintName = "MetalTracer"
+            ReferencedContainer = "container:MetalTracer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
