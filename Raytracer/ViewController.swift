@@ -34,7 +34,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var lightYSlider: UISlider!
     @IBOutlet weak var lightZSlider: UISlider!
     
-    var device: MTLDevice! = nil;
+    var context:MetalContext = MetalContext();
+    
     var defaultLibrary: MTLLibrary! = nil;
     var commandQueue: MTLCommandQueue! = nil
     var pipelineState: MTLComputePipelineState! = nil
@@ -61,9 +62,6 @@ class ViewController: UIViewController {
     var cameraToggle:Bool = false;
     
     var scene: Scene! = nil;
-    var light:Sphere = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
-
-    
     
     @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
         self.scene.camera.cameraPosition = Matrix.transformPoint(Matrix.translate( self.scene.camera.cameraPosition * (Float(sender.velocity) * -0.1)), right: self.scene.camera.cameraPosition);
@@ -100,14 +98,14 @@ class ViewController: UIViewController {
             let xVelocity = Float(velocity.x/(CGFloat(M_PI) * CGFloat(xResolution)));
             let yVelocity = Float(velocity.y/(CGFloat(M_PI) * CGFloat(yResolution)));
             
-            /*if (abs(xDelta) < abs(yDelta)){
-                let yMatrix:Matrix = Matrix.rotate(self.scene.camera.cameraUp, angle: yDelta);
+            if (abs(xDelta) < abs(yDelta)){
+                let yMatrix:Matrix = Matrix.rotate(scene.camera.cameraRight, angle: yVelocity);
                 self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * yMatrix;
                 self.scene.camera.cameraUp = self.scene.camera.cameraUp * yMatrix;
-            } else{*/
-                let xMatrix:Matrix = Matrix.rotateY(xVelocity);
+            } else{
+                let xMatrix:Matrix = Matrix.rotate(scene.camera.cameraUp, angle: xVelocity);
                 self.scene.camera.cameraPosition = self.scene.camera.cameraPosition * xMatrix;
-            //}
+            }
             
         }
         
@@ -119,10 +117,10 @@ class ViewController: UIViewController {
     
     @IBAction func lightPositionSlider(sender: UISlider) {
         switch(sender){
-        case lightXSlider:light.position.x = sender.value;
-        case lightYSlider:light.position.y = sender.value;
-        case lightZSlider:light.position.z = sender.value;
-        default:light.position.x = sender.value;
+        case lightXSlider:scene.light.position.x = sender.value;
+        case lightYSlider:scene.light.position.y = sender.value;
+        case lightZSlider:scene.light.position.z = sender.value;
+        default:scene.light.position.x = sender.value;
         }
         self.resetDisplay();
     }
@@ -133,8 +131,8 @@ class ViewController: UIViewController {
     }
     
     @IBAction func lightSizeSlider(sender: UISlider) {
-        self.light.radius = sender.value;
-        self.resetDisplay();
+        scene.light.radius = sender.value;
+        resetDisplay();
     }
     
     @IBAction func radiusSlider(sender: UISlider) {
@@ -163,24 +161,24 @@ class ViewController: UIViewController {
     }
     
     @IBAction func editLighting(){
-        self.lightXSlider.value = self.light.position.x;
-        self.lightYSlider.value = self.light.position.y;
-        self.lightZSlider.value = self.light.position.z;
-        self.lightSizeSlider.value = self.light.radius;
-        self.lightEditView.hidden = !self.lightEditView.hidden;
+        self.lightXSlider.value = scene.light.position.x;
+        self.lightYSlider.value = scene.light.position.y;
+        self.lightZSlider.value = scene.light.position.z;
+        self.lightSizeSlider.value = scene.light.radius;
+        self.lightEditView.hidden = !lightEditView.hidden;
         
     }
     
     @IBAction func addSphere(){
         let yPosition:Float = 0.4 * Float(scene.spheres.count-2);
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:yPosition, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
-        self.resetDisplay();
+        resetDisplay();
     }
     
     @IBAction func deleteSphere(sender: AnyObject) {
-        self.scene.spheres.removeAtIndex(self.selectedSphere);
-        self.selectedSphere = -1;
-        self.resetDisplay();
+        scene.deleteSphere(selectedSphere);
+        selectedSphere = -1;
+        resetDisplay();
     }
     
     override func viewDidLoad() {
@@ -193,21 +191,22 @@ class ViewController: UIViewController {
         let size:CGSize = self.imageView.frame.size;
         xResolution = Int(size.width);
         yResolution = Int(size.height);
-        scene = Scene(camera: Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height)));
-        device = MTLCreateSystemDefaultDevice()
-        defaultLibrary = device.newDefaultLibrary()
-        commandQueue = device.newCommandQueue();
+        
+        let light = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
+        let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
+        scene = Scene(camera:camera, light:light, context:self.context);
+        defaultLibrary = context.device.newDefaultLibrary()
+        commandQueue = context.device.newCommandQueue();
         let kernalProgram = defaultLibrary!.newFunctionWithName("mainProgram");
-        pipelineState = self.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
+        pipelineState = context.device.newComputePipelineStateWithFunction(kernalProgram!, error: nil);
   
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        inputTexture = device.newTextureWithDescriptor(textureDescriptor);
-        outputTexture = device.newTextureWithDescriptor(textureDescriptor);
+        inputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
+        outputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
         
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
    
-        
         
         
         let bytesPerPixel = UInt(4)
@@ -224,13 +223,13 @@ class ViewController: UIViewController {
         
         let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
         
-        let context = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
+        let graphicsContext = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
         
-        CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
+        CGContextDrawImage(graphicsContext, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
         
         let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
         
-        imageTexture = device.newTextureWithDescriptor(imageTextureDescriptor)
+        imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
         let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
         imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
 
@@ -253,21 +252,13 @@ class ViewController: UIViewController {
         let cameraParams = self.scene.camera.getParameterArray();
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1), 2];
         
-        let a = self.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
-        let b = self.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
+        let a = context.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
+        let b = context.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
         
-        
-        var s:[Sphere] = [];
-        s.append(light);
-        for sphere:Sphere in scene.spheres{
-            s.append(sphere);
-        }
-        
-        let c = self.device.newBufferWithBytes(&s, length: (sizeof(Sphere) + 3) * (scene.spheres.count + 1), options:nil);
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
-        commandEncoder.setBuffer(c, offset: 0, atIndex: 2);
+        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
         //commandEncoder.setBuffer(d, offset: 0, atIndex: 3);
         
         
@@ -296,6 +287,7 @@ class ViewController: UIViewController {
     func resetDisplay() {
         self.sampleNumber = 1;
         self.start = NSDate();
+        //scene.resetBuffer();
         //self.renderLoop();
     }
     

@@ -11,10 +11,24 @@ import Foundation
 class Scene : NSObject {
     
     var camera:Camera;
+    var light:Sphere;
     var spheres:[Sphere] = [];
+    var sphereData:[Sphere] = [];
+    var context:MetalContext;
+    var sphereBuffer:MTLBuffer!
     
-    init(camera:Camera){
+    init(camera:Camera, light:Sphere, context:MetalContext){
         self.camera = camera;
+        self.light = light;
+        self.context = context;
+    }
+    
+    func resetBuffer(){
+        sphereData = [light];
+        for sphere:Sphere in spheres{
+            sphereData.append(sphere);
+        }
+        sphereBuffer = context.device.newBufferWithBytes(&sphereData, length: (sizeof(Sphere) + 3) * (spheres.count + 1), options:nil);
     }
     
     func getClosestHit(ray:Ray) -> Int{
@@ -28,5 +42,11 @@ class Scene : NSObject {
     
     func addSphere(sphere:Sphere){
         spheres.append(sphere);
+        resetBuffer();
+    }
+    
+    func deleteSphere(index:Int){
+        spheres.removeAtIndex(index);
+        resetBuffer();
     }
 }
