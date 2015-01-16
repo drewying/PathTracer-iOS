@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D1816ABB1A68EA4D008D74C6 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1816ABA1A68EA4D008D74C6 /* Box.swift */; };
 		D1C2607F1A3D13A70063CDF3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C2607E1A3D13A70063CDF3 /* Metal.framework */; };
 		D1C260831A3D52C70063CDF3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C260821A3D52C70063CDF3 /* QuartzCore.framework */; };
 		D1D407231A67B12200CA07E0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D4070A1A67B12200CA07E0 /* AppDelegate.swift */; };
@@ -32,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		D130D6C01A314FD10096BFC7 /* MetalTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1816ABA1A68EA4D008D74C6 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Box.swift; path = MetalTracer/Box.swift; sourceTree = SOURCE_ROOT; };
 		D1C2607E1A3D13A70063CDF3 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		D1C260821A3D52C70063CDF3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D1D4070A1A67B12200CA07E0 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = MetalTracer/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
@@ -95,6 +97,7 @@
 				D1EAD1711A67B39500327963 /* SupportingFiles */,
 				D1D4070A1A67B12200CA07E0 /* AppDelegate.swift */,
 				D1D407101A67B12200CA07E0 /* BoundingBox.swift */,
+				D1816ABA1A68EA4D008D74C6 /* Box.swift */,
 				D1D407111A67B12200CA07E0 /* Camera.swift */,
 				D1D407121A67B12200CA07E0 /* Images.xcassets */,
 				D1D407141A67B12200CA07E0 /* MainShader.metal */,
@@ -205,6 +208,7 @@
 				D1D407341A67B12200CA07E0 /* UIImage+MBETextureUtilities.m in Sources */,
 				D1D407321A67B12200CA07E0 /* Sphere.swift in Sources */,
 				D1D407231A67B12200CA07E0 /* AppDelegate.swift in Sources */,
+				D1816ABB1A68EA4D008D74C6 /* Box.swift in Sources */,
 				D1D4072C1A67B12200CA07E0 /* Matrix.swift in Sources */,
 				D1D4072A1A67B12200CA07E0 /* MainShader.metal in Sources */,
 				D1D407301A67B12200CA07E0 /* Raytracer.swift in Sources */,

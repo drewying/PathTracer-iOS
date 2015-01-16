@@ -45,6 +45,7 @@ class ViewController: UIViewController {
     var sampleNumber = 1;
     var xResolution:Int = 0;
     var yResolution:Int = 0;
+    var boxes:[Box] = [];
     
     var selectedSphere:Int = -1 {
         didSet {
@@ -59,6 +60,59 @@ class ViewController: UIViewController {
     var cameraToggle:Bool = false;
     
     var scene: Scene! = nil;
+    
+    override func viewDidAppear(animated: Bool) {
+        let size:CGSize = self.imageView.frame.size;
+        xResolution = Int(size.width);
+        yResolution = Int(size.height);
+        
+        let light = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
+        let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
+        scene = Scene(camera:camera, light:light, context:self.context);
+        
+        
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        inputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
+        outputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
+        
+        scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
+        scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
+        
+        boxes.append(Box(min:Vector3D(x: -1.0, y: 1.0, z: -1.0), max:Vector3D(x: -1.0, y: -1.0, z: 1.0), normal:Vector3D(x:1.0, y:0.0, z:0.0), color:Vector3D(x: 0.75,y: 0.0,z: 0.0), material:Material.DIFFUSE));
+        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: -1.0), max:Vector3D(x: 1.0, y: -1.0, z: 1.0), normal:Vector3D(x:-1.0, y:0.0, z:0.0), color:Vector3D(x: 0.0,y: 0.0,z: 0.75), material:Material.DIFFUSE));
+        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: -1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:0.0, z:1.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
+        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: 1.0), normal:Vector3D(x:0.0, y:0.0, z:-1.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
+        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: 1.0), max:Vector3D(x: -1.0, y: 1.0, z: -1.0), normal:Vector3D(x:0.0, y:-1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
+        boxes.append(Box(min:Vector3D(x: 1.0, y: -1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
+        
+        
+        let bytesPerPixel = UInt(4)
+        let bitsPerComponent = UInt(8)
+        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+        
+        let image = UIImage(named: "texture.jpg")
+        let imageRef = image?.CGImage
+        let imageWidth = CGImageGetWidth(imageRef)
+        let imageHeight = CGImageGetHeight(imageRef)
+        let bytesPerRow = bytesPerPixel * imageWidth
+        
+        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: 0)
+        
+        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
+        
+        let graphicsContext = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
+        
+        CGContextDrawImage(graphicsContext, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
+        
+        let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
+        
+        imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
+        let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
+        imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
+        
+        timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
+        timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+    }
     
     @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
         self.scene.camera.cameraPosition = Matrix.transformPoint(Matrix.translate( self.scene.camera.cameraPosition * (Float(sender.velocity) * -0.1)), right: self.scene.camera.cameraPosition);
@@ -184,52 +238,8 @@ class ViewController: UIViewController {
     }
     
     
-    override func viewDidAppear(animated: Bool) {
-        let size:CGSize = self.imageView.frame.size;
-        xResolution = Int(size.width);
-        yResolution = Int(size.height);
-        
-        let light = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
-        let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
-        scene = Scene(camera:camera, light:light, context:self.context);
-        
-  
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        inputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
-        outputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
-        
-        scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
-        scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
-   
-        
-        
-        let bytesPerPixel = UInt(4)
-        let bitsPerComponent = UInt(8)
-        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-        
-        let image = UIImage(named: "texture.jpg")
-        let imageRef = image?.CGImage
-        let imageWidth = CGImageGetWidth(imageRef)
-        let imageHeight = CGImageGetHeight(imageRef)
-        let bytesPerRow = bytesPerPixel * imageWidth
-        
-        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: 0)
-        
-        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
-        
-        let graphicsContext = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
-        
-        CGContextDrawImage(graphicsContext, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
-        
-        let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
-        
-        imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
-        let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
-        imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
-
-        timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
-        timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-    }
+    
+    
     
     func render() {
         context.commandQueue.insertDebugCaptureBoundary();
@@ -241,13 +251,14 @@ class ViewController: UIViewController {
         commandEncoder.setComputePipelineState(context.pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
-        //commandEncoder.setTexture(imageTexture, atIndex:2);
         
         let cameraParams = self.scene.camera.getParameterArray();
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1), 2];
         
         let a = context.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = context.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
+        
+        
         
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
