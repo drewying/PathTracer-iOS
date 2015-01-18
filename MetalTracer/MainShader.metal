@@ -450,9 +450,10 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
     Camera cam;
     cam.eye = float3(cameraParams[0]);
     cam.up = float3(cameraParams[1]);
+    cam.right = float3(cameraParams[2]);
     //cam.focalLength = float3(cameraParams[2]).x;
     cam.lookAt = -normalize(cam.eye);
-    cam.right = cross(-normalize(cam.eye), cam.up);
+    //cam.right = cross(-normalize(cam.eye), cam.up);
     cam.right *= aspectRatio;
     
     float r1 = 0;
@@ -464,7 +465,8 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
     }
     
     float3 base = cam.right * x + cam.up * y;
-    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up + cam.right).z/2.0);
+    //float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up + cam.right).z/2.0);
+    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up.z/2.0)+(cam.right.z/2.0));
     
     float3 U = cam.up * r1 * cam.apertureSize;
     float3 V = cam.right * r2 * cam.apertureSize;

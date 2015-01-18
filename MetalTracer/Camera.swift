@@ -10,16 +10,13 @@ import Foundation
 
 struct Camera {
     var cameraUp:Vector3D;
-    var cameraRight:Vector3D{
-        get {
-            return (-cameraPosition.normalized() × cameraUp)
-        }
-    }
+    var cameraRight:Vector3D;
     var cameraPosition:Vector3D;
     var aspectRatio:Float;
 
-    init(cameraUp:Vector3D, cameraPosition:Vector3D, aspectRatio:Float){
+    init(cameraUp:Vector3D, cameraRight:Vector3D, cameraPosition:Vector3D, aspectRatio:Float){
         self.cameraUp = cameraUp;
+        self.cameraRight = cameraRight;
         self.cameraPosition = cameraPosition;
         self.aspectRatio = aspectRatio;
     }
@@ -36,7 +33,7 @@ struct Camera {
     
     
     func getParameterArray() -> [Vector3D]{
-        return [cameraPosition, cameraUp];
+        return [cameraPosition, cameraUp, cameraRight];
     }
     
 }
