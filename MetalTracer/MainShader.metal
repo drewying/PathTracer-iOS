@@ -450,11 +450,7 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
     Camera cam;
     cam.eye = float3(cameraParams[0]);
     cam.up = float3(cameraParams[1]);
-    cam.right = float3(cameraParams[2]);
-    //cam.focalLength = float3(cameraParams[2]).x;
     cam.lookAt = -normalize(cam.eye);
-    //cam.right = cross(-normalize(cam.eye), cam.up);
-    cam.right *= aspectRatio;
     
     float r1 = 0;
     float r2 = 0;
@@ -464,16 +460,22 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
         r2 = (rand(seed) * 2.0) - 1.0;
     }
     
-    float3 base = cam.right * x + cam.up * y;
-    //float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up + cam.right).z/2.0);
-    float3 centered = base - float3(cam.right.x/2.0, cam.up.y/2.0, (cam.up.z/2.0)+(cam.right.z/2.0));
-    
     float3 U = cam.up * r1 * cam.apertureSize;
     float3 V = cam.right * r2 * cam.apertureSize;
     float3 UV = U+V;
     
     float3 origin = cam.eye + UV;
-    float3 direction = centered + cam.lookAt;
+    
+    float3 l = normalize(cam.lookAt-cam.eye);
+    float3 right = cross(l, cam.up);
+    float3 up = cross(right, l);
+    
+    right = normalize(right);
+    up = normalize(up);
+    
+    right *= aspectRatio;
+    
+    float3 direction = l + right * x + up * y;
     direction = (direction * cam.focalLength) - UV;
     direction = normalize(direction);
     
@@ -519,8 +521,8 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     
     float dx = 1.0 / xResolution;
     float dy = 1.0 / yResolution;
-    float x = gid.x  * dx;
-    float y = gid.y  * dy;
+    float x = -0.5 + gid.x  * dx;
+    float y = -0.5 + gid.y  * dy;
     
     
     //Jitter the ray

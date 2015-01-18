@@ -38,7 +38,7 @@ struct Matrix{
     static func rotate(axis:Vector3D, angle:Float) -> Matrix{
         let axisN:Vector3D = axis.normalized();
         
-        var returnMatrix = identityMatrix();
+        var returnMatrix = Matrix();
         
         let x:Float = axisN.x;
         let y:Float = axisN.y;
@@ -47,24 +47,24 @@ struct Matrix{
         let sine:Float = sin(angle);
         let t:Float = 1.0 - cosine;
         
-        returnMatrix.x[0][0] = t * x * x + cosine;
-        returnMatrix.x[0][1] = t * x * y - sine * y;
-        returnMatrix.x[0][2] = t * x * z + sine * y;
-        returnMatrix.x[0][3] = 0.0;
-        
-        returnMatrix.x[1][0] = t * x * y + sine * z;
-        returnMatrix.x[1][1] = t * y * y + cosine;
-        returnMatrix.x[1][2] = t * y * z - sine * x;
-        returnMatrix.x[1][3] = 0.0;
-        
-        returnMatrix.x[2][0] = t * x * z - sine * y;
-        returnMatrix.x[2][1] = t * y * z + sine * x;
-        returnMatrix.x[2][2] = t * z * z + cosine;
-        returnMatrix.x[2][3] = 0.0;
-        
+        returnMatrix.x[0][0] = t * x * x + cosine
+        returnMatrix.x[1][0] = t * x * y - sine * z;
+        returnMatrix.x[2][0] = t * x * z + sine * y;
         returnMatrix.x[3][0] = 0.0;
+        
+        returnMatrix.x[0][1] = t * x * y + sine * z;
+        returnMatrix.x[1][1] = t * y * y + cosine;
+        returnMatrix.x[2][1] = t * y * z - sine * x;
         returnMatrix.x[3][1] = 0.0;
+        
+        returnMatrix.x[0][2] = t * x * z - sine * y;
+        returnMatrix.x[1][2] = t * y * z + sine * x;
+        returnMatrix.x[2][2] = t * z * z + cosine;
         returnMatrix.x[3][2] = 0.0;
+        
+        returnMatrix.x[0][3] = 0.0;
+        returnMatrix.x[1][3] = 0.0;
+        returnMatrix.x[2][3] = 0.0;
         returnMatrix.x[3][3] = 1.0;
         
         return returnMatrix;

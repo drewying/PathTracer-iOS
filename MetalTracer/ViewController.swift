@@ -67,9 +67,8 @@ class ViewController: UIViewController {
         yResolution = Int(size.height);
         
         let light = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
-        //let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraRight:Vector3D(x: 1.0,y: 0.0,z: 0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
         
-        let camera = Camera(cameraUp:Vector3D(x:0.0, y:0.0, z:-1.0), cameraRight:Vector3D(x: 1.0,y: 0.0,z: 0.0), cameraPosition:Vector3D(x:0.0, y:3.0, z:0.0), aspectRatio:Float(size.width/size.height));
+        let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
         
         scene = Scene(camera:camera, light:light, context:self.context);
         
@@ -127,8 +126,8 @@ class ViewController: UIViewController {
         var point = sender.locationInView(self.imageView);
         let dx:Float = 1.0 / Float(xResolution);
         let dy:Float = 1.0 / Float(yResolution);
-        let x:Float = Float(CGFloat(xResolution)-point.x)  * dx;
-        let y:Float = Float(CGFloat(yResolution)-point.y)  * dy;
+        let x:Float = -0.5 + Float(CGFloat(xResolution)-point.x)  * dx;
+        let y:Float = -0.5 + Float(point.y)  * dy;
         var ray:Ray = scene.camera.getRay(x, y: y);
         selectedSphere = scene.getClosestHit(ray);
         lightEditView.hidden = true;
@@ -152,19 +151,17 @@ class ViewController: UIViewController {
             let xVelocity = Float(velocity.x/(CGFloat(M_PI) * CGFloat(xResolution)));
             let yVelocity = Float(velocity.y/(CGFloat(M_PI) * CGFloat(yResolution)));
             
-            if (abs(xDelta) < abs(yDelta)){
-                let yMatrix:Matrix = Matrix.rotate(self.scene.camera.cameraRight, angle:yVelocity)
-                //self.scene.camera.cameraUp = Matrix.transformPoint(yMatrix, right: self.scene.camera.cameraUp);
-                //self.scene.camera.cameraRight = Matrix.transformVector(yMatrix, right: self.scene.camera.cameraRight);
-                //self.scene.camera.cameraPosition = Matrix.transformPoint(yMatrix, right: self.scene.camera.cameraPosition)
+            //if (abs(xDelta) < abs(yDelta)){
+                let yMatrix:Matrix = Matrix.rotate(self.scene.camera.cameraRight, angle:-yVelocity)
+                self.scene.camera.cameraUp = Matrix.transformVector(yMatrix, right: self.scene.camera.cameraUp);
+                self.scene.camera.cameraPosition = Matrix.transformPoint(yMatrix, right: self.scene.camera.cameraPosition)
                 
-            } else{
+            //} else{
                 let xMatrix:Matrix = Matrix.rotateY(xVelocity);
-                self.scene.camera.cameraRight = Matrix.transformVector(xMatrix, right: self.scene.camera.cameraRight);
                 self.scene.camera.cameraUp = Matrix.transformVector(xMatrix, right: self.scene.camera.cameraUp);
-                //self.scene.camera.cameraPosition = Matrix.transformPoint(xMatrix, right: self.scene.camera.cameraPosition)
+                self.scene.camera.cameraPosition = Matrix.transformPoint(xMatrix, right: self.scene.camera.cameraPosition)
                 
-            }
+            //}
             
         }
         
