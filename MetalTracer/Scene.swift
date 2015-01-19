@@ -14,6 +14,7 @@ class Scene : NSObject {
     var light:Sphere;
     var spheres:[Sphere] = [];
     var sphereData:[Sphere] = [];
+    var wallColors:[Vector3D] = [];
     var context:MetalContext;
     var sphereBuffer:MTLBuffer!
     

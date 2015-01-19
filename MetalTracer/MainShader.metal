@@ -79,7 +79,7 @@ struct Camera{
 struct Scene{
     Sphere light;
     constant Sphere *spheres;
-    int sphereCount;
+    constant packed_float3 *colors;
     float xResolution;
     float yResolution;
 };
@@ -354,19 +354,13 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
         Hit hit = boxIntersection(b, r, h.distance);
         if (hit.didHit){
             h = hit;
+            //h.color = scene.colors[i];
         }
     }
     
     for (int i=0; i<maxSpheres; i++){
         Hit hit = sphereIntersection(scene.spheres[i], r, h.distance);
         if (hit.didHit){
-            /*if (spheres[i].selected == 0){
-                h = hit;
-            } else{
-                if (h.normal.x > 0.3){
-                    h = hit;
-                }
-            }*/
             h = hit;
         }
     }
@@ -496,7 +490,8 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
                       constant packed_float3 *cameraParams [[buffer(1)]],
-                      constant Sphere *spheres [[buffer(2)]]
+                      constant Sphere *spheres [[buffer(2)]],
+                      constant packed_float3 *wallColors [[buffer(3)]]
                       ){
     
     uint gidIndex = gid.x * intParams[2] + gid.y;
@@ -556,7 +551,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    Scene scene = Scene{spheres[0], spheres+1, sphereCount, xResolution, yResolution};
+    Scene scene = Scene{spheres[0], spheres+1, wallColors, xResolution, yResolution};
     
     float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     

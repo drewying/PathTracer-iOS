@@ -87,6 +87,13 @@ class ViewController: UIViewController {
         boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: 1.0), max:Vector3D(x: -1.0, y: 1.0, z: -1.0), normal:Vector3D(x:0.0, y:-1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
         boxes.append(Box(min:Vector3D(x: 1.0, y: -1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
         
+        scene.wallColors.append(Vector3D(x: 0.75, y: 0.0, z: 0.0));
+        scene.wallColors.append(Vector3D(x: 0.0, y: 0.0, z: 0.75));
+        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
+        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
+        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
+        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
+        
         
         let bytesPerPixel = UInt(4)
         let bitsPerComponent = UInt(8)
@@ -262,13 +269,14 @@ class ViewController: UIViewController {
         
         let a = context.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
         let b = context.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
-        
+        let c = context.device.newBufferWithBytes(&scene.wallColors, length: sizeof(Vector3D) * scene.wallColors.count, options: nil);
         
         
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
         commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
+        commandEncoder.setBuffer(c, offset: 0, atIndex: 3);
     
     
         
