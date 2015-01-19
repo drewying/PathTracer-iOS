@@ -35,14 +35,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var lightZSlider: UISlider!
     
     var context:MetalContext = MetalContext(device: MTLCreateSystemDefaultDevice());
-    var inputTexture: MTLTexture! = nil;
-    var outputTexture: MTLTexture! = nil;
+    
     var imageTexture: MTLTexture! = nil;
 
+    var rayTracer:Raytracer! = nil;
     
     var timer: CADisplayLink! = nil
-    var start = NSDate();
-    var sampleNumber = 1;
+    
     var xResolution:Int = 0;
     var yResolution:Int = 0;
     var boxes:[Box] = [];
@@ -73,19 +72,17 @@ class ViewController: UIViewController {
         scene = Scene(camera:camera, light:light, context:self.context);
         
         
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        inputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
-        outputTexture = context.device.newTextureWithDescriptor(textureDescriptor);
+        
         
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
         
-        boxes.append(Box(min:Vector3D(x: -1.0, y: 1.0, z: -1.0), max:Vector3D(x: -1.0, y: -1.0, z: 1.0), normal:Vector3D(x:1.0, y:0.0, z:0.0), color:Vector3D(x: 0.75,y: 0.0,z: 0.0), material:Material.DIFFUSE));
+        /*boxes.append(Box(min:Vector3D(x: -1.0, y: 1.0, z: -1.0), max:Vector3D(x: -1.0, y: -1.0, z: 1.0), normal:Vector3D(x:1.0, y:0.0, z:0.0), color:Vector3D(x: 0.75,y: 0.0,z: 0.0), material:Material.DIFFUSE));
         boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: -1.0), max:Vector3D(x: 1.0, y: -1.0, z: 1.0), normal:Vector3D(x:-1.0, y:0.0, z:0.0), color:Vector3D(x: 0.0,y: 0.0,z: 0.75), material:Material.DIFFUSE));
         boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: -1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:0.0, z:1.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
         boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: 1.0), normal:Vector3D(x:0.0, y:0.0, z:-1.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
         boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: 1.0), max:Vector3D(x: -1.0, y: 1.0, z: -1.0), normal:Vector3D(x:0.0, y:-1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
-        boxes.append(Box(min:Vector3D(x: 1.0, y: -1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
+        boxes.append(Box(min:Vector3D(x: 1.0, y: -1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));*/
         
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.0, z: 0.0));
         scene.wallColors.append(Vector3D(x: 0.0, y: 0.0, z: 0.75));
@@ -118,6 +115,9 @@ class ViewController: UIViewController {
         imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
         let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
         imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
+        
+        
+        self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution);
         
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
@@ -251,56 +251,16 @@ class ViewController: UIViewController {
     }
     
     
-    
-    
-    
-    func render() {
-        context.commandQueue.insertDebugCaptureBoundary();
-        let threadgroupCounts = MTLSizeMake(16,16, 1);
-        let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
-        let commandBuffer = context.commandQueue.commandBuffer();
-        let commandEncoder = commandBuffer.computeCommandEncoder();
-        
-        commandEncoder.setComputePipelineState(context.pipelineState);
-        commandEncoder.setTexture(inputTexture, atIndex: 0);
-        commandEncoder.setTexture(outputTexture, atIndex:1);
-        
 
-        let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1), 2];
-        
-        let a = context.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
-        
-        
-        
-        commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
-        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 1);
-        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
-        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 3);
-    
-    
-        
-        
-        commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
-        commandEncoder.endEncoding();
-        commandBuffer.commit();
-        //commandBuffer.waitUntilScheduled();
-        commandBuffer.waitUntilCompleted();
-        //self.inputTexture.replaceRegion(MTLRegionMake2D(0, 0, self.xResolution, self.yResolution), mipmapLevel: 0, withBytes: &self.outputTexture, bytesPerRow: 4*self.xResolution);
-        self.inputTexture = self.outputTexture;
-    }
-    
     func renderLoop() {
         autoreleasepool {
-            self.render();
-            self.sampleNumber++;
-            self.sampleLabel.text = NSString(format: "Pass:%i", self.sampleNumber);
-            self.imageView.image = UIImage(MTLTexture: self.inputTexture)
+            self.imageView.image = self.rayTracer.renderScene(self.scene);
+            self.sampleLabel.text = NSString(format: "Pass:%i", self.rayTracer.sampleNumber);
         }
     }
     
     func resetDisplay() {
-        self.sampleNumber = 1;
-        self.start = NSDate();
+        self.rayTracer.sampleNumber = 1;
         scene.resetBuffer();
         //self.renderLoop();
     }
