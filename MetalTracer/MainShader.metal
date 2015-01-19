@@ -352,7 +352,7 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
         Hit hit = boxIntersection(b, r, h.distance);
         if (hit.didHit){
             h = hit;
-            //h.color = scene.colors[i];
+            h.color = scene.colors[i];
         }
     }
     

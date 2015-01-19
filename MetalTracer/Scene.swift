@@ -12,11 +12,17 @@ class Scene : NSObject {
     
     var camera:Camera;
     var light:Sphere;
-    var spheres:[Sphere] = [];
-    var sphereData:[Sphere] = [];
-    var wallColors:[Vector3D] = [];
+    var spheres:[Sphere] = []
+    var wallColors:[Vector3D] = []
+    
     var context:MetalContext;
+    
     var sphereBuffer:MTLBuffer!
+    var cameraBuffer:MTLBuffer!
+    var wallColorBuffer:MTLBuffer!
+    
+    var sphereData:[Sphere] = []
+    var cameraData:[Vector3D] = []
     
     init(camera:Camera, light:Sphere, context:MetalContext){
         self.camera = camera;
@@ -31,6 +37,12 @@ class Scene : NSObject {
             sphereData.append(sphere);
         }
         sphereBuffer = context.device.newBufferWithBytes(&sphereData, length: (sizeof(Sphere) + 3) * (spheres.count + 1), options:nil);
+        
+        cameraData = [camera.cameraPosition, camera.cameraUp];
+        cameraBuffer = context.device.newBufferWithBytes(&cameraData, length: sizeof(Vector3D) * 2, options:nil);
+        
+        wallColorBuffer = context.device.newBufferWithBytes(&wallColors, length: sizeof(Vector3D) * 6, options:nil);
+        
     }
     
     func getClosestHit(ray:Ray) -> Int{

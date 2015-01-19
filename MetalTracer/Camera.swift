@@ -42,10 +42,4 @@ struct Camera {
         return Ray(origin: cameraPosition, direction: direction);
     }
     
-    
-    
-    func getParameterArray() -> [Vector3D]{
-        return [cameraPosition, cameraUp];
-    }
-    
 }

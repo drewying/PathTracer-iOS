@@ -121,6 +121,7 @@ class ViewController: UIViewController {
         
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+        resetDisplay();
     }
     
     @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
@@ -264,19 +265,17 @@ class ViewController: UIViewController {
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
         
-        let cameraParams = self.scene.camera.getParameterArray();
+
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(self.lightModeSegmentedControl.selectedSegmentIndex + 1), 2];
         
         let a = context.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
-        let b = context.device.newBufferWithBytes(cameraParams, length: sizeofValue(cameraParams[0])*cameraParams.count, options:nil);
-        let c = context.device.newBufferWithBytes(&scene.wallColors, length: sizeof(Vector3D) * scene.wallColors.count, options: nil);
         
         
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
-        commandEncoder.setBuffer(b, offset: 0, atIndex: 1);
+        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 1);
         commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
-        commandEncoder.setBuffer(c, offset: 0, atIndex: 3);
+        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 3);
     
     
         
