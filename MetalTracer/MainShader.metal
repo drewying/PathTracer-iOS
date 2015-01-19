@@ -71,7 +71,7 @@ struct Triangle{
 
 struct Camera{
     float3 position;
-    float3 up = float3(0.0, 1.0, 0.0);
+    float3 up;
     float apertureSize = 0.0;
     float focalLength = 1.0;
 };
@@ -80,8 +80,6 @@ struct Scene{
     Sphere light;
     constant Sphere *spheres;
     constant packed_float3 *colors;
-    float xResolution;
-    float yResolution;
 };
 
 inline Hit noHit(){
@@ -430,12 +428,6 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
     
 }
 
-float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNumber){
-    currentSample -= currentSample / (float)sampleNumber;
-    currentSample += newSample / (float)sampleNumber;
-    return currentSample;
-}
-
 Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant packed_float3 *cameraParams){
     Camera cam;
     cam.position = float3(cameraParams[0]);
@@ -551,7 +543,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    Scene scene = Scene{spheres[0], spheres+1, wallColors, xResolution, yResolution};
+    Scene scene = Scene{spheres[0], spheres+1, wallColors};
     
     float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     

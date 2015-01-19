@@ -20,7 +20,6 @@ struct Camera {
 
     init(cameraUp:Vector3D, cameraPosition:Vector3D, aspectRatio:Float){
         self.cameraUp = cameraUp;
-        //self.cameraRight = cameraRight;
         self.cameraPosition = cameraPosition;
         self.aspectRatio = aspectRatio;
     }
@@ -46,7 +45,7 @@ struct Camera {
     
     
     func getParameterArray() -> [Vector3D]{
-        return [cameraPosition, cameraUp, cameraRight];
+        return [cameraPosition, cameraUp];
     }
     
 }
