@@ -72,10 +72,8 @@ struct Triangle{
 };
 
 struct Camera{
-    float3 eye;
-    float3 lookAt;
+    float3 position;
     float3 up = float3(0.0, 1.0, 0.0);
-    float3 right;
     float apertureSize = 0.0;
     float focalLength = 1.0;
 };
@@ -448,9 +446,9 @@ float4 monteCarloIntegrate(float4 currentSample, float4 newSample, uint sampleNu
 
 Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant packed_float3 *cameraParams){
     Camera cam;
-    cam.eye = float3(cameraParams[0]);
+    cam.position = float3(cameraParams[0]);
     cam.up = float3(cameraParams[1]);
-    cam.lookAt = -normalize(cam.eye);
+    float3 lookAt = -normalize(cam.position);
     
     float r1 = 0;
     float r2 = 0;
@@ -460,15 +458,14 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
         r2 = (rand(seed) * 2.0) - 1.0;
     }
     
-    float3 U = cam.up * r1 * cam.apertureSize;
-    float3 V = cam.right * r2 * cam.apertureSize;
-    float3 UV = U+V;
-    
-    float3 origin = cam.eye + UV;
-    
-    float3 l = normalize(cam.lookAt-cam.eye);
+    float3 l = normalize(lookAt-cam.position);
     float3 right = cross(l, cam.up);
     float3 up = cross(right, l);
+    
+    float3 U = up * r1 * cam.apertureSize;
+    float3 V = right * r2 * cam.apertureSize;
+    float3 UV = U+V;
+    
     
     right = normalize(right);
     up = normalize(up);
@@ -478,6 +475,8 @@ Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant pac
     float3 direction = l + right * x + up * y;
     direction = (direction * cam.focalLength) - UV;
     direction = normalize(direction);
+    
+    float3 origin = cam.position + UV;
     
     Ray outRay = {origin, direction};
     return outRay;
