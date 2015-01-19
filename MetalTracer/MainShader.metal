@@ -17,7 +17,6 @@ using namespace metal;
 #define EPSILON 1.e-4
 
 static constant int boxCount = 6;
-
 static constant int bounceCount = 5;
 static constant int maxSpheres = 4;
 
@@ -42,7 +41,6 @@ struct Sphere{
     packed_float3 position;
     float radius;
     packed_float3 color;
-    //uint selected;
     Material material;
 };
 
@@ -499,8 +497,6 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       constant uint *intParams [[buffer(0)]],
                       constant packed_float3 *cameraParams [[buffer(1)]],
                       constant Sphere *spheres [[buffer(2)]]
-                      //constant Sphere *spheres [[buffer(3)]]
-                      
                       ){
     
     uint gidIndex = gid.x * intParams[2] + gid.y;
