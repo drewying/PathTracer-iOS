@@ -92,32 +92,11 @@ class ViewController: UIViewController {
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
         
         
-        let bytesPerPixel = UInt(4)
-        let bitsPerComponent = UInt(8)
-        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-        
-        let image = UIImage(named: "texture.jpg")
-        let imageRef = image?.CGImage
-        let imageWidth = CGImageGetWidth(imageRef)
-        let imageHeight = CGImageGetHeight(imageRef)
-        let bytesPerRow = bytesPerPixel * imageWidth
-        
-        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: 0)
-        
-        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
-        
-        let graphicsContext = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
-        
-        CGContextDrawImage(graphicsContext, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
-        
-        let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
-        
-        imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
-        let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
-        imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
+        self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context);
         
         
         self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution);
+        rayTracer.imageTexture = imageTexture;
         
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)

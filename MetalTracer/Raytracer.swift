@@ -16,6 +16,8 @@ class Raytracer: NSObject {
     var outputTexture: MTLTexture;
     var sampleNumber = 1;
     var renderMode:Int = 3;
+    var imageTexture: MTLTexture! = nil;
+    
     
     init(renderContext:MetalContext, xResolution:Int, yResolution:Int){
         self.renderContext = renderContext;
@@ -38,6 +40,7 @@ class Raytracer: NSObject {
         commandEncoder.setComputePipelineState(renderContext.pipelineState);
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
+        commandEncoder.setTexture(imageTexture, atIndex:2);
         
         
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(renderMode), 2];
