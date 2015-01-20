@@ -80,7 +80,6 @@ struct Scene{
     Sphere light;
     constant Sphere *spheres;
     constant packed_float3 *colors;
-    texture2d<float, access::read> imageTexture;
 };
 
 inline Hit noHit(){
@@ -345,7 +344,7 @@ static constant struct Box boxes[] = {
 };
     
 
-inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
+inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed, texture2d<float, access::read> imageTexture){
     Hit h = noHit();
 
     for (int i=0; i<boxCount; i++){
@@ -353,7 +352,11 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
         Hit hit = boxIntersection(b, r, h.distance);
         if (hit.didHit){
             h = hit;
-            //h.color = scene.colors[i];
+            /*if (scene.colors[i][0] >= 0.0){
+                h.color = scene.colors[i];
+            } else{
+                h.color = imageTexture.read(uint2(((hit.hitPosition.x/2)+0.5) * 1000, 1000 - (((hit.hitPosition.y/2)+0.5) * 1000))).rgb;
+            }*/
         }
     }
     
@@ -374,12 +377,12 @@ float3 jitterLightPosition(thread uint *seed, float3 position){
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
 
-float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting){
+float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting, texture2d<float, access::read> imageTexture){
     float3 reflectColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 jitteredLight = jitterLightPosition(seed, scene.light.position);
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r, scene, seed);
+        Hit h = getClosestHit(r, scene, seed, imageTexture);
         if (!h.didHit){
             return float3(0.0,0.0,0.0);
         }
@@ -403,7 +406,7 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
             
             //Calculate shadow factor
             Ray shadowRay = {h.hitPosition, lightDirection};
-            Hit shadowHit = getClosestHit(shadowRay, scene, seed);
+            Hit shadowHit = getClosestHit(shadowRay, scene, seed, imageTexture);
             
             float lightDistance = distance(jitteredLight, h.hitPosition);
             float shadowFactor = 1.0;
@@ -545,9 +548,9 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    Scene scene = Scene{spheres[0], spheres+1, wallColors, imageTexture};
+    Scene scene = Scene{spheres[0], spheres+1, wallColors};
     
-    float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
+    float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect, imageTexture), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
     //outTexture.write(outColor,gid);

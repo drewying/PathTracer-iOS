@@ -86,15 +86,16 @@ class ViewController: UIViewController {
         
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.0, z: 0.0));
         scene.wallColors.append(Vector3D(x: 0.0, y: 0.0, z: 0.75));
+        scene.wallColors.append(Vector3D(x: -0.75, y: 0.75, z: 0.75));
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
-        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
+        
+        
+        //let img:UIImage = UIImage(named: "texture.jpg")!;
         
         
         self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context);
-        
-        
         self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution);
         rayTracer.imageTexture = imageTexture;
         
