@@ -63,6 +63,7 @@ class Raytracer: NSObject {
         
         self.inputTexture = self.outputTexture;
         sampleNumber++;
-        return UIImage(MTLTexture: self.inputTexture)
+        //return UIImage.imageFromTexture(self.inputTexture)
+        return UIImage(MTLTexture: self.inputTexture);
     }
 }

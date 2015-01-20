@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2AA2CA4A-8E57-447C-B53A-254B6838CFCC</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MetalTracer</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>C374177CCC1228E6F92D882AED4755F93CC4566B</key>
+		<string>https://github.com/drewying/MetalTracer.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>MetalTracer.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>C374177CCC1228E6F92D882AED4755F93CC4566B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/drewying/MetalTracer.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>C374177CCC1228E6F92D882AED4755F93CC4566B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C374177CCC1228E6F92D882AED4755F93CC4566B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MetalTracer</string>
+		</dict>
+	</array>
+</dict>
+</plist>
