@@ -96,13 +96,13 @@
 		D130D6C21A314FD10096BFC7 /* MetalTracer */ = {
 			isa = PBXGroup;
 			children = (
+				D1CCC2701A7475990049CB87 /* Shader */,
 				D1EAD1711A67B39500327963 /* SupportingFiles */,
 				D1D4070A1A67B12200CA07E0 /* AppDelegate.swift */,
 				D1D407101A67B12200CA07E0 /* BoundingBox.swift */,
 				D1816ABA1A68EA4D008D74C6 /* Box.swift */,
 				D1D407111A67B12200CA07E0 /* Camera.swift */,
 				D1D407121A67B12200CA07E0 /* Images.xcassets */,
-				D1D407141A67B12200CA07E0 /* MainShader.metal */,
 				D1D407151A67B12200CA07E0 /* Material.swift */,
 				D1D407161A67B12200CA07E0 /* Matrix.swift */,
 				D1D407171A67B12200CA07E0 /* MetalContext.swift */,
@@ -122,6 +122,14 @@
 			);
 			name = MetalTracer;
 			path = Raytracer;
+			sourceTree = "<group>";
+		};
+		D1CCC2701A7475990049CB87 /* Shader */ = {
+			isa = PBXGroup;
+			children = (
+				D1D407141A67B12200CA07E0 /* MainShader.metal */,
+			);
+			name = Shader;
 			sourceTree = "<group>";
 		};
 		D1EAD1711A67B39500327963 /* SupportingFiles */ = {

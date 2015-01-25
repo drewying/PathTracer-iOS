@@ -21,7 +21,7 @@ static constant int bounceCount = 5;
 static constant int maxSpheres = 4;
 
 enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
-
+    
 struct Ray{
     float3 origin;
     float3 direction;
@@ -81,6 +81,16 @@ struct Scene{
     constant Sphere *spheres;
     constant packed_float3 *colors;
 };
+    
+static constant struct Box boxes[] = {
+    {float3(-1.0,1.0,-1.0), float3(-1.0,-1.0,1.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE}, //Left
+    {float3(1.0,1.0,-1.0), float3(1.0,-1.0,1.0), float3(-1.0,0.0,0.0), float3(0.0,0.0,0.75), DIFFUSE}, //Right
+    {float3(1.0,1.0,-1.0), float3(-1.0,-1.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Back
+    {float3(1.0,1.0,1.0), float3(-1.0,-1.0,1.0), float3(0.0,0.0,-1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Front
+    {float3(1.0,1.0,1.0), float3(-1.0,1.0,-1.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE}, //Top
+    {float3(1.0,-1.0,1.0), float3(-1.0,-1.0,-1.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE} //Bottom
+};
+
 
 inline Hit noHit(){
     Hit hit;
@@ -333,15 +343,6 @@ Ray bounce(Hit h, thread uint *seed){
     outRay.direction = outVector;
     return outRay;
 }
-
-static constant struct Box boxes[] = {
-    {float3(-1.0,1.0,-1.0), float3(-1.0,-1.0,1.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE}, //Left
-    {float3(1.0,1.0,-1.0), float3(1.0,-1.0,1.0), float3(-1.0,0.0,0.0), float3(0.0,0.0,0.75), DIFFUSE}, //Right
-    {float3(1.0,1.0,-1.0), float3(-1.0,-1.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Back
-    {float3(1.0,1.0,1.0), float3(-1.0,-1.0,1.0), float3(0.0,0.0,-1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Front
-    {float3(1.0,1.0,1.0), float3(-1.0,1.0,-1.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE}, //Top
-    {float3(1.0,-1.0,1.0), float3(-1.0,-1.0,-1.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE} //Bottom
-};
     
 
 inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed, texture2d<float, access::read> imageTexture){
@@ -553,5 +554,4 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect, imageTexture), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
-    //outTexture.write(outColor,gid);
 }
