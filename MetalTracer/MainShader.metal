@@ -356,7 +356,19 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed, texture2d<float,
             /*if (scene.colors[i][0] >= 0.0){
                 h.color = scene.colors[i];
             } else{
-                h.color = imageTexture.read(uint2(((hit.hitPosition.x/2)+0.5) * 1000, 1000 - (((hit.hitPosition.y/2)+0.5) * 1000))).rgb;
+                float x;
+                float y;
+                if (abs(hit.normal.x) > 0){
+                    x = hit.hitPosition.z;
+                    y = hit.hitPosition.y;
+                } else if (abs(hit.normal.y) > 0){
+                    x = hit.hitPosition.x;
+                    y = hit.hitPosition.z;
+                } else if (abs(hit.normal.z) > 0){
+                    x = hit.hitPosition.x;
+                    y = hit.hitPosition.y;
+                }
+                h.color = imageTexture.read(uint2(((x/2)+0.5) * 1000, 1000 - (((y/2)+0.5) * 1000))).rgb;
             }*/
         }
     }
