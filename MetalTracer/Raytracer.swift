@@ -42,20 +42,14 @@ class Raytracer: NSObject {
         commandEncoder.setTexture(outputTexture, atIndex:1);
         commandEncoder.setTexture(imageTexture, atIndex:2);
         
-        
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(renderMode), 2];
         
         let a = renderContext.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
-        
-        
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 1);
         commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
         commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 3);
-        
-        
-        
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         commandEncoder.endEncoding();

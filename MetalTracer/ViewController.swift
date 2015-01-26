@@ -230,12 +230,19 @@ class ViewController: UIViewController {
         
     }
     
-    
+    var que:dispatch_queue_t = dispatch_queue_create("Rendering", DISPATCH_QUEUE_SERIAL);
 
     func renderLoop() {
         autoreleasepool {
-            self.imageView.image = self.rayTracer.renderScene(self.scene);
-            self.sampleLabel.text = NSString(format: "Pass:%i", self.rayTracer.sampleNumber);
+            dispatch_async(self.que, {
+                let image:UIImage = self.rayTracer.renderScene(self.scene);
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.imageView.image = image; //self.rayTracer.renderScene(self.scene);
+                    self.sampleLabel.text = NSString(format: "Pass:%i", self.rayTracer.sampleNumber);
+                });
+            });
+            
+            
         }
     }
     
