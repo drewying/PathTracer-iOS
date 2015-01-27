@@ -304,18 +304,7 @@ Ray bounce(Hit h, thread uint *seed){
     
     float3 outVector;
     
-    if (h.material == DIFFUSE){
-        //outVector = uniformSampleDirection(seed);
-        //outVector = cosineWeightedDirection(seed);
-        outVector = bookSampleDirection(seed);
-        float3 normal = h.normal;
-        
-        // if the point is in the wrong hemisphere, mirror it
-        if (dot(normal, outVector) < 0.0) {
-            outVector *= -1.0;
-        }
-        
-    } else if (h.material == SPECULAR){
+    if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, normalize(h.normal));
     } else if (h.material == DIELECTRIC){
         if (rand(seed) > 0.95){
@@ -335,6 +324,18 @@ Ray bounce(Hit h, thread uint *seed){
         
     } else if (h.material == TRANSPARENT){
         outVector = h.ray.direction;
+    } else {
+        //Material is DIFFUSE
+        //outVector = uniformSampleDirection(seed);
+        //outVector = cosineWeightedDirection(seed);
+        outVector = bookSampleDirection(seed);
+        float3 normal = h.normal;
+        
+        // if the point is in the wrong hemisphere, mirror it
+        if (dot(normal, outVector) < 0.0) {
+            outVector *= -1.0;
+        }
+        
     }
     
     

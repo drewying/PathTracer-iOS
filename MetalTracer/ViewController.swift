@@ -171,6 +171,7 @@ class ViewController: UIViewController {
     
     
     @IBAction func lightModeSegmentedControl(sender: UISegmentedControl) {
+        self.rayTracer.renderMode = sender.selectedSegmentIndex + 1;
         self.resetDisplay();
     }
     
