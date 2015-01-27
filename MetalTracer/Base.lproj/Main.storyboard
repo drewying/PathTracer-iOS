@@ -18,15 +18,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1000" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uFE-EO-tVQ" userLabel="SampleCountLabel">
-                                <rect key="frame" x="24" y="408" width="39" height="21"/>
+                                <rect key="frame" x="24" y="476" width="39" height="21"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1ft-mH-1i8" userLabel="MainView">
-                                <rect key="frame" x="0.0" y="20" width="600" height="380"/>
+                                <rect key="frame" x="116" y="20" width="368" height="448"/>
                                 <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="448" id="Ony-fE-6AY"/>
+                                    <constraint firstAttribute="width" constant="368" id="a68-dc-mXh"/>
+                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="50r-TN-zaZ" appends="YES" id="1Cw-ht-JU7"/>
                                     <outletCollection property="gestureRecognizers" destination="Gdd-6h-Ajn" appends="YES" id="6sX-td-vv4"/>
@@ -52,7 +56,7 @@
                                 </items>
                             </toolbar>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Dv-CD-vSj" userLabel="SphereEditView">
-                                <rect key="frame" x="8" y="400" width="584" height="156"/>
+                                <rect key="frame" x="8" y="468" width="584" height="88"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q2d-dV-JsO">
                                         <rect key="frame" x="511" y="8" width="65" height="30"/>
@@ -190,7 +194,7 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ziz-Bc-yiu" userLabel="LightEditView">
-                                <rect key="frame" x="8" y="400" width="584" height="156"/>
+                                <rect key="frame" x="8" y="468" width="584" height="88"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Position:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F2c-EA-zHa">
                                         <rect key="frame" x="8" y="8" width="67" height="21"/>
@@ -299,7 +303,7 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="l29-em-rwi">
-                                <rect key="frame" x="0.0" y="400" width="600" height="156"/>
+                                <rect key="frame" x="0.0" y="468" width="600" height="88"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="aMj-wW-8Dx">
                                         <rect key="frame" x="124" y="114" width="369" height="29"/>
@@ -331,10 +335,13 @@
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-8" id="Phz-wR-nv3"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="leading" secondItem="l29-em-rwi" secondAttribute="leading" id="RCL-AS-uwZ"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="U4w-4U-M7y"/>
+                            <constraint firstAttribute="centerY" secondItem="1ft-mH-1i8" secondAttribute="centerY" constant="90" id="Ul5-qP-R4s"/>
+                            <constraint firstAttribute="centerX" secondItem="1ft-mH-1i8" secondAttribute="centerX" id="UqF-gH-X3w"/>
                             <constraint firstAttribute="trailingMargin" secondItem="1ft-mH-1i8" secondAttribute="trailing" constant="-16" id="Zep-dI-wHT"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="trailing" secondItem="l29-em-rwi" secondAttribute="trailing" id="cd3-4g-hUe"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="bottom" id="cig-7i-3wY"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="dgX-vG-44s"/>
+                            <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="elQ-oq-qj9"/>
                             <constraint firstItem="uFE-EO-tVQ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="8" id="jab-mU-rEB"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-8" id="jsx-Mb-IE0"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="kt5-GZ-Drn"/>
@@ -342,6 +349,15 @@
                             <constraint firstItem="3i3-to-PZy" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="oZb-xa-cWL"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="x0F-cW-esq"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="9hZ-xs-4Jr"/>
+                                <exclude reference="Ul5-qP-R4s"/>
+                                <exclude reference="Zep-dI-wHT"/>
+                                <exclude reference="x0F-cW-esq"/>
+                                <exclude reference="OoI-cL-uhc"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>

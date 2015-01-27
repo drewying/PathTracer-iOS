@@ -64,3 +64,5 @@ class Raytracer: NSObject {
         return UIImage(MTLTexture: self.inputTexture);
     }
 }
+
+//368 x 348
