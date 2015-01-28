@@ -348,12 +348,12 @@ Ray bounce(Hit h, thread uint *seed){
 inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed, texture2d<float, access::read> imageTexture){
     Hit h = noHit();
 
-    for (int i=0; i<boxCount; i++){
+    /*for (int i=0; i<boxCount; i++){
         Box b = boxes[i];
         Hit hit = boxIntersection(b, r, h.distance);
         if (hit.didHit){
             h = hit;
-            /*if (scene.colors[i][0] >= 0.0){
+            if (scene.colors[i][0] >= 0.0){
                 h.color = scene.colors[i];
             } else{
                 float x;
@@ -369,17 +369,55 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed, texture2d<float,
                     y = hit.hitPosition.y;
                 }
                 h.color = imageTexture.read(uint2(((x/2)+0.5) * 1000, 1000 - (((y/2)+0.5) * 1000))).rgb;
-            }*/
+            }
         }
+    }*/
+    
+    Hit hit = boxIntersection(boxes[0], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = boxIntersection(boxes[1], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = boxIntersection(boxes[2], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = boxIntersection(boxes[3], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = boxIntersection(boxes[4], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = boxIntersection(boxes[5], r, h.distance);
+    if (hit.didHit){
+        h = hit;
     }
     
-    for (int i=0; i<maxSpheres; i++){
-        Hit hit = sphereIntersection(scene.spheres[i], r, h.distance);
-        if (hit.didHit){
-            h = hit;
-        }
+    hit = sphereIntersection(scene.spheres[0], r, h.distance);
+    if (hit.didHit){
+        h = hit;
     }
-    
+    hit = sphereIntersection(scene.spheres[1], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = sphereIntersection(scene.spheres[2], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = sphereIntersection(scene.spheres[3], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
+    hit = sphereIntersection(scene.spheres[4], r, h.distance);
+    if (hit.didHit){
+        h = hit;
+    }
     return h;
 }
 
