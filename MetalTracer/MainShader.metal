@@ -164,6 +164,9 @@ Hit planeIntersection(Plane p, Ray ray, float distance){
 }
 
 Hit sphereIntersection(Sphere s, Ray ray, float distance){
+    if (s.radius < 0.05){
+        return noHit();
+    }
     float3 v = s.position - ray.origin;
     float b = dot(v, ray.direction);
     float discriminant = b * b - dot(v, v) + s.radius * s.radius;
@@ -435,7 +438,7 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
     for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(r, scene, seed, imageTexture);
         if (!h.didHit){
-            return float3(0.0,0.0,0.0);
+            return float3(0.145,0.145,0.145);
         }
         
         if (includeIndirectLighting && scene.light.radius > 0){
@@ -477,7 +480,7 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
     if (includeDirectLighting){
         return accumulatedColor * 0.5;
     } else{
-        return float3(0.0,0.0,0.0);
+        return float3(0.145,0.145,0.145);
     }
     
     

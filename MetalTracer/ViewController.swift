@@ -215,7 +215,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func addSphere(){
-        let yPosition:Float = 0.4 * Float(scene.spheres.count-2);
+        let yPosition:Float = 0.4 * Float(scene.sphereCount-2);
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:yPosition, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
         resetDisplay();
     }

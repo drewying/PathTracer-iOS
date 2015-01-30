@@ -12,7 +12,14 @@ class Scene : NSObject {
     
     var camera:Camera;
     var light:Sphere;
-    var spheres:[Sphere] = []
+    var spheres:[Sphere] = [
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE)
+    ];
+            
     var wallColors:[Vector3D] = []
     
     var context:MetalContext;
@@ -23,6 +30,8 @@ class Scene : NSObject {
     
     var sphereData:[Sphere] = []
     var cameraData:[Vector3D] = []
+    
+    var sphereCount:Int = 0;
     
     init(camera:Camera, light:Sphere, context:MetalContext){
         self.camera = camera;
@@ -55,12 +64,14 @@ class Scene : NSObject {
     }
     
     func addSphere(sphere:Sphere){
-        spheres.append(sphere);
+        spheres[sphereCount] = sphere;
+        sphereCount++;
         resetBuffer();
     }
     
     func deleteSphere(index:Int){
-        spheres.removeAtIndex(index);
+        sphereCount--;
+        spheres[sphereCount].radius = 0;
         resetBuffer();
     }
 }
