@@ -14,12 +14,12 @@ extension UIImage {
         let imageSize = CGSize(width: texture.width, height: texture.height)
         let imageByteCount = Int(imageSize.width * imageSize.height * 4)
         
-        let bytesPerPixel = UInt(4)
-        let bitsPerComponent = UInt(8)
-        let bitsPerPixel:UInt = 32
+        let bytesPerPixel:Int = Int(4)
+        let bitsPerComponent:Int = Int(8)
+        let bitsPerPixel:Int = 32
         let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
             
-        let bytesPerRow = bytesPerPixel * UInt(imageSize.width)
+        let bytesPerRow = bytesPerPixel * Int(imageSize.width)
         var imageBytes = [UInt8](count: imageByteCount, repeatedValue: 0)
         let region = MTLRegionMake2D(0, 0, Int(imageSize.width), Int(imageSize.height))
         
@@ -33,23 +33,23 @@ extension UIImage {
         let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
         let renderingIntent = kCGRenderingIntentDefault
         
-        let imageRef = CGImageCreate(UInt(imageSize.width), UInt(imageSize.height), bitsPerComponent, bitsPerPixel, bytesPerRow, rgbColorSpace, bitmapInfo, providerRef, nil, false, renderingIntent)
+        let imageRef = CGImageCreate(Int(imageSize.width), Int(imageSize.height), bitsPerComponent, bitsPerPixel, bytesPerRow, rgbColorSpace, bitmapInfo, providerRef, nil, false, renderingIntent)
         
         return UIImage(CGImage: imageRef)!
     }
     
     class func textureFromImage(image:UIImage, context:MetalContext) -> MTLTexture{
-        let bytesPerPixel = UInt(4)
-        let bitsPerComponent = UInt(8)
+        let bytesPerPixel = Int(4)
+        let bitsPerComponent = Int(8)
         let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
         
         let image = UIImage(named: "texture.jpg")
         let imageRef = image?.CGImage
-        let imageWidth = CGImageGetWidth(imageRef)
-        let imageHeight = CGImageGetHeight(imageRef)
-        let bytesPerRow = bytesPerPixel * imageWidth
+        let imageWidth:Int = Int(CGImageGetWidth(imageRef))
+        let imageHeight:Int = Int(CGImageGetHeight(imageRef))
+        let bytesPerRow:Int = bytesPerPixel * imageWidth
         
-        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: 0)
+        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: UInt8(0))
         
         let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
         

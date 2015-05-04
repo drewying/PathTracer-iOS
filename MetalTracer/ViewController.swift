@@ -239,7 +239,7 @@ class ViewController: UIViewController {
                 let image:UIImage = self.rayTracer.renderScene(self.scene);
                 dispatch_async(dispatch_get_main_queue(), {
                     self.imageView.image = image; //self.rayTracer.renderScene(self.scene);
-                    self.sampleLabel.text = NSString(format: "Pass:%i", self.rayTracer.sampleNumber);
+                    self.sampleLabel.text = "Pass:\(self.rayTracer.sampleNumber)"
                 });
             });
             

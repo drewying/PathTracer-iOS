@@ -9,7 +9,7 @@
 import UIKit
 
 class MetalContext: NSObject {
-    let device:MTLDevice = MTLCreateSystemDefaultDevice();
+    let device:MTLDevice;
     let defaultLibrary: MTLLibrary;
     let commandQueue: MTLCommandQueue;
     let pipelineState: MTLComputePipelineState!;

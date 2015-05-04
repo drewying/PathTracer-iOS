@@ -31,7 +31,7 @@ class Raytracer: NSObject {
     }
     
     func renderScene(scene:Scene) -> UIImage{
-        renderContext.commandQueue.insertDebugCaptureBoundary();
+        
         let threadgroupCounts = MTLSizeMake(16,16, 1);
         let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
         let commandBuffer = renderContext.commandQueue.commandBuffer();
@@ -52,16 +52,20 @@ class Raytracer: NSObject {
         commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 3);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
-        commandEncoder.endEncoding();
-        commandBuffer.commit();
-        commandBuffer.waitUntilCompleted();
+        
+        renderContext.commandQueue.insertDebugCaptureBoundary();
+        //commandEncoder.insertDebugSignpost("com.apple.GPUTools.event.debug-frame")
+        
+        commandEncoder.endEncoding()
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
         
         //self.inputTexture.replaceRegion(MTLRegionMake2D(0, 0, self.xResolution, self.yResolution), mipmapLevel: 0, withBytes: &self.outputTexture, bytesPerRow: 4*self.xResolution);
         
         self.inputTexture = self.outputTexture;
-        sampleNumber++;
+        sampleNumber++
         //return UIImage.imageFromTexture(self.inputTexture)
-        return UIImage(MTLTexture: self.inputTexture);
+        return UIImage(MTLTexture: self.inputTexture)
     }
 }
 
