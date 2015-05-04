@@ -20,7 +20,7 @@ static constant int boxCount = 6;
 static constant int bounceCount = 5;
 static constant int maxSpheres = 4;
 
-enum Material { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
+enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
     
 struct Ray{
     float3 origin;
@@ -32,7 +32,7 @@ struct Hit{
     Ray ray;
     float3 normal;
     float3 hitPosition;
-    Material material;
+    uint material;
     float3 color;
     bool didHit;
 };
@@ -40,8 +40,8 @@ struct Hit{
 struct Sphere{
     packed_float3 position;
     float radius;
+    uint material;
     packed_float3 color;
-    Material material;
 };
 
 
@@ -99,7 +99,7 @@ inline Hit noHit(){
     return hit;
 }
 
-inline Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, Material material){
+inline Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, uint material){
     
     if (minT > EPSILON && minT < maxT){
         Hit hit;

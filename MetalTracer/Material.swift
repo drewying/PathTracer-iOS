@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum Material:Int{
+enum Material:UInt32{
     case DIFFUSE = 0;
     case SPECULAR = 1;
     case DIELECTRIC = 2;

@@ -197,10 +197,10 @@ class ViewController: UIViewController {
     
     @IBAction func sphereMaterialSegmentedControl(sender: UISegmentedControl) {
         switch (sender.selectedSegmentIndex){
-        case 0:self.scene.spheres[selectedSphere].material = Material.DIFFUSE;
-        case 1:self.scene.spheres[selectedSphere].material = Material.SPECULAR;
-        case 2:self.scene.spheres[selectedSphere].material = Material.DIELECTRIC;
-        default:self.scene.spheres[selectedSphere].material = Material.DIFFUSE;
+        case 0:self.scene.spheres[selectedSphere].material = Material.DIFFUSE.rawValue;
+        case 1:self.scene.spheres[selectedSphere].material = Material.SPECULAR.rawValue;
+        case 2:self.scene.spheres[selectedSphere].material = Material.DIELECTRIC.rawValue;
+        default:self.scene.spheres[selectedSphere].material = Material.DIFFUSE.rawValue;
         }
         self.resetDisplay();
     }
@@ -215,6 +215,9 @@ class ViewController: UIViewController {
     }
     
     @IBAction func addSphere(){
+        if (scene.sphereCount >= 5){
+            return;
+        }
         let yPosition:Float = 0.4 * Float(scene.sphereCount-2);
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:yPosition, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
         resetDisplay();
@@ -276,12 +279,7 @@ class ViewController: UIViewController {
         sphereGreenSlider.value = s.color.y;
         sphereBlueSlider.value = s.color.z;
         sphereSizeSlider.value = s.radius;
-        switch (s.material){
-        case Material.DIFFUSE:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
-        case Material.SPECULAR:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 1;
-        case Material.DIELECTRIC:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 2;
-        default:self.sphereMaterialSegmentedControl.selectedSegmentIndex = 0;
-        }
+        sphereMaterialSegmentedControl.selectedSegmentIndex = Int(s.material);
         self.sphereEditView.hidden = false;
     }
 }
