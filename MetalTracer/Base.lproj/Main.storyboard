@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -159,7 +159,7 @@
                                         </connections>
                                     </segmentedControl>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.1976768092" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="EcB-6Z-8CW" firstAttribute="leading" secondItem="4my-bi-mKd" secondAttribute="leading" id="03a-eW-C2A"/>
                                     <constraint firstItem="4my-bi-mKd" firstAttribute="leading" secondItem="XUs-eT-Kuj" secondAttribute="trailing" constant="8" id="5Yd-08-cOD"/>
@@ -272,7 +272,7 @@
                                         </connections>
                                     </segmentedControl>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.1976768092" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="FDv-OK-V8d" firstAttribute="leading" secondItem="vv0-Go-d93" secondAttribute="leading" id="0tu-LR-KtU"/>
                                     <constraint firstItem="F2c-EA-zHa" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="top" constant="8" id="6Eo-Hg-e9b"/>
@@ -320,7 +320,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="0.14697265625" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.19767680921052633" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="tintColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <constraints>
@@ -328,16 +328,12 @@
                             <constraint firstAttribute="trailingMargin" secondItem="ziz-Bc-yiu" secondAttribute="trailing" constant="-8" id="4Qk-rH-3LB"/>
                             <constraint firstAttribute="trailingMargin" secondItem="l29-em-rwi" secondAttribute="trailing" constant="-16" id="4ox-11-JXS"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="6Dv-CD-vSj" secondAttribute="bottom" id="6P8-Kg-uU5"/>
-                            <constraint firstItem="1ft-mH-1i8" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="9hZ-xs-4Jr"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="AHl-Ng-gj3"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="l29-em-rwi" secondAttribute="bottom" id="HI0-a7-qNB"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="200" id="OoI-cL-uhc"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-8" id="Phz-wR-nv3"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="leading" secondItem="l29-em-rwi" secondAttribute="leading" id="RCL-AS-uwZ"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="U4w-4U-M7y"/>
-                            <constraint firstAttribute="centerY" secondItem="1ft-mH-1i8" secondAttribute="centerY" constant="90" id="Ul5-qP-R4s"/>
                             <constraint firstAttribute="centerX" secondItem="1ft-mH-1i8" secondAttribute="centerX" id="UqF-gH-X3w"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="1ft-mH-1i8" secondAttribute="trailing" constant="-16" id="Zep-dI-wHT"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="trailing" secondItem="l29-em-rwi" secondAttribute="trailing" id="cd3-4g-hUe"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="bottom" id="cig-7i-3wY"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="dgX-vG-44s"/>
@@ -347,17 +343,7 @@
                             <constraint firstItem="l29-em-rwi" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="kt5-GZ-Drn"/>
                             <constraint firstAttribute="trailingMargin" secondItem="6Dv-CD-vSj" secondAttribute="trailing" constant="-8" id="o6d-Fw-VL5"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="oZb-xa-cWL"/>
-                            <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="x0F-cW-esq"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="9hZ-xs-4Jr"/>
-                                <exclude reference="Ul5-qP-R4s"/>
-                                <exclude reference="Zep-dI-wHT"/>
-                                <exclude reference="x0F-cW-esq"/>
-                                <exclude reference="OoI-cL-uhc"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
