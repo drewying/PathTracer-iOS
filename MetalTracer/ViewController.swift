@@ -14,25 +14,37 @@ class ViewController: UIViewController {
     
     
     @IBOutlet weak var imageView: UIImageView!
-    
     @IBOutlet weak var sampleLabel: UILabel!
     
+    @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var mainToolbarButton: UIBarButtonItem!
+    @IBOutlet weak var lightingToolbarButton: UIBarButtonItem!
+    @IBOutlet weak var sceneToolbarButton: UIBarButtonItem!
+    
+    @IBOutlet weak var mainEditView: UIView!
+    @IBOutlet weak var sphereEditView: UIView!
+    @IBOutlet weak var sceneEditView: UIView!
+    @IBOutlet weak var lightEditView: UIView!
+    
+    @IBOutlet weak var sceneWallSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var sceneRedSlider: UISlider!
+    @IBOutlet weak var sceneGreenSlider: UISlider!
+    @IBOutlet weak var sceneBlueSlider: UISlider!
     
     @IBOutlet weak var sphereRedSlider: UISlider!
     @IBOutlet weak var sphereGreenSlider: UISlider!
     @IBOutlet weak var sphereBlueSlider: UISlider!
     @IBOutlet weak var sphereMaterialSegmentedControl: UISegmentedControl!
     @IBOutlet weak var sphereSizeSlider: UISlider!
-    
-    @IBOutlet weak var sphereEditView: UIView!
-    
-    @IBOutlet weak var lightEditView: UIView!
  
     @IBOutlet weak var lightModeSegmentedControl: UISegmentedControl!
     @IBOutlet weak var lightSizeSlider: UISlider!
     @IBOutlet weak var lightXSlider: UISlider!
     @IBOutlet weak var lightYSlider: UISlider!
     @IBOutlet weak var lightZSlider: UISlider!
+    
+    var panes:[UIView] = [];
+    var toolbarButtons:[UIBarButtonItem] = [];
     
     var context:MetalContext = MetalContext(device: MTLCreateSystemDefaultDevice());
     
@@ -44,7 +56,6 @@ class ViewController: UIViewController {
     
     var xResolution:Int = 0;
     var yResolution:Int = 0;
-    var boxes:[Box] = [];
     
     var selectedSphere:Int = -1 {
         didSet {
@@ -61,6 +72,9 @@ class ViewController: UIViewController {
     var scene: Scene! = nil;
     
     override func viewDidAppear(animated: Bool) {
+        panes = [mainEditView, lightEditView, sceneEditView];
+        toolbarButtons = [mainToolbarButton, lightingToolbarButton, sceneToolbarButton];
+        
         let size:CGSize = self.imageView.frame.size;
         xResolution = Int(size.width);
         yResolution = Int(size.height);
@@ -71,18 +85,8 @@ class ViewController: UIViewController {
         
         scene = Scene(camera:camera, light:light, context:self.context);
         
-        
-        
-        
         scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR));
         scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC));
-        
-        /*boxes.append(Box(min:Vector3D(x: -1.0, y: 1.0, z: -1.0), max:Vector3D(x: -1.0, y: -1.0, z: 1.0), normal:Vector3D(x:1.0, y:0.0, z:0.0), color:Vector3D(x: 0.75,y: 0.0,z: 0.0), material:Material.DIFFUSE));
-        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: -1.0), max:Vector3D(x: 1.0, y: -1.0, z: 1.0), normal:Vector3D(x:-1.0, y:0.0, z:0.0), color:Vector3D(x: 0.0,y: 0.0,z: 0.75), material:Material.DIFFUSE));
-        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: -1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:0.0, z:1.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
-        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: 1.0), normal:Vector3D(x:0.0, y:0.0, z:-1.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
-        boxes.append(Box(min:Vector3D(x: 1.0, y: 1.0, z: 1.0), max:Vector3D(x: -1.0, y: 1.0, z: -1.0), normal:Vector3D(x:0.0, y:-1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));
-        boxes.append(Box(min:Vector3D(x: 1.0, y: -1.0, z: 1.0), max:Vector3D(x: -1.0, y: -1.0, z: -1.0), normal:Vector3D(x:0.0, y:1.0, z:0.0), color:Vector3D(x: 0.75,y: 0.75,z: 0.75), material:Material.DIFFUSE));*/
         
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.0, z: 0.0));
         scene.wallColors.append(Vector3D(x: 0.0, y: 0.0, z: 0.75));
@@ -90,10 +94,6 @@ class ViewController: UIViewController {
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
         scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
-        
-        
-        //let img:UIImage = UIImage(named: "texture.jpg")!;
-        
         
         self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context);
         self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution);
@@ -205,13 +205,27 @@ class ViewController: UIViewController {
         self.resetDisplay();
     }
     
+    @IBAction func editMain(){
+        selectPane(0);
+    }
+    
     @IBAction func editLighting(){
+        selectPane(1);
         self.lightXSlider.value = scene.light.position.x;
         self.lightYSlider.value = scene.light.position.y;
         self.lightZSlider.value = scene.light.position.z;
         self.lightSizeSlider.value = scene.light.radius;
-        self.lightEditView.hidden = !lightEditView.hidden;
-        
+    }
+    
+    @IBAction func editScene(){
+        selectPane(2);
+    }
+    
+    func selectPane(index: Int){
+        for i in 0...panes.count-1 {
+            panes[i].hidden = (index != i);
+            toolbarButtons[i].tintColor = (index == i) ? UIColor.darkGrayColor() : UIColor.lightGrayColor();
+        }
     }
     
     @IBAction func addSphere(){
@@ -241,7 +255,7 @@ class ViewController: UIViewController {
             dispatch_async(self.que, {
                 let image:UIImage = self.rayTracer.renderScene(self.scene);
                 dispatch_async(dispatch_get_main_queue(), {
-                    self.imageView.image = image; //self.rayTracer.renderScene(self.scene);
+                    self.imageView.image = image;
                     self.sampleLabel.text = "Pass:\(self.rayTracer.sampleNumber)"
                 });
             });
@@ -253,7 +267,6 @@ class ViewController: UIViewController {
     func resetDisplay() {
         self.rayTracer.sampleNumber = 1;
         scene.resetBuffer();
-        //self.renderLoop();
     }
     
     override func didReceiveMemoryWarning() {
