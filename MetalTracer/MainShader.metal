@@ -430,21 +430,21 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed, texture2d<float,
     return h;
 }
 
-float3 jitterLightPosition(thread uint *seed, float3 position){
-    float lightx = (rand(seed) * 0.2) - 0.1;
-    float lighty = (rand(seed) * 0.2) - 0.1;
-    float lightz = (rand(seed) * 0.2) - 0.1;
+float3 jitterPosition(thread uint *seed, float3 position){
+    float lightx = (rand(seed) * 0.1) - 0.05;
+    float lighty = (rand(seed) * 0.1) - 0.05;
+    float lightz = (rand(seed) * 0.1) - 0.05;
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
 
 float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting, texture2d<float, access::read> imageTexture){
     float3 reflectColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
-    float3 jitteredLight = jitterLightPosition(seed, scene.light.position);
+    float3 lightPosition = scene.light.position; //jitterLightPosition(seed, scene.light.position);
     for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(r, scene, seed, imageTexture);
         if (!h.didHit){
-            return float3(0.145,0.145,0.145);
+            return float3(0,0,0);
         }
         
         if (includeIndirectLighting && scene.light.radius > 0){
@@ -460,15 +460,16 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
         if (includeDirectLighting){
             //Direct Lighting
             float3 normal = normalize(h.normal);
-            float3 lightDirection = normalize(jitteredLight - h.hitPosition);
+            float3 lightDirection = normalize(lightPosition - h.hitPosition);
             float cosphi = dot(normal, lightDirection);
             
             
             //Calculate shadow factor
-            Ray shadowRay = {h.hitPosition, lightDirection};
+            float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
+            Ray shadowRay = {jitteredPosition, lightDirection};
             Hit shadowHit = getClosestHit(shadowRay, scene, seed, imageTexture);
             
-            float lightDistance = distance(jitteredLight, h.hitPosition);
+            float lightDistance = distance(lightPosition, jitteredPosition);
             float shadowFactor = 1.0;
             if (shadowHit.didHit && shadowHit.distance <= lightDistance){
                 shadowFactor = 0.0;
@@ -486,7 +487,7 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
     if (includeDirectLighting){
         return accumulatedColor * 0.5;
     } else{
-        return float3(0.145,0.145,0.145);
+        return float3(0,0,0);
     }
     
     
