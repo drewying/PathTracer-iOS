@@ -20,6 +20,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var mainToolbarButton: UIBarButtonItem!
     @IBOutlet weak var lightingToolbarButton: UIBarButtonItem!
     @IBOutlet weak var sceneToolbarButton: UIBarButtonItem!
+    @IBOutlet weak var sphereToolbarButton: UIBarButtonItem!
     
     @IBOutlet weak var mainEditView: UIView!
     @IBOutlet weak var sphereEditView: UIView!
@@ -60,9 +61,8 @@ class ViewController: UIViewController {
     var selectedSphere:Int = -1 {
         didSet {
             if (selectedSphere > -1){
-                showSphereEditView();
-            } else{
-                hideSphereEditView();
+                updateSphereEditView();
+                selectPane(3);
             }
         }
     }
@@ -72,8 +72,8 @@ class ViewController: UIViewController {
     var scene: Scene! = nil;
     
     override func viewDidAppear(animated: Bool) {
-        panes = [mainEditView, lightEditView, sceneEditView];
-        toolbarButtons = [mainToolbarButton, lightingToolbarButton, sceneToolbarButton];
+        panes = [mainEditView, lightEditView, sceneEditView, sphereEditView];
+        toolbarButtons = [mainToolbarButton, lightingToolbarButton, sceneToolbarButton, sphereToolbarButton];
         
         let size:CGSize = self.imageView.frame.size;
         xResolution = Int(size.width);
@@ -210,15 +210,17 @@ class ViewController: UIViewController {
     }
     
     @IBAction func editLighting(){
+        updateLightingEditView();
         selectPane(1);
-        self.lightXSlider.value = scene.light.position.x;
-        self.lightYSlider.value = scene.light.position.y;
-        self.lightZSlider.value = scene.light.position.z;
-        self.lightSizeSlider.value = scene.light.radius;
     }
     
     @IBAction func editScene(){
         selectPane(2);
+    }
+    
+    @IBAction func editSphere(){
+        updateSphereEditView();
+        selectPane(3);
     }
     
     func selectPane(index: Int){
@@ -277,12 +279,14 @@ class ViewController: UIViewController {
     var lastX:Float = 0.0;
     var lastY:Float = 0.0;
     
-        
-    func hideSphereEditView(){
-        self.sphereEditView.hidden = true;
+    func updateLightingEditView(){
+        self.lightXSlider.value = scene.light.position.x;
+        self.lightYSlider.value = scene.light.position.y;
+        self.lightZSlider.value = scene.light.position.z;
+        self.lightSizeSlider.value = scene.light.radius;
     }
-        
-    func showSphereEditView(){
+    
+    func updateSphereEditView(){
         lastX = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraRight;
         lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
         
@@ -293,7 +297,6 @@ class ViewController: UIViewController {
         sphereBlueSlider.value = s.color.z;
         sphereSizeSlider.value = s.radius;
         sphereMaterialSegmentedControl.selectedSegmentIndex = Int(s.material);
-        self.sphereEditView.hidden = false;
     }
 }
 

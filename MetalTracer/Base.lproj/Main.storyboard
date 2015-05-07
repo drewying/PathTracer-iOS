@@ -419,7 +419,7 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="McV-0p-YuE"/>
-                                    <barButtonItem title="Help" id="Sui-sF-6Ab"/>
+                                    <barButtonItem title="Sphere" id="Sui-sF-6Ab"/>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -474,6 +474,7 @@
                         <outlet property="sphereMaterialSegmentedControl" destination="4my-bi-mKd" id="bgC-Xw-tcp"/>
                         <outlet property="sphereRedSlider" destination="LDJ-Rn-T72" id="dSm-IA-wuB"/>
                         <outlet property="sphereSizeSlider" destination="3Xh-jW-0By" id="mPk-Zk-e5j"/>
+                        <outlet property="sphereToolbarButton" destination="Sui-sF-6Ab" id="X1l-Gr-d3z"/>
                         <outlet property="toolbar" destination="3i3-to-PZy" id="GGz-q9-FJ9"/>
                     </connections>
                 </viewController>
