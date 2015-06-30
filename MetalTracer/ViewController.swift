@@ -79,7 +79,9 @@ class ViewController: UIViewController {
         xResolution = Int(size.width);
         yResolution = Int(size.height);
         
-        let light = Sphere(position:Vector3D(x:0.5,y:0.5,z:0.5), radius:0.0, color:Vector3D(x: 10.0,y: 10.0,z: 10.0), material:Material.LIGHT);
+        let light = Sphere(position:Vector3D(x:0.0,y:0.9,z:0.5), radius:0.0, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT);
+        
+        //let light = Sphere(position:Vector3D(x:0.0,y:10.97,z:0.0), radius:10.0, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT);
         
         let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
         
