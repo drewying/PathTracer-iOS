@@ -14,7 +14,7 @@ using namespace metal;
 #define UNSIGNED_INT_MAX 4294967295
 #define M_PI 3.14159265358979323846
 
-#define EPSILON 1.e-4
+#define EPSILON 1.e-3
 
 static constant int boxCount = 6;
 static constant int bounceCount = 5;
@@ -244,9 +244,15 @@ Hit triangleIntersection(Triangle t, Ray ray, float distance){
 
 inline float rand(thread uint *seed)
 {
-    //LCG which is faster
-    //http://www.reedbeta.com/blog/2013/01/12/quick-and-easy-gpu-random-numbers-in-d3d11/
+    //A hack for the sin funciton
+    /*uint x = *seed;
+    x++;
+    *seed = x;
+    return fract(sin(float(x))*43758.5453123);*/
     
+    
+    //http://www.reedbeta.com/blog/2013/01/12/quick-and-easy-gpu-random-numbers-in-d3d11/
+    //LCG which is faster
     /*uint x = *seed;
     x = 1664525 * x + 1013904223;
     *seed = x;
