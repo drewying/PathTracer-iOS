@@ -14,249 +14,65 @@ using namespace metal;
 #define UNSIGNED_INT_MAX 4294967295
 #define M_PI 3.14159265358979323846
 
-#define EPSILON 1.e-3
+#define EPSILON 1.e-3/*
 
-static constant int boxCount = 6;
-static constant int bounceCount = 5;
-static constant int maxSpheres = 4;
+This shader is an attempt at porting smallpt to GLSL.
 
-enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
-    
-struct Ray{
-    float3 origin;
-    float3 direction;
-};
+See what it's all about here:
+http://www.kevinbeason.com/smallpt/
 
-struct Hit{
-    float distance;
-    Ray ray;
-    float3 normal;
-    float3 hitPosition;
-    uint material;
-    float3 color;
-    bool didHit;
-};
+The code is based in particular on the slides by David Cline.
 
-struct Sphere{
-    packed_float3 position;
-    float radius;
-    uint material;
-    packed_float3 color;
-};
+Some differences:
 
+- For optimization purposes, the code considers there is
+only one light source (see the commented loop)
+- Russian roulette and tent filter are not implemented
 
-struct Plane{
-    float3 position;
-    float3 normal;
-    float3 color;
-    Material material;
-};
+I spent quite some time pulling my hair over inconsistent
+behavior between Chrome and Firefox, Angle and native. I
+expect many GLSL related bugs to be lurking, on top of
+implementation errors. Please Let me know if you find any.
 
-struct Box{
-    float3 min;
-    float3 max;
-    float3 normal;
-    float3 color;
-    Material material;
-};
+--
+Zavie
 
+*/
 
-struct Triangle{
-    float3 p0;
-    float3 p1;
-    float3 p2;
-    float3 color;
-    Material material;
-};
+// Play with the two following values to change quality.
+// You want as many samples as your GPU can bear. :)
+#define SAMPLES 6
+#define MAXDEPTH 4
 
-struct Camera{
-    float3 position;
-    float3 up;
-    float apertureSize = 0.0;
-    float focalLength = 1.0;
-};
-    
-struct Scene{
-    Sphere light;
-    constant Sphere *spheres;
-    constant packed_float3 *colors;
-};
-    
-static constant struct Box boxes[] = {
-    {float3(-1.0,1.0,-1.0), float3(-1.0,-1.0,1.0), float3(1.0,0.0,0.0), float3(0.75,0.0,0.0), DIFFUSE}, //Left
-    {float3(1.0,1.0,-1.0), float3(1.0,-1.0,1.0), float3(-1.0,0.0,0.0), float3(0.0,0.0,0.75), DIFFUSE}, //Right
-    {float3(1.0,1.0,-1.0), float3(-1.0,-1.0,-1.0), float3(0.0,0.0,1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Back
-    {float3(1.0,1.0,1.0), float3(-1.0,-1.0,1.0), float3(0.0,0.0,-1.0), float3(0.75,0.75,0.75), DIFFUSE}, //Front
-    {float3(1.0,1.0,1.0), float3(-1.0,1.0,-1.0), float3(0.0,-1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE}, //Top
-    {float3(1.0,-1.0,1.0), float3(-1.0,-1.0,-1.0), float3(0.0,1.0,0.0), float3(0.75,0.75,0.75), DIFFUSE} //Bottom
-};
+// Uncomment to see how many samples never reach a light source
+//#define DEBUG
 
+// Not used for now
+#define DEPTH_RUSSIAN 2
 
-inline Hit noHit(){
-    Hit hit;
-    hit.didHit = false;
-    hit.distance = DBL_MAX;
-    return hit;
-}
+#define PI 3.14159265359
+#define DIFF 0
+#define SPEC 1
+#define REFR 2
+#define NUM_SPHERES 9
 
-inline Hit getHit(float maxT, float minT, Ray ray, float3 normal, float3 color, uint material){
-    
-    if (minT > EPSILON && minT < maxT){
-        Hit hit;
-        hit.distance = minT;
-        hit.ray = ray;
-        hit.normal = normal;
-        hit.color = color;
-        hit.material = material;
-        float3 hitpos = ray.origin + ray.direction * minT;
-        hit.hitPosition = hitpos;
-        hit.didHit = true;
-        return hit;
-    } else{
-        return noHit();
-    }
-    
-    
-}
-    
-    
-Hit boxIntersection(Box b, Ray ray, float distance){
-    
-    float3 tMin = (b.min - ray.origin) / ray.direction;
-    float3 tMax = (b.max - ray.origin) / ray.direction;
-    float3 t1 = min(tMin, tMax);
-    float3 t2 = max(tMin, tMax);
-    float tNear = max(max(t1.x, t1.y), t1.z);
-    float tFar = min(min(t2.x, t2.y), t2.z);
-    
-    
-    if (tNear > tFar){
-        return noHit();
-    }
-    
-    if (dot(b.normal, ray.direction) > 0){
-        return noHit();
-    }
-    
-    float t;
-    if (tNear <= EPSILON) {
-        t = tNear;
-    } else{
-        t = tFar;
-    }
-    
-    return getHit(distance, t, ray, b.normal, b.color, b.material);
-}
-    
-
-
-Hit planeIntersection(Plane p, Ray ray, float distance);
-Hit planeIntersection(Plane p, Ray ray, float distance){
-    float3 n = normalize(p.normal);
-    float d = dot(n, p.position);
-    float denom = dot(n, ray.direction);
-    if (-denom > EPSILON) {
-        float t = (d - dot(n, ray.origin)) / denom;
-        float3 hitpos = ray.origin + ray.direction * t;
-        return getHit(distance, t, ray, p.normal, p.color, p.material);
-    }
-    return noHit();
-}
-
-Hit sphereIntersection(Sphere s, Ray ray, float distance){
-    if (s.radius < 0.05){
-        return noHit();
-    }
-    float3 v = s.position - ray.origin;
-    float b = dot(v, ray.direction);
-    float discriminant = b * b - dot(v, v) + s.radius * s.radius;
-    if (discriminant < 0) {
-        return noHit();
-    }
-    float d = sqrt(discriminant);
-    float tFar = b + d;
-    if (tFar <= EPSILON) {
-        return noHit();
-    }
-    float tNear = b - d;
-    
-    if (tNear <= EPSILON) {
-        float3 hitpos = ray.origin + ray.direction * tFar;
-        float3 norm = (hitpos - s.position);
-        return getHit(distance, tFar, ray, norm, s.color, s.material);
-    } else{
-        float3 hitpos = ray.origin + ray.direction * tNear;
-        float3 norm = (hitpos - s.position);
-        return getHit(distance, tNear, ray, norm, s.color, s.material);
-    }
-}
-
-Hit triangleIntersection(Triangle t, Ray ray, float distance){
-    float tVal;
-    
-    float A = t.p0.x - t.p1.x;
-    float B = t.p0.y - t.p1.y;
-    float C = t.p0.z - t.p1.z;
-    
-    float D = t.p0.x - t.p2.x;
-    float E = t.p0.y - t.p2.y;
-    float F = t.p0.z - t.p2.z;
-    
-    float G = ray.direction.x;
-    float H = ray.direction.y;
-    float I = ray.direction.z;
-    
-    float J = t.p0.x - ray.origin.x;
-    float K = t.p0.y - ray.origin.y;
-    float L = t.p0.z - ray.origin.z;
-    
-    float EIHF = E*I-H*F;
-    float GFDI = G*F-D*I;
-    float DHEG = D*H-E*G;
-    
-    float denom = (A*EIHF + B*GFDI + C*DHEG);
-    
-    float beta = (J*EIHF + K*GFDI + L*DHEG) / denom;
-    
-    if (beta <= 0.0f || beta >= 1.0f){
-        return noHit();
-    }
-    
-    float AKJB = A*K-J*B;
-    float JCAL = J*C-A*L;
-    float BLKC = B*L-K*C;
-    
-    float gamma = (I*AKJB + H*JCAL + G*BLKC)/denom;
-    
-    if (gamma <= 0.0f || beta + gamma >= 1.0f){
-        return noHit();
-    }
-    
-    tVal = -(F*AKJB + E*JCAL + D*BLKC) / denom;
-    
-    if (tVal > 0){
-        float3 normal = cross((t.p1-t.p2), (t.p2-t.p0));
-        return getHit(distance, tVal, ray, normal, t.color, t.material);
-    } else{
-        return noHit();
-    }
-}
+//float rand(thread uint *seed) {  uint x = *seed; *seed = x; return fract(sin(float(x))*43758.5453123); }
 
 inline float rand(thread uint *seed)
 {
     //A hack for the sin funciton
     /*uint x = *seed;
-    x++;
-    *seed = x;
-    return fract(sin(float(x))*43758.5453123);*/
+     x++;
+     *seed = x;
+     return fract(sin(float(x))*43758.5453123);*/
     
     
     //http://www.reedbeta.com/blog/2013/01/12/quick-and-easy-gpu-random-numbers-in-d3d11/
     //LCG which is faster
     /*uint x = *seed;
-    x = 1664525 * x + 1013904223;
-    *seed = x;
-    return float(x) / 4294967295.0;*/
+     x = 1664525 * x + 1013904223;
+     *seed = x;
+     return float(x) / 4294967295.0;*/
     
     //While a xor_shift... produces better results
     uint x = *seed;
@@ -267,289 +83,125 @@ inline float rand(thread uint *seed)
     return float(x) / 4294967295.0;
 }
 
-float3 uniformSampleDirection(thread uint *seed){
-    float u1 = rand(seed);
-    float u2 = rand(seed);
-    
-    float r = sqrt(1.0 - u1 * u2);
-    float theta = 2 * M_PI * u2;
-    
-    float x = r * cos(theta);
-    float y = r * sin(theta);
-    float z = u1;
-    
-    return normalize(float3(x,y,z));
+
+
+struct Ray { float3 o, d; };
+struct Sphere {
+    float r;
+    float3 p, e, c;
+    int refl;
+};
+
+static constant Sphere lightSourceVolume = {20., float3(50., 81.6, 81.6), float3(12.), float3(0.), DIFF};
+static constant Sphere spheres[NUM_SPHERES] = {
+    {1e5, float3(-1e5+1., 40.8, 81.6),	float3(0.), float3(.75, .25, .25), DIFF},
+    {1e5, float3( 1e5+99., 40.8, 81.6),float3(0.), float3(.25, .25, .75), DIFF},
+    {1e5, float3(50., 40.8, -1e5),		float3(0.), float3(.75), DIFF},
+    {1e5, float3(50., 40.8,  1e5+170.),float3(0.), float3(0.), DIFF},
+    {1e5, float3(50., -1e5, 81.6),		float3(0.), float3(.75), DIFF},
+    {1e5, float3(50.,  1e5+81.6, 81.6),float3(0.), float3(.75), DIFF},
+    {16.5, float3(27., 16.5, 47.), 	float3(0.), float3(1.), SPEC},
+    {16.5, float3(73., 16.5, 78.), 	float3(0.), float3(.7, 1., .9), REFR},
+    {600., float3(50., 681.33, 81.6),	float3(12.), float3(0.), DIFF}
+};
+
+
+float intersect(Sphere s, Ray r) {
+    float3 op = s.p - r.o;
+    float t, epsilon = 1e-3, b = dot(op, r.d), det = b * b - dot(op, op) + s.r * s.r;
+    if (det < 0.) return 0.; else det = sqrt(det);
+    return (t = b - det) > epsilon ? t : ((t = b + det) > epsilon ? t : 0.);
 }
 
-float3 bookSampleDirection(thread uint *seed){
-    float u1 = rand(seed);
-    float u2 = rand(seed);
-    
-    float r = sqrt(u1);
-    float theta = 2 * M_PI * u2;
-    
-    float x = r * cos(theta);
-    float y = r * sin(theta);
-    float z = sqrt(1.0 - x * x - y * y);
-    return normalize(float3(x,y,z));
-    
-}
-
-
-float3 cosineWeightedDirection(thread uint *seed){
-    float u1 = rand(seed);
-    float u2 = rand(seed);
-    
-    float r = sqrt(u1);
-    float theta = 2 * M_PI * u2;
-    
-    float x = r * cos(theta);
-    float y = r * sin(theta);
-    float z = sqrt(1.0 - u1);
-    return normalize(float3(x,y,z));
-}
-
-Ray bounce(Hit h, thread uint *seed){
-    
-    float3 outVector;
-    
-    if (h.material == DIFFUSE){
-        //outVector = uniformSampleDirection(seed);
-        //outVector = cosineWeightedDirection(seed);
-        outVector = bookSampleDirection(seed);
-        float3 normal = h.normal;
-        
-        // if the point is in the wrong hemisphere, mirror it
-        if (dot(normal, outVector) < 0.0) {
-            outVector *= -1.0;
-        }
-        
-    } else if (h.material == SPECULAR){
-        outVector = reflect(h.ray.direction, normalize(h.normal));
-    } else if (h.material == DIELECTRIC){
-        if (rand(seed) > 0.95){
-            outVector = reflect(h.ray.direction, normalize(h.normal));
-        } else{
-            float3 normal = normalize(h.normal);
-            float3 incident = h.ray.direction;
-            float3 nl = dot(normal, incident) < 0 ? normal : normal * -1.0;
-            float into = dot(nl, normal);
-            
-            float refractiveIndexAir = 1;
-            float refractiveIndexGlass = 1.5;
-            float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
-            normal *= ((into > 0) - (into < 0));
-            outVector = refract(incident, normal, refractiveIndexRatio);
-        }
-        
-    } else {
-        outVector = h.ray.direction;
+int intersect(Ray r, thread float &t, thread Sphere &s, int avoid) {
+    int id = -1;
+    t = 1e5;
+    s = spheres[0];
+    for (int i = 0; i < NUM_SPHERES; ++i) {
+        Sphere S = spheres[i];
+        float d = intersect(S, r);
+        if (i!=avoid && d!=0. && d<t) { t = d; id = i; s=S; }
     }
-    
-    
-    Ray outRay;
-    outRay.origin = h.hitPosition;
-    outRay.direction = outVector;
-    return outRay;
+    return id;
 }
-    
 
-inline Hit getClosestHit(Ray r, Scene scene, bool isShadowHit, thread uint *seed, texture2d<float, access::read> imageTexture){
-    Hit h = noHit();
+float3 jitter(float3 d, float phi, float sina, float cosa) {
+    float3 w = normalize(d), u = normalize(cross(w.yzx, w)), v = cross(w, u);
+    return (u*cos(phi) + v*sin(phi)) * sina + w * cosa;
+}
 
-    /*for (int i=0; i<boxCount; i++){
-        Box b = boxes[i];
-        Hit hit = boxIntersection(b, r, h.distance);
-        if (hit.didHit){
-            h = hit;
-            if (scene.colors[i][0] >= 0.0){
-                h.color = scene.colors[i];
-            } else{
-                float x;
-                float y;
-                if (abs(hit.normal.x) > 0){
-                    x = hit.hitPosition.z;
-                    y = hit.hitPosition.y;
-                } else if (abs(hit.normal.y) > 0){
-                    x = hit.hitPosition.x;
-                    y = hit.hitPosition.z;
-                } else if (abs(hit.normal.z) > 0){
-                    x = hit.hitPosition.x;
-                    y = hit.hitPosition.y;
+float3 radiance(Ray r, thread uint *seed) {
+    float3 acc = float3(0.);
+    float3 mask = float3(1.);
+    int id = -1;
+    for (int depth = 0; depth < MAXDEPTH; ++depth) {
+        float t;
+        Sphere obj;
+        if ((id = intersect(r, t, obj, id)) < 0) break;
+        float3 x = t * r.d + r.o;
+        float3 n = normalize(x - obj.p), nl = n * sign(-dot(n, r.d));
+        
+        //float3 f = obj.c;
+        //float p = dot(f, float3(1.2126, 0.7152, 0.0722));
+        //if (depth > DEPTH_RUSSIAN || p == 0.) if (rand() < p) f /= p; else { acc += mask * obj.e * E; break; }
+        
+        if (obj.refl == DIFF) {
+            float r2 = rand(seed);
+            float3 d = jitter(nl, 2.*PI*rand(seed), sqrt(r2), sqrt(1. - r2));
+            float3 e = float3(0.);
+            //for (int i = 0; i < NUM_SPHERES; ++i)
+            {
+                // Sphere s = sphere(i);
+                // if (dot(s.e, float3(1.)) == 0.) continue;
+                
+                // Normally we would loop over the light sources and
+                // cast rays toward them, but since there is only one
+                // light source, that is mostly occluded, here goes
+                // the ad hoc optimization:
+                Sphere s = lightSourceVolume;
+                int i = 8;
+                
+                float3 l0 = s.p - x;
+                float cos_a_max = sqrt(1. - clamp(s.r * s.r / dot(l0, l0), 0., 1.));
+                float cosa = mix(cos_a_max, 1., rand(seed));
+                float3 l = jitter(l0, 2.*PI*rand(seed), sqrt(1. - cosa*cosa), cosa);
+                
+                if (intersect(Ray{x, l}, t, s, id) == i) {
+                    float omega = 2. * PI * (1. - cos_a_max);
+                    e += (s.e * clamp(dot(l, n),0.,1.) * omega) / PI;
                 }
-                h.color = imageTexture.read(uint2(((x/2)+0.5) * 1000, 1000 - (((y/2)+0.5) * 1000))).rgb;
+            }
+            float E = 1.;//float(depth==0);
+            acc += mask * obj.e * E + mask * obj.c * e;
+            mask *= obj.c;
+            r = Ray{x, d};
+        } else if (obj.refl == SPEC) {
+            acc += mask * obj.e;
+            mask *= obj.c;
+            r = Ray{x, reflect(r.d, n)};
+        } else {
+            float a=dot(n,r.d), ddn=abs(a);
+            float nc=1., nt=1.5, nnt=mix(nc/nt, nt/nc, float(a>0.));
+            float cos2t=1.-nnt*nnt*(1.-ddn*ddn);
+            r = Ray{x, reflect(r.d, n)};
+            if (cos2t>0.) {
+                float3 tdir = normalize(r.d*nnt + sign(a)*n*(ddn*nnt+sqrt(cos2t)));
+                float R0=(nt-nc)*(nt-nc)/((nt+nc)*(nt+nc)),
+                c = 1.-mix(ddn,dot(tdir, n),float(a>0.));
+                float Re=R0+(1.-R0)*c*c*c*c*c,P=.25+.5*Re,RP=Re/P,TP=(1.-Re)/(1.-P);
+                if (rand(seed)<P) { mask *= RP; }
+                else { mask *= obj.c*TP; r = Ray{x, tdir}; }
             }
         }
-    }*/
-    
-    Hit hit = boxIntersection(boxes[0], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[0];
     }
-    hit = boxIntersection(boxes[1], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[1];
-    }
-    hit = boxIntersection(boxes[2], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[2];
-    }
-    hit = boxIntersection(boxes[3], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[3];
-    }
-    hit = boxIntersection(boxes[4], r, h.distance);
-    if (hit.didHit && !isShadowHit){
-        h = hit;
-        h.color = scene.colors[4];
-    }
-    hit = boxIntersection(boxes[5], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[5];
-    }
-    
-    hit = sphereIntersection(scene.spheres[0], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    hit = sphereIntersection(scene.spheres[1], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    hit = sphereIntersection(scene.spheres[2], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    hit = sphereIntersection(scene.spheres[3], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    hit = sphereIntersection(scene.spheres[4], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    return h;
+    return acc;
 }
 
-float3 jitterPosition(thread uint *seed, float3 position){
-    float lightx = (rand(seed) * 0.1) - 0.05;
-    float lighty = (rand(seed) * 0.1) - 0.05;
-    float lightz = (rand(seed) * 0.1) - 0.05;
-    return float3(position.x + lightx, position.y + lighty, position.z + lightz);
-}
+/*void mainImage( out float4 fragColor, in float2 fragCoord ) {
+    
+}*/
 
-float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting, texture2d<float, access::read> imageTexture){
-    float3 reflectColor = float3(1.0,1.0,1.0);
-    float3 accumulatedColor = float3(0.0,0.0,0.0);
-    float3 lightPosition = scene.light.position; //jitterLightPosition(seed, scene.light.position);
-    for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r, scene, false, seed, imageTexture);
-        if (!h.didHit){
-            return float3(0,0,0);
-        }
-        
-        if (includeIndirectLighting && scene.light.radius > 0){
-            Hit lightHit = sphereIntersection(scene.light, r, h.distance);
-            if (lightHit.didHit){
-                accumulatedColor += reflectColor * lightHit.color;
-                return accumulatedColor * 0.5;
-            }
-        }
-        
-        reflectColor *= h.color;
-        
-        if (includeDirectLighting){
-            //Direct Lighting
-            float3 normal = normalize(h.normal);
-            
-            //lightPosition[1] -= scene.light.radius; //Set the direct lighting point to the bottom of the light sphere
-        
-            float3 lightDirection = normalize(lightPosition - h.hitPosition);
-            float cosphi = dot(normal, lightDirection);
-            
-            
-            //Calculate shadow factor
-            float3 jitteredPosition = h.hitPosition;
-            //jitteredPosition = jitterPosition(seed, h.hitPosition); //Jitter the light for psuedo soft shadows
-            Ray shadowRay = {jitteredPosition, lightDirection};
-            Hit shadowHit = getClosestHit(shadowRay, scene, true, seed, imageTexture);
-            
-            float lightDistance = distance(lightPosition, jitteredPosition);
-            float shadowFactor = 1.0;
-            if (shadowHit.didHit && shadowHit.distance <= lightDistance){
-                shadowFactor = 0.0;
-            }
-            
-            accumulatedColor += reflectColor * cosphi * shadowFactor;
-            
-            if (!includeIndirectLighting && h.material == DIFFUSE){
-                return accumulatedColor;
-            }
-        }
-        r = bounce(h, seed);
-    }
-    
-    if (includeDirectLighting){
-        return accumulatedColor * 0.5;
-    } else{
-        return float3(0,0,0);
-    }
-    
-    
-}
 
-Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant packed_float3 *cameraParams){
-    Camera cam;
-    cam.position = float3(cameraParams[0]);
-    cam.up = float3(cameraParams[1]);
-    float3 lookAt = -normalize(cam.position);
-    
-    float r1 = 0;
-    float r2 = 0;
-    
-    if (cam.apertureSize > 0.0){
-        r1 = (rand(seed) * 2.0) - 1.0;
-        r2 = (rand(seed) * 2.0) - 1.0;
-    }
-    
-    float3 l = normalize(lookAt-cam.position);
-    float3 right = cross(l, cam.up);
-    float3 up = cross(right, l);
-    
-    float3 U = up * r1 * cam.apertureSize;
-    float3 V = right * r2 * cam.apertureSize;
-    float3 UV = U+V;
-    
-    
-    right = normalize(right);
-    up = normalize(up);
-    
-    right *= aspectRatio;
-    
-    float3 direction = l + right * x + up * y;
-    direction = (direction * cam.focalLength) - UV;
-    direction = normalize(direction);
-    
-    float3 origin = cam.position + UV;
-    
-    Ray outRay = {origin, direction};
-    return outRay;
-}
-
-    
-uint hashSeed(uint seed){
-    seed = (seed ^ 61) ^ (seed >> 16);
-    seed *= 9;
-    seed = seed ^ (seed >> 4);
-    seed *= 0x27d4eb2d;
-    seed = seed ^ (seed >> 15);
-    return seed;
-}
 
 kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
@@ -558,7 +210,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
                       constant packed_float3 *cameraParams [[buffer(1)]],
-                      constant Sphere *spheres [[buffer(2)]],
+                      constant Sphere *spheresa [[buffer(2)]],
                       constant packed_float3 *wallColors [[buffer(3)]]
                       ){
     
@@ -569,59 +221,33 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     float yResolution = float(intParams[3]);
     int sphereCount = int(intParams[4]);
     
-    uint seedMemory = hashSeed(gidIndex * sysTime * sampleNumber);
+    float2 fragCoord = float2(gid.x, gid.y);
     
-    thread uint *seed = &seedMemory;
+    float2 iResolution = float2(xResolution,yResolution);
     
     //Get the inColor
     float4 inColor = inTexture.read(gid).rgba;
     
+    float2 iMouse = float2(0,0);
     
-    float dx = 1.0 / xResolution;
-    float dy = 1.0 / yResolution;
-    float x = -0.5 + gid.x  * dx;
-    float y = -0.5 + gid.y  * dy;
-    
-    
-    //Jitter the ray
-    /*uint jitterIndex = sampleNumber%100;
-    uint xJitterPosition = jitterIndex%10;
-    uint yJitterPosition = floor(float(jitterIndex)/10.0);
-    
-    float incX = 1.0/(xResolution*10);
-    float xOffset = rand(seed) * float(incX) + float(xJitterPosition) * float(incX);
-    
-    float incY = 1.0/(yResolution*10);
-    float yOffset = rand(seed) * float(incY) + float(yJitterPosition) * float(incY);*/
-    
-    float aspect_ratio = xResolution/yResolution;
-    
-    float xOffset = ((rand(seed) * 2.0) - 1.0)/(xResolution*2);
-    float yOffset = ((rand(seed) * 2.0) - 1.0)/(yResolution*2);
-    
-    Ray r = makeRay(seed, x + xOffset, y + yOffset, aspect_ratio, cameraParams);
-    
-    uint lightingMode = intParams[4];
-    
-    bool includeDirect = false;
-    bool includeIndirect = false;
-    
-    switch (lightingMode){
-        case 1:
-            includeDirect = true;
-            break;
-        case 2:
-            includeIndirect = true;
-            break;
-        case 3:
-            includeDirect = true;
-            includeIndirect = true;
-            break;
+    uint seed = sysTime + iResolution.y * fragCoord.x / iResolution.x + fragCoord.y / iResolution.y;
+    float2 uv = 2. * fragCoord.xy / iResolution.xy - 1.;
+    float3 camPos = float3(0,0,10); //float3((2. * (.5*iResolution.xy) / iResolution.xy - 1.) * float2(48., 40.) + float2(50., 40.8), 169.);
+    float3 cz = normalize(float3(50., 40., 81.6) - camPos);
+    float3 cx = float3(1., 0., 0.);
+    float3 cy = normalize(cross(cx, cz)); cx = cross(cz, cy);
+    float3 color = float3(0.);
+    for (int i = 0; i < SAMPLES; ++i)
+    {
+#ifdef DEBUG
+        float3 test = radiance(Ray(camPos, normalize(.53135 * (iResolution.x/iResolution.y*uv.x * cx + uv.y * cy) + cz)));
+        if (dot(test, test) > 0.) color += float3(1.); else color += float3(0.5,0.,0.1);
+#else
+        color += radiance(Ray{camPos, normalize(.53135 * (iResolution.x/iResolution.y*uv.x * cx + uv.y * cy) + cz)}, &seed);
+#endif
     }
+    //fragColor = float4(pow(clamp(color/float(SAMPLES), 0., 1.), float3(1./2.2)), 1.);
     
-    Scene scene = Scene{spheres[0], spheres+1, wallColors};
     
-    float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect, imageTexture), 1.0);
-    
-    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    outTexture.write(mix(float4(color,1.0), inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
