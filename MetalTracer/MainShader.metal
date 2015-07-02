@@ -230,9 +230,9 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     
     float2 iMouse = float2(0,0);
     
-    uint seed = sysTime + iResolution.y * fragCoord.x / iResolution.x + fragCoord.y / iResolution.y;
+    thread uint seed = sysTime + iResolution.y * fragCoord.x / iResolution.x + fragCoord.y / iResolution.y;
     float2 uv = 2. * fragCoord.xy / iResolution.xy - 1.;
-    float3 camPos = float3(0,0,10); //float3((2. * (.5*iResolution.xy) / iResolution.xy - 1.) * float2(48., 40.) + float2(50., 40.8), 169.);
+    float3 camPos = float3((2. * (.5*iResolution.xy) / iResolution.xy - 1.) * float2(48., 40.) + float2(50., 40.8), 169.);
     float3 cz = normalize(float3(50., 40., 81.6) - camPos);
     float3 cx = float3(1., 0., 0.);
     float3 cy = normalize(cross(cx, cz)); cx = cross(cz, cy);
