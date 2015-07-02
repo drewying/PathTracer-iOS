@@ -225,12 +225,17 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     
     float2 iResolution = float2(xResolution,yResolution);
     
+    
+    
+    
     //Get the inColor
     float4 inColor = inTexture.read(gid).rgba;
     
     float2 iMouse = float2(0,0);
     
-    thread uint seed = sysTime + iResolution.y * fragCoord.x / iResolution.x + fragCoord.y / iResolution.y;
+    uint seed = sysTime + iResolution.y * fragCoord.x / iResolution.x + fragCoord.y / iResolution.y;
+    thread uint *seedPointer = &seed;
+    
     float2 uv = 2. * fragCoord.xy / iResolution.xy - 1.;
     float3 camPos = float3((2. * (.5*iResolution.xy) / iResolution.xy - 1.) * float2(48., 40.) + float2(50., 40.8), 169.);
     float3 cz = normalize(float3(50., 40., 81.6) - camPos);
@@ -243,11 +248,11 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
         float3 test = radiance(Ray(camPos, normalize(.53135 * (iResolution.x/iResolution.y*uv.x * cx + uv.y * cy) + cz)));
         if (dot(test, test) > 0.) color += float3(1.); else color += float3(0.5,0.,0.1);
 #else
-        color += radiance(Ray{camPos, normalize(.53135 * (iResolution.x/iResolution.y*uv.x * cx + uv.y * cy) + cz)}, &seed);
+        color += radiance(Ray{camPos, normalize(.53135 * (iResolution.x/iResolution.y*uv.x * cx + uv.y * cy) + cz)}, seedPointer);
 #endif
     }
-    //fragColor = float4(pow(clamp(color/float(SAMPLES), 0., 1.), float3(1./2.2)), 1.);
+    float4 fragColor = float4(pow(clamp(color/float(SAMPLES), 0., 1.), float3(1./2.2)), 1.);
+    outTexture.write(fragColor, gid);
     
-    
-    outTexture.write(mix(float4(color,1.0), inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    //outTexture.write(mix(float4(color,1.0), inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
