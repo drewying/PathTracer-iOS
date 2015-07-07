@@ -327,7 +327,7 @@ Ray bounce(Hit h, thread uint *seed){
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, normalize(h.normal));
     } else if (h.material == DIELECTRIC){
-        if (rand(seed) > 0.95){
+        if (rand(seed) > 0.9){
             outVector = reflect(h.ray.direction, normalize(h.normal));
         } else{
             float3 normal = normalize(h.normal);
@@ -487,21 +487,19 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
             
             accumulatedColor += reflectColor * cosphi * shadowFactor;
             
-            if (h.material == DIELECTRIC){
-                Ray lr = bounce(h, seed);
-                Hit lh = getClosestHit(lr, scene, seed, imageTexture);
-                lr = bounce(lh, seed);
-                Hit lightHit = sphereIntersection(scene.light, lr, h.distance);
-                if (lightHit.didHit){
-                    return reflectColor * lightHit.color;
-                }
-            }
-            
             if (!includeIndirectLighting && h.material == DIFFUSE){
                 return accumulatedColor;
             }
         }
         r = bounce(h, seed);
+        
+        //Caustics
+        if (h.material == DIELECTRIC){
+            Hit lightHit = sphereIntersection(scene.light, r, DBL_MAX);
+            if (lightHit.didHit){
+                accumulatedColor += lightHit.color;
+            }
+        }
     }
     
     if (includeDirectLighting){
