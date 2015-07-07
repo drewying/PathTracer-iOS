@@ -354,7 +354,7 @@ Ray bounce(Hit h, thread uint *seed){
 }
     
 
-inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed, texture2d<float, access::read> imageTexture){
+inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
     Hit h = noHit();
 
     /*for (int i=0; i<boxCount; i++){
@@ -443,71 +443,51 @@ float3 jitterPosition(thread uint *seed, float3 position){
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
 
-float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting, texture2d<float, access::read> imageTexture){
+float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting){
     float3 reflectColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 lightPosition = scene.light.position; //jitterLightPosition(seed, scene.light.position);
     for (int i=0; i < bounceCount; i++){
-        Hit h = getClosestHit(r, scene, seed, imageTexture);
+        Hit h = getClosestHit(ray, scene, seed);
         if (!h.didHit){
             return float3(0,0,0);
         }
         
-        if (includeIndirectLighting && scene.light.radius > 0){
-            Hit lightHit = sphereIntersection(scene.light, r, h.distance);
-            if (lightHit.didHit && i != 0){
-                //return (reflectColor * lightHit.color);
-            }
-        }
-        
+        //Indirect Lighting Factor
         reflectColor *= h.color;
         
-        if (includeDirectLighting){
-            //Direct Lighting
-            float3 normal = normalize(h.normal);
-            
-            //lightPosition[1] -= scene.light.radius; //Set the direct lighting point to the bottom of the light sphere
+
+        //Direct Lighting Factor
+        float3 normal = normalize(h.normal);
+        float3 lightDirection = normalize(lightPosition - h.hitPosition);
+        float cosphi = dot(normal, lightDirection);
         
-            float3 lightDirection = normalize(lightPosition - h.hitPosition);
-            float cosphi = dot(normal, lightDirection);
-            
-            
-            //Calculate shadow factor
-            
-            float3 jitteredPosition = includeIndirectLighting ? jitterPosition(seed, h.hitPosition) : h.hitPosition;
-            
-            Ray shadowRay = {jitteredPosition, lightDirection};
-            Hit shadowHit = getClosestHit(shadowRay, scene, seed, imageTexture);
-            
-            float lightDistance = distance(lightPosition, jitteredPosition);
-            float shadowFactor = 1.0;
-            if (shadowHit.didHit && shadowHit.distance <= lightDistance){
-                shadowFactor = 0.0;
-            }
-            
-            accumulatedColor += reflectColor * cosphi * shadowFactor;
-            
-            if (!includeIndirectLighting && h.material == DIFFUSE){
-                return accumulatedColor;
-            }
-        }
-        r = bounce(h, seed);
         
-        //Caustics
-        if (h.material == DIELECTRIC){
-            Hit lightHit = sphereIntersection(scene.light, r, DBL_MAX);
-            if (lightHit.didHit){
-                accumulatedColor += lightHit.color;
+        //Direct Lighting Shadow Factor
+        float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
+        Ray shadowRay = {jitteredPosition, lightDirection};
+        Hit shadowHit = getClosestHit(shadowRay, scene, seed);
+        
+        float lightDistance = distance(lightPosition, jitteredPosition);
+        float shadowFactor = (shadowHit.didHit && shadowHit.distance <= lightDistance) ? 0.0 : 1.0;
+        
+        //Accumulate all Lighting Factors
+        accumulatedColor += reflectColor * cosphi * shadowFactor;
+        
+        if (i < bounceCount - 1){
+            //Bounce the ray
+            ray = bounce(h, seed);
+            
+            //Calculate caustic
+            if (h.material == DIELECTRIC){
+                Hit lightHit = sphereIntersection(scene.light, ray, DBL_MAX);
+                if (lightHit.didHit){
+                    accumulatedColor += lightHit.color;
+                }
             }
         }
     }
-    
-    if (includeDirectLighting){
-        return accumulatedColor * 0.5;
-    } else{
-        return float3(0,0,0);
-    }
-    
+    return accumulatedColor * 0.5;
     
 }
 
@@ -561,7 +541,6 @@ uint hashSeed(uint seed){
 
 kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
-                      texture2d<float, access::read> imageTexture [[texture(2)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
                       constant uint *intParams [[buffer(0)]],
@@ -629,7 +608,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     
     Scene scene = Scene{spheres[0], spheres+1, wallColors};
     
-    float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect, imageTexture), 1.0);
+    float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
