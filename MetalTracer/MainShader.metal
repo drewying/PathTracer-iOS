@@ -456,7 +456,7 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
         if (includeIndirectLighting && scene.light.radius > 0){
             Hit lightHit = sphereIntersection(scene.light, r, h.distance);
             if (lightHit.didHit && i != 0){
-                return (reflectColor * lightHit.color);
+                //return (reflectColor * lightHit.color);
             }
         }
         
@@ -486,6 +486,16 @@ float3 tracePath(Ray r, thread uint *seed, Scene scene, bool includeDirectLighti
             }
             
             accumulatedColor += reflectColor * cosphi * shadowFactor;
+            
+            if (h.material == DIELECTRIC){
+                Ray lr = bounce(h, seed);
+                Hit lh = getClosestHit(lr, scene, seed, imageTexture);
+                lr = bounce(lh, seed);
+                Hit lightHit = sphereIntersection(scene.light, lr, h.distance);
+                if (lightHit.didHit){
+                    return reflectColor * lightHit.color;
+                }
+            }
             
             if (!includeIndirectLighting && h.material == DIFFUSE){
                 return accumulatedColor;
