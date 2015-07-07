@@ -11,14 +11,14 @@ import Foundation
 class Scene : NSObject {
     
     var camera:Camera;
-    var light:Sphere;
+    var light:Sphere = Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.LIGHT)
     var spheres:[Sphere] = [
         Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
         Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
         Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
         Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
         Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE)
-    ];
+    ]
             
     var wallColors:[Vector3D] = []
     
@@ -31,12 +31,22 @@ class Scene : NSObject {
     var sphereData:[Sphere] = []
     var cameraData:[Vector3D] = []
     
-    var sphereCount:Int = 0;
+    var sphereCount:Int = 0
     
-    init(camera:Camera, light:Sphere, context:MetalContext){
-        self.camera = camera;
-        self.light = light;
-        self.context = context;
+    init(camera:Camera, context:MetalContext){
+        self.camera = camera
+        self.context = context
+    }
+    
+    func clearSpheres(){
+        spheres = [
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE)
+        ];
+        sphereCount = 0
     }
     
     func resetBuffer(){

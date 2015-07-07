@@ -16,9 +16,7 @@ using namespace metal;
 
 #define EPSILON 1.e-3
 
-static constant int boxCount = 6;
 static constant int bounceCount = 5;
-static constant int maxSpheres = 4;
 
 enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
     
@@ -444,7 +442,7 @@ float3 jitterPosition(thread uint *seed, float3 position){
 }
 
 float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting){
-    float3 reflectColor = float3(1.0,1.0,1.0);
+    float3 indirectLightingColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     float3 lightPosition = scene.light.position; //jitterLightPosition(seed, scene.light.position);
     for (int i=0; i < bounceCount; i++){
@@ -454,13 +452,13 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         }
         
         //Indirect Lighting Factor
-        reflectColor *= h.color;
+        indirectLightingColor *= h.color;
         
 
         //Direct Lighting Factor
         float3 normal = normalize(h.normal);
         float3 lightDirection = normalize(lightPosition - h.hitPosition);
-        float cosphi = dot(normal, lightDirection);
+        float directLightingFactor = dot(normal, lightDirection);
         
         
         //Direct Lighting Shadow Factor
@@ -472,7 +470,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         float shadowFactor = (shadowHit.didHit && shadowHit.distance <= lightDistance) ? 0.0 : 1.0;
         
         //Accumulate all Lighting Factors
-        accumulatedColor += reflectColor * cosphi * shadowFactor;
+        accumulatedColor += indirectLightingColor * directLightingFactor * shadowFactor;
         
         if (i < bounceCount - 1){
             //Bounce the ray
@@ -482,7 +480,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
             if (h.material == DIELECTRIC){
                 Hit lightHit = sphereIntersection(scene.light, ray, DBL_MAX);
                 if (lightHit.didHit){
-                    accumulatedColor += lightHit.color;
+                    accumulatedColor += indirectLightingColor * lightHit.color;
                 }
             }
         }
