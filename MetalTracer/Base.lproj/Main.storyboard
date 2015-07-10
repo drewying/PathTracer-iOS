@@ -269,6 +269,14 @@
                                             <action selector="loadPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Zr5-DZ-6aQ"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LP5-CP-mhB">
+                                        <rect key="frame" x="75" y="8" width="56" height="30"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                        <state key="normal" title="Preset 4"/>
+                                        <connections>
+                                            <action selector="loadPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="669-dF-gsw"/>
+                                        </connections>
+                                    </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1000" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uFE-EO-tVQ" userLabel="SampleCountLabel">
                                         <rect key="frame" x="521" y="8" width="39" height="21"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -284,9 +292,11 @@
                                     <constraint firstItem="kBQ-eM-dSe" firstAttribute="top" secondItem="Cqk-Q1-z7A" secondAttribute="bottom" constant="8" id="6ov-8e-0ro"/>
                                     <constraint firstItem="Cqk-Q1-z7A" firstAttribute="leading" secondItem="Jpj-AB-ukp" secondAttribute="leading" constant="8" id="6xp-rG-eSO"/>
                                     <constraint firstAttribute="centerX" secondItem="Cee-yx-L7p" secondAttribute="centerX" id="Doh-2b-Z0y"/>
+                                    <constraint firstItem="Cqk-Q1-z7A" firstAttribute="centerY" secondItem="LP5-CP-mhB" secondAttribute="centerY" id="GVb-42-ycC"/>
                                     <constraint firstItem="Cee-yx-L7p" firstAttribute="leading" secondItem="Jpj-AB-ukp" secondAttribute="leading" constant="8" id="Hsj-DB-zdd"/>
                                     <constraint firstItem="uFE-EO-tVQ" firstAttribute="top" secondItem="Jpj-AB-ukp" secondAttribute="top" constant="8" id="OPG-Ir-pNg"/>
                                     <constraint firstItem="Cee-yx-L7p" firstAttribute="top" secondItem="kBQ-eM-dSe" secondAttribute="bottom" constant="8" id="Vgm-jB-eoV"/>
+                                    <constraint firstItem="LP5-CP-mhB" firstAttribute="leading" secondItem="Cqk-Q1-z7A" secondAttribute="trailing" constant="10" id="Zzn-Mc-fv0"/>
                                     <constraint firstItem="Cqk-Q1-z7A" firstAttribute="top" secondItem="Jpj-AB-ukp" secondAttribute="top" constant="8" id="rbS-EJ-g5n"/>
                                     <constraint firstItem="kBQ-eM-dSe" firstAttribute="leading" secondItem="Jpj-AB-ukp" secondAttribute="leading" constant="8" id="rlj-8G-nMZ"/>
                                 </constraints>
