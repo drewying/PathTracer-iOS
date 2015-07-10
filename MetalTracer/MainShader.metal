@@ -143,7 +143,7 @@ Hit boxIntersection(Box b, Ray ray, float distance){
         t = tFar;
     }
     
-    return getHit(distance, t, ray, b.normal, b.color, b.material);
+    return getHit(distance, t, ray, normalize(b.normal), b.color, b.material);
 }
     
 
@@ -180,11 +180,11 @@ Hit sphereIntersection(Sphere s, Ray ray, float distance){
     
     if (tNear <= EPSILON) {
         float3 hitpos = ray.origin + ray.direction * tFar;
-        float3 norm = (hitpos - s.position);
+        float3 norm = normalize(hitpos - s.position);
         return getHit(distance, tFar, ray, norm, s.color, s.material);
     } else{
         float3 hitpos = ray.origin + ray.direction * tNear;
-        float3 norm = (hitpos - s.position);
+        float3 norm = normalize(hitpos - s.position);
         return getHit(distance, tNear, ray, norm, s.color, s.material);
     }
 }
@@ -323,12 +323,12 @@ Ray bounce(Hit h, thread uint *seed){
         }
         
     } else if (h.material == SPECULAR){
-        outVector = reflect(h.ray.direction, normalize(h.normal));
+        outVector = reflect(h.ray.direction, h.normal);
     } else if (h.material == DIELECTRIC){
         if (rand(seed) > 0.9){
-            outVector = reflect(h.ray.direction, normalize(h.normal));
+            outVector = reflect(h.ray.direction, h.normal);
         } else{
-            float3 normal = normalize(h.normal);
+            float3 normal = h.normal;
             float3 incident = h.ray.direction;
             float3 nl = dot(normal, incident) < 0 ? normal : normal * -1.0;
             float into = dot(nl, normal);
@@ -456,7 +456,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         
 
         //Direct Lighting Factor
-        float3 normal = normalize(h.normal);
+        float3 normal = h.normal;
         float3 lightDirection = normalize(lightPosition - h.hitPosition);
         float directLightingFactor = dot(normal, lightDirection);
         
