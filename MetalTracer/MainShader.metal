@@ -435,9 +435,9 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
 }
 
 float3 jitterPosition(thread uint *seed, float3 position){
-    float lightx = (rand(seed) * 0.1) - 0.05;
-    float lighty = (rand(seed) * 0.1) - 0.05;
-    float lightz = (rand(seed) * 0.1) - 0.05;
+    float lightx = (rand(seed) * 0.06) - 0.03;
+    float lighty = (rand(seed) * 0.06) - 0.03;
+    float lightz = (rand(seed) * 0.06) - 0.03;
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
 
