@@ -104,7 +104,7 @@ class ViewController: UIViewController {
             
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:3.0)
         }
-        resetDisplay()
+        resetDisplay(true)
     }
 
     var panes:[UIView] = [];
@@ -158,13 +158,13 @@ class ViewController: UIViewController {
         
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-        resetDisplay();
+        resetDisplay(true);
     }
     
     @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
         self.scene.camera.cameraPosition = Matrix.transformPoint(Matrix.translate( self.scene.camera.cameraPosition * (Float(sender.velocity) * -0.1)), right: self.scene.camera.cameraPosition);
         sender.scale = 1.0;
-        self.resetDisplay();
+        self.resetDisplay(false);
     }
     @IBAction func tapAction(sender: UITapGestureRecognizer) {
         
@@ -212,8 +212,7 @@ class ViewController: UIViewController {
         
         lastX = x;
         lastY = y;
-        self.resetDisplay();
-        
+        self.resetDisplay(false);
     }
     
     @IBAction func lightPositionSlider(sender: UISlider) {
@@ -223,23 +222,23 @@ class ViewController: UIViewController {
         case lightZSlider:scene.light.position.z = sender.value;
         default:scene.light.position.x = sender.value;
         }
-        self.resetDisplay();
+        self.resetDisplay(false);
     }
     
     
     @IBAction func lightModeSegmentedControl(sender: UISegmentedControl) {
         self.rayTracer.renderMode = sender.selectedSegmentIndex + 1;
-        self.resetDisplay();
+        self.resetDisplay(true);
     }
     
     @IBAction func lightSizeSlider(sender: UISlider) {
         scene.light.radius = sender.value;
-        resetDisplay();
+        resetDisplay(false);
     }
     
     @IBAction func radiusSlider(sender: UISlider) {
         self.scene.spheres[selectedSphere].radius = sender.value;
-        self.resetDisplay();
+        self.resetDisplay(false);
     }
     
     @IBAction func colorSlider(sender: UISlider) {
@@ -249,7 +248,7 @@ class ViewController: UIViewController {
         case sphereBlueSlider:scene.spheres[selectedSphere].color.z = sender.value;
         default:scene.spheres[selectedSphere].color.x = sender.value;
         }
-        self.resetDisplay();
+        self.resetDisplay(false);
     }
     
     @IBAction func sphereMaterialSegmentedControl(sender: UISegmentedControl) {
@@ -259,7 +258,7 @@ class ViewController: UIViewController {
         case 2:self.scene.spheres[selectedSphere].material = Material.DIELECTRIC.rawValue;
         default:self.scene.spheres[selectedSphere].material = Material.DIFFUSE.rawValue;
         }
-        self.resetDisplay();
+        self.resetDisplay(true);
     }
     
     @IBAction func editMain(){
@@ -293,13 +292,13 @@ class ViewController: UIViewController {
         }
         let yPosition:Float = 0.4 * Float(scene.sphereCount-2);
         scene.addSphere(Sphere(position: Vector3D(x:0.0, y:yPosition, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
-        resetDisplay();
+        resetDisplay(true);
     }
     
     @IBAction func deleteSphere(sender: AnyObject) {
         scene.deleteSphere(selectedSphere);
         selectedSphere = -1;
-        resetDisplay();
+        resetDisplay(true);
     }
     
     override func viewDidLoad() {
@@ -323,9 +322,12 @@ class ViewController: UIViewController {
         }
     }
     
-    func resetDisplay() {
+    func resetDisplay(activeReset:Bool) {
         self.rayTracer.sampleNumber = 1;
         scene.resetBuffer();
+        if (activeReset){
+            self.rayTracer.reset();
+        }
     }
     
     override func didReceiveMemoryWarning() {

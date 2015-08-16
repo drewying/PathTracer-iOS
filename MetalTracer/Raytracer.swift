@@ -23,11 +23,15 @@ class Raytracer: NSObject {
         self.renderContext = renderContext;
         self.xResolution = xResolution;
         self.yResolution = yResolution;
-        
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
-
+    }
+    
+    func reset(){
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
+        outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
     }
     
     func renderScene(scene:Scene) -> UIImage{

@@ -454,12 +454,10 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         //Indirect Lighting Factor
         indirectLightingColor *= h.color;
         
-
         //Direct Lighting Factor
         float3 normal = h.normal;
         float3 lightDirection = normalize(lightPosition - h.hitPosition);
         float directLightingFactor = dot(normal, lightDirection);
-        
         
         //Direct Lighting Shadow Factor
         float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
@@ -561,30 +559,18 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     //Get the inColor
     float4 inColor = inTexture.read(gid).rgba;
     
+    float aspect_ratio = xResolution/yResolution;
+    
+    //Jitter the ray
+    xResolution += (rand(seed) - 0.5);
+    yResolution += (rand(seed) - 0.5);
     
     float dx = 1.0 / xResolution;
     float dy = 1.0 / yResolution;
     float x = -0.5 + gid.x  * dx;
     float y = -0.5 + gid.y  * dy;
     
-    
-    //Jitter the ray
-    /*uint jitterIndex = sampleNumber%100;
-    uint xJitterPosition = jitterIndex%10;
-    uint yJitterPosition = floor(float(jitterIndex)/10.0);
-    
-    float incX = 1.0/(xResolution*10);
-    float xOffset = rand(seed) * float(incX) + float(xJitterPosition) * float(incX);
-    
-    float incY = 1.0/(yResolution*10);
-    float yOffset = rand(seed) * float(incY) + float(yJitterPosition) * float(incY);*/
-    
-    float aspect_ratio = xResolution/yResolution;
-    
-    float xOffset = ((rand(seed) * 2.0) - 1.0)/(xResolution*2);
-    float yOffset = ((rand(seed) * 2.0) - 1.0)/(yResolution*2);
-    
-    Ray r = makeRay(seed, x + xOffset, y + yOffset, aspect_ratio, cameraParams);
+    Ray r = makeRay(seed, x, y, aspect_ratio, cameraParams);
     
     uint lightingMode = intParams[4];
     
