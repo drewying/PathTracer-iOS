@@ -38,74 +38,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var sphereMaterialSegmentedControl: UISegmentedControl!
     @IBOutlet weak var sphereSizeSlider: UISlider!
  
-    @IBOutlet weak var lightModeSegmentedControl: UISegmentedControl!
-    @IBOutlet weak var lightSizeSlider: UISlider!
+
     @IBOutlet weak var lightXSlider: UISlider!
     @IBOutlet weak var lightYSlider: UISlider!
     @IBOutlet weak var lightZSlider: UISlider!
     
-    @IBAction func loadPreset(sender: UIButton) {
-        scene.clearSpheres()
-        if (sender.tag == 1){
-            scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.5,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
-            
-            scene.wallColors[0] = Vector3D(x: 0.75, y: 0.0, z: 0.0);
-            scene.wallColors[1] = Vector3D(x: 0.0, y: 0.0, z: 0.75);
-            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            
-            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:3.0)
-        } else if (sender.tag == 2){
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.light = Sphere(position:Vector3D(x:0.5,y:0.5,z:-0.7), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
-            
-            scene.wallColors[0] = Vector3D(x: 0.0, y: 0.0, z: 1.0);
-            scene.wallColors[1] = Vector3D(x: 1.0, y: 1.0, z: 0.0);
-            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            
-            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:-3.0)
-        } else if (sender.tag == 3){
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.7, z:0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.2, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.9,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
-            
-            scene.wallColors[0] = Vector3D(x: 0.0, y: 0.75, z: 0.0);
-            scene.wallColors[1] = Vector3D(x: 0.75, y: 0.0, z: 0.0);
-            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            
-            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:-3.0)
-        } else if (sender.tag == 4){
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.75, z:0.6),radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
-            scene.addSphere(Sphere(position: Vector3D(x:0.3, y:-0.75, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
-            scene.addSphere(Sphere(position: Vector3D(x:0.6, y:-0.75, z:-0.6),radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIELECTRIC))
-            scene.light = Sphere(position:Vector3D(x:-0.6,y:0.5,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
-            
-            scene.wallColors[0] = Vector3D(x: 0.8, y: 0.8, z: 0.8);
-            scene.wallColors[1] = Vector3D(x: 0.8, y: 0.8, z: 0.8);
-            scene.wallColors[2] = Vector3D(x: 0.8, y: 0.8, z: 0.8);
-            scene.wallColors[3] = Vector3D(x: 0.8, y: 0.8, z: 0.8);
-            scene.wallColors[4] = Vector3D(x: 0.8, y: 0.8, z: 0.8);
-            scene.wallColors[5] = Vector3D(x: 0.8, y: 0.8, z: 0.8);
-            
-            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:3.0)
-        }
-        resetDisplay(true)
-    }
+    
 
     var panes:[UIView] = [];
     var toolbarButtons:[UIBarButtonItem] = [];
@@ -138,27 +76,116 @@ class ViewController: UIViewController {
         panes = [mainEditView, lightEditView, sceneEditView, sphereEditView];
         toolbarButtons = [mainToolbarButton, lightingToolbarButton, sceneToolbarButton, sphereToolbarButton];
         
-        let size:CGSize = self.imageView.frame.size;
-        xResolution = Int(size.width);
-        yResolution = Int(size.height);
+        let size:CGSize = self.imageView.frame.size
+        xResolution = Int(size.width)
+        yResolution = Int(size.height)
         
-        let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height));
-        scene = Scene(camera:camera, context:self.context);
+        let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height))
+        scene = Scene(camera:camera, context:self.context)
         
-        scene.wallColors.append(Vector3D(x: 0.75, y: 0.0, z: 0.0));
-        scene.wallColors.append(Vector3D(x: 0.0, y: 0.0, z: 0.75));
-        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
-        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
-        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
-        scene.wallColors.append(Vector3D(x: 0.75, y: 0.75, z: 0.75));
         
-        self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context);
-        self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution);
-        rayTracer.imageTexture = imageTexture;
+        self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context)
+        self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution)
+        rayTracer.imageTexture = imageTexture
         
         timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
         timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-        resetDisplay(true);
+        loadScene(1)
+    }
+    
+    @IBAction func loadPreset(sender: UIButton) {
+        loadScene(sender.tag)
+    }
+    
+    func loadScene(sceneIndex: Int) {
+        scene.clearSpheres()
+        if (sceneIndex == 1){
+            scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
+            scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.5,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            
+            scene.wallColors[0] = Vector3D(x: 0.75, y: 0.0, z: 0.0);
+            scene.wallColors[1] = Vector3D(x: 0.0, y: 0.0, z: 0.75);
+            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            
+            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:3.0)
+        } else if (sceneIndex == 2){
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
+            scene.light = Sphere(position:Vector3D(x:0.5,y:0.5,z:-0.7), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            
+            scene.wallColors[0] = Vector3D(x: 0.0, y: 0.0, z: 1.0);
+            scene.wallColors[1] = Vector3D(x: 1.0, y: 1.0, z: 0.0);
+            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            
+            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:-3.0)
+        } else if (sceneIndex == 3){
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.7, z:0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
+            scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
+            scene.addSphere(Sphere(position: Vector3D(x:0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.2, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.9,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            
+            scene.wallColors[0] = Vector3D(x: 0.0, y: 0.75, z: 0.0);
+            scene.wallColors[1] = Vector3D(x: 0.75, y: 0.0, z: 0.0);
+            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            
+            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:-3.0)
+        } else if (sceneIndex == 4){
+            scene.addSphere(Sphere(position: Vector3D(x:-0.4, y:-0.4, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
+            scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: 0.4, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
+            scene.addSphere(Sphere(position: Vector3D(x: 0.4, y:-0.4, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIELECTRIC))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            
+            scene.wallColors[0] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[1] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[2] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[3] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[4] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[5] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            
+            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:-3.0)
+        } else if (sceneIndex == 5){
+            scene.addSphere(Sphere(position: Vector3D(x:-0.15, y:-0.15, z:0.3), radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
+            scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: 0.15, z:0.3), radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
+            scene.addSphere(Sphere(position: Vector3D(x: 0.15, y:-0.15, z:0.3), radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIELECTRIC))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:-0.3), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            
+            scene.wallColors[0] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[1] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[2] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[3] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[4] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            scene.wallColors[5] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
+            
+            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:-3.0)
+        } else if (sceneIndex == 6){
+            scene.addSphere(Sphere(position: Vector3D(x: 0.6, y:0.0, z:0.0), radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
+            scene.addSphere(Sphere(position: Vector3D(x: 0.3, y: 0.0, z:0.0), radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
+            scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:0.0, z:0.0), radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIELECTRIC))
+            scene.light = Sphere(position:Vector3D(x:-0.6,y:0.0,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            
+            scene.wallColors[0] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[1] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            
+            scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:-3.0)
+        }
+        resetDisplay(true)
     }
     
     @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
@@ -225,30 +252,24 @@ class ViewController: UIViewController {
         self.resetDisplay(false);
     }
     
-    
-    @IBAction func lightModeSegmentedControl(sender: UISegmentedControl) {
-        self.rayTracer.renderMode = sender.selectedSegmentIndex + 1;
-        self.resetDisplay(true);
-    }
-    
-    @IBAction func lightSizeSlider(sender: UISlider) {
-        scene.light.radius = sender.value;
-        resetDisplay(false);
-    }
-    
     @IBAction func radiusSlider(sender: UISlider) {
         self.scene.spheres[selectedSphere].radius = sender.value;
         self.resetDisplay(false);
     }
     
-    @IBAction func colorSlider(sender: UISlider) {
+    @IBAction func sphereColorSlider(sender: UISlider) {
         switch (sender){
-        case sphereRedSlider:scene.spheres[selectedSphere].color.x = sender.value;
-        case sphereGreenSlider:scene.spheres[selectedSphere].color.y = sender.value;
-        case sphereBlueSlider:scene.spheres[selectedSphere].color.z = sender.value;
-        default:scene.spheres[selectedSphere].color.x = sender.value;
+        case sphereRedSlider:scene.spheres[selectedSphere].color.x = sender.value
+        case sphereGreenSlider:scene.spheres[selectedSphere].color.y = sender.value
+        case sphereBlueSlider:scene.spheres[selectedSphere].color.z = sender.value
+        default:scene.spheres[selectedSphere].color.x = sender.value
         }
-        self.resetDisplay(false);
+        self.resetDisplay(false)
+    }
+    
+    @IBAction func sceneWallColorSlider(sender: UISlider) {
+        scene.wallColors[sceneWallSegmentedControl.selectedSegmentIndex] = Vector3D(x: sceneRedSlider.value, y: sceneGreenSlider.value, z: sceneBlueSlider.value)
+        self.resetDisplay(false)
     }
     
     @IBAction func sphereMaterialSegmentedControl(sender: UISegmentedControl) {

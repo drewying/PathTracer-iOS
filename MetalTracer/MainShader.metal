@@ -457,7 +457,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         //Direct Lighting Factor
         float3 normal = h.normal;
         float3 lightDirection = normalize(lightPosition - h.hitPosition);
-        float directLightingFactor = dot(normal, lightDirection);
+        float directLightingFactor = dot(normal, lightDirection)/dot(lightDirection, lightDirection);
         
         //Direct Lighting Shadow Factor
         float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
