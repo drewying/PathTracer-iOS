@@ -83,7 +83,6 @@ class ViewController: UIViewController {
         let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height))
         scene = Scene(camera:camera, context:self.context)
         
-        
         self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context)
         self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution)
         rayTracer.imageTexture = imageTexture

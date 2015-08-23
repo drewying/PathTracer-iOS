@@ -20,7 +20,14 @@ class Scene : NSObject {
         Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE)
     ]
             
-    var wallColors:[Vector3D] = []
+    var wallColors:[Vector3D] = [
+        Vector3D(x: 0.0, y: 0.0, z: 0.0),
+        Vector3D(x: 0.0, y: 0.0, z: 0.0),
+        Vector3D(x: 0.0, y: 0.0, z: 0.0),
+        Vector3D(x: 0.0, y: 0.0, z: 0.0),
+        Vector3D(x: 0.0, y: 0.0, z: 0.0),
+        Vector3D(x: 0.0, y: 0.0, z: 0.0)
+    ]
     
     var context:MetalContext;
     
