@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreGraphics
 
 extension UIImage {
     class func imageFromTexture(texture:MTLTexture) -> UIImage{
@@ -30,12 +31,12 @@ extension UIImage {
             NSData(bytes: &imageBytes, length: imageBytes.count * sizeof(UInt8))
         )
         
-        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
-        let renderingIntent = kCGRenderingIntentDefault
+        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
+        //let renderingIntent = kCGRenderingIntentDefault
         
-        let imageRef = CGImageCreate(Int(imageSize.width), Int(imageSize.height), bitsPerComponent, bitsPerPixel, bytesPerRow, rgbColorSpace, bitmapInfo, providerRef, nil, false, renderingIntent)
+        let imageRef = CGImageCreate(Int(imageSize.width), Int(imageSize.height), bitsPerComponent, bitsPerPixel, bytesPerRow, rgbColorSpace, bitmapInfo, providerRef, nil, false, .RenderingIntentDefault)
         
-        return UIImage(CGImage: imageRef)!
+        return UIImage(CGImage: imageRef!)
     }
     
     class func textureFromImage(image:UIImage, context:MetalContext) -> MTLTexture{
@@ -51,15 +52,15 @@ extension UIImage {
         
         var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: UInt8(0))
         
-        let bitmapInfo = CGBitmapInfo(CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
         
-        let graphicsContext = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo)
+        let graphicsContext = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo.rawValue)
         
         CGContextDrawImage(graphicsContext, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
         
         let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
         
-        var imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
+        let imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
         let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
         imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
         

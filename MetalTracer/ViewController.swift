@@ -48,7 +48,7 @@ class ViewController: UIViewController {
     var panes:[UIView] = [];
     var toolbarButtons:[UIBarButtonItem] = [];
     
-    var context:MetalContext = MetalContext(device: MTLCreateSystemDefaultDevice());
+    var context:MetalContext = MetalContext(device: MTLCreateSystemDefaultDevice()!);
     
     var imageTexture: MTLTexture! = nil;
 
@@ -103,14 +103,15 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC))
             scene.light = Sphere(position:Vector3D(x:0.0,y:0.5,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
             
-            scene.wallColors[0] = Vector3D(x: 0.75, y: 0.0, z: 0.0);
-            scene.wallColors[1] = Vector3D(x: 0.0, y: 0.0, z: 0.75);
-            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
-            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
+            scene.wallColors[0] = Vector3D(x: 0.75, y: 0.0, z: 0.0)
+            scene.wallColors[1] = Vector3D(x: 0.0, y: 0.0, z: 0.75)
+            scene.wallColors[2] = Vector3D(x: 0.75, y: 0.75, z: 0.75)
+            scene.wallColors[3] = Vector3D(x: 0.75, y: 0.75, z: 0.75)
+            scene.wallColors[4] = Vector3D(x: 0.75, y: 0.75, z: 0.75)
+            scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75)
             
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:3.0)
+            scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 2){
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
@@ -126,6 +127,7 @@ class ViewController: UIViewController {
             scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
             
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:-3.0)
+            scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 3){
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.7, z:0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
             scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
@@ -141,6 +143,7 @@ class ViewController: UIViewController {
             scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
             
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:-3.0)
+            scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 4){
             scene.addSphere(Sphere(position: Vector3D(x:-0.4, y:-0.4, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: 0.4, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
@@ -155,6 +158,7 @@ class ViewController: UIViewController {
             scene.wallColors[5] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
             
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:-3.0)
+            scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 5){
             scene.addSphere(Sphere(position: Vector3D(x:-0.15, y:-0.15, z:0.3), radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: 0.15, z:0.3), radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
@@ -169,6 +173,7 @@ class ViewController: UIViewController {
             scene.wallColors[5] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
             
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:-3.0)
+            scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 6){
             scene.addSphere(Sphere(position: Vector3D(x: 0.6, y:0.0, z:0.0), radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.3, y: 0.0, z:0.0), radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
@@ -183,6 +188,7 @@ class ViewController: UIViewController {
             scene.wallColors[5] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
             
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.75, z:-3.0)
+            scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         }
         resetDisplay(true)
     }
@@ -194,12 +200,12 @@ class ViewController: UIViewController {
     }
     @IBAction func tapAction(sender: UITapGestureRecognizer) {
         
-        var point = sender.locationInView(self.imageView);
+        let point = sender.locationInView(self.imageView);
         let dx:Float = 1.0 / Float(xResolution);
         let dy:Float = 1.0 / Float(yResolution);
         let x:Float = -0.5 + Float(CGFloat(xResolution)-point.x)  * dx;
         let y:Float = -0.5 + Float(point.y)  * dy;
-        var ray:Ray = scene.camera.getRay(x, y: y);
+        let ray:Ray = scene.camera.getRay(x, y: y);
         selectedSphere = scene.getClosestHit(ray);
         lightEditView.hidden = true;
     }
@@ -370,7 +376,7 @@ class ViewController: UIViewController {
         lastY = scene.spheres[selectedSphere].position ⋅ scene.camera.cameraUp;
         
         //Configure editView
-        var s:Sphere = scene.spheres[selectedSphere];
+        let s:Sphere = scene.spheres[selectedSphere];
         sphereRedSlider.value = s.color.x;
         sphereGreenSlider.value = s.color.y;
         sphereBlueSlider.value = s.color.z;

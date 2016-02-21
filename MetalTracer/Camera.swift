@@ -32,7 +32,7 @@ struct Camera {
         right = right.normalized();
         up = up.normalized();
         right = right * aspectRatio;
-        var direction = (l + right * x + up * y).normalized();
+        let direction = (l + right * x + up * y).normalized();
         
         /*var camRight:Vector3D = cameraRight * aspectRatio;
         let lookAt:Vector3D = -cameraPosition.normalized();

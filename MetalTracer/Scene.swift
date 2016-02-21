@@ -62,12 +62,12 @@ class Scene : NSObject {
         for sphere:Sphere in spheres{
             sphereData.append(sphere);
         }
-        sphereBuffer = context.device.newBufferWithBytes(&sphereData, length: (sizeof(Sphere) + 3) * (spheres.count + 1), options:nil);
+        sphereBuffer = context.device.newBufferWithBytes(&sphereData, length: (sizeof(Sphere) + 3) * (spheres.count + 1), options:.CPUCacheModeDefaultCache);
         
         cameraData = [camera.cameraPosition, camera.cameraUp];
-        cameraBuffer = context.device.newBufferWithBytes(&cameraData, length: sizeof(Vector3D) * 2, options:nil);
+        cameraBuffer = context.device.newBufferWithBytes(&cameraData, length: sizeof(Vector3D) * 2, options:.CPUCacheModeDefaultCache);
         
-        wallColorBuffer = context.device.newBufferWithBytes(&wallColors, length: sizeof(Vector3D) * 6, options:nil);
+        wallColorBuffer = context.device.newBufferWithBytes(&wallColors, length: sizeof(Vector3D) * 6, options:.CPUCacheModeDefaultCache);
         
     }
     

@@ -48,7 +48,7 @@ class Raytracer: NSObject {
         
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(renderMode), 2];
         
-        let a = renderContext.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:nil);
+        let a = renderContext.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:.CPUCacheModeDefaultCache);
         
         commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
         commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 1);

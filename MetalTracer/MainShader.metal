@@ -9,7 +9,7 @@
 #include <metal_stdlib>
 using namespace metal;
 
-#define DBL_MAX 1.7976931348623157E+308
+//#define FLT_MAX 3.40282347E+38
 #define INT_MAX 2147483647
 #define UNSIGNED_INT_MAX 4294967295
 #define M_PI 3.14159265358979323846
@@ -93,7 +93,7 @@ static constant struct Box boxes[] = {
 inline Hit noHit(){
     Hit hit;
     hit.didHit = false;
-    hit.distance = DBL_MAX;
+    hit.distance = FLT_MAX;
     return hit;
 }
 
@@ -476,7 +476,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
             
             //Calculate caustic
             if (h.material == DIELECTRIC){
-                Hit lightHit = sphereIntersection(scene.light, ray, DBL_MAX);
+                Hit lightHit = sphereIntersection(scene.light, ray, FLT_MAX);
                 if (lightHit.didHit){
                     accumulatedColor += indirectLightingColor * lightHit.color;
                 }
