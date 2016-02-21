@@ -444,46 +444,45 @@ float3 jitterPosition(thread uint *seed, float3 position){
 float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting){
     float3 indirectLightingColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
-    float3 lightPosition = scene.light.position; //jitterLightPosition(seed, scene.light.position);
+    
     for (int i=0; i < bounceCount; i++){
         Hit h = getClosestHit(ray, scene, seed);
-        if (!h.didHit){
+        
+        if (h.didHit == false){
             return float3(0,0,0);
         }
+        
+        //Return if we hit a light source
+        if (h.material == LIGHT){
+            accumulatedColor += indirectLightingColor * h.color;
+            return accumulatedColor;
+        }
+        
+        //Bounce the ray
+        ray = bounce(h, seed);
         
         //Indirect Lighting Factor
         indirectLightingColor *= h.color;
         
+        
         //Direct Lighting Factor
-        float3 normal = h.normal;
-        float3 lightDirection = normalize(lightPosition - h.hitPosition);
-        float directLightingFactor = dot(normal, lightDirection)/dot(lightDirection, lightDirection);
-        
-        //Direct Lighting Shadow Factor
-        float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
-        Ray shadowRay = {jitteredPosition, lightDirection};
-        Hit shadowHit = getClosestHit(shadowRay, scene, seed);
-        
-        float lightDistance = distance(lightPosition, jitteredPosition);
-        float shadowFactor = (shadowHit.didHit && shadowHit.distance <= lightDistance) ? 0.0 : 1.0;
-        
-        //Accumulate all Lighting Factors
-        accumulatedColor += indirectLightingColor * directLightingFactor * shadowFactor;
-        
         if (i < bounceCount - 1){
-            //Bounce the ray
-            ray = bounce(h, seed);
+            float3 lightDirection = normalize(scene.light.position - h.hitPosition);
+            //float directLightingFactor = dot(h.normal, lightDirection)/dot(lightDirection, lightDirection);
             
-            //Calculate caustic
-            if (h.material == DIELECTRIC){
-                Hit lightHit = sphereIntersection(scene.light, ray, FLT_MAX);
-                if (lightHit.didHit){
-                    accumulatedColor += indirectLightingColor * lightHit.color;
-                }
-            }
+            float cos_a_max = sqrt(1.0 - clamp(0.5 * 0.5 / dot(scene.light.position - ray.origin, scene.light.position - ray.origin), 0.0, 1.0));
+            float weight = 2.0 * (1.0 - cos_a_max);
+            
+            accumulatedColor += (indirectLightingColor * scene.light.color) * (weight * clamp(dot( lightDirection, h.normal ), 0., 1.));
         }
+        //Direct Lighting Shadow Factor
+        //float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
+        //Ray shadowRay = {jitteredPosition, lightDirection};
+        //Hit shadowHit = getClosestHit(shadowRay, scene, seed);
+        //float lightDistance = distance(lightPosition, jitteredPosition);
+        //float shadowFactor = (shadowHit.didHit && shadowHit.distance <= lightDistance) ? 0.0 : 1.0;
     }
-    return accumulatedColor * 0.5;
+    return accumulatedColor;
     
 }
 
@@ -590,7 +589,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    Scene scene = Scene{spheres[0], spheres+1, wallColors};
+    Scene scene = Scene{spheres[0], spheres, wallColors};
     
     float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     
