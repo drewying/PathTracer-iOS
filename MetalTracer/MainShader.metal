@@ -244,9 +244,10 @@ inline float rand(thread uint *seed)
 {
     //A hack for the sin funciton
     /*uint x = *seed;
-    x++;
-    *seed = x;
-    return fract(sin(float(x))*43758.5453123);*/
+    float s = float(x)/4294967295.0;
+    s = fract(sin(dot(float2(s, s), float2(12.9898, 78.233))) * 43758.5453123);
+    *seed = s * 4294967295.0;
+    return s;*/
     
     
     //http://www.reedbeta.com/blog/2013/01/12/quick-and-easy-gpu-random-numbers-in-d3d11/
