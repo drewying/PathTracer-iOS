@@ -440,6 +440,19 @@ float3 jitterPosition(thread uint *seed, float3 position){
     float lightz = (rand(seed) * 0.06) - 0.03;
     return float3(position.x + lightx, position.y + lighty, position.z + lightz);
 }
+    
+    
+float3 randomSphereDirection(thread uint *seed) {
+    float2 r = float2(rand(seed), rand(seed));
+    float3 dr = float3(sin(r.x)*float2(sin(r.y),cos(r.y)),cos(r.x));
+    return dr;
+}
+
+    
+float3 sampleLight(float3 lightPosition, thread uint *seed) {
+    float3 n = randomSphereDirection(seed) * 0.5;
+    return lightPosition.xyz + n;
+}
 
 float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting){
     float3 indirectLightingColor = float3(1.0,1.0,1.0);
@@ -468,7 +481,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         //Direct Lighting Factor
         if (i < bounceCount - 1){
             float3 lightDirection = normalize(scene.light.position - h.hitPosition);
-            //float directLightingFactor = dot(h.normal, lightDirection)/dot(lightDirection, lightDirection);
+            //float3 lightDirection = normalize(sampleLight(scene.light.position, seed) - ray.origin);
             
             float cos_a_max = sqrt(1.0 - clamp(0.5 * 0.5 / dot(scene.light.position - ray.origin, scene.light.position - ray.origin), 0.0, 1.0));
             float weight = 2.0 * (1.0 - cos_a_max);
