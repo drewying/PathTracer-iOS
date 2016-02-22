@@ -592,13 +592,16 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     float aspect_ratio = xResolution/yResolution;
     
     //Jitter the ray
-    xResolution += (rand(seed) - 0.5);
-    yResolution += (rand(seed) - 0.5);
+    //xResolution += (rand(seed) - 0.5);
+    //yResolution += (rand(seed) - 0.5);
     
     float dx = 1.0 / xResolution;
     float dy = 1.0 / yResolution;
     float x = -0.5 + gid.x  * dx;
     float y = -0.5 + gid.y  * dy;
+    
+    x += (rand(seed) - 0.5)/xResolution;
+    y+= (rand(seed) - 0.5)/yResolution;
     
     Ray r = makeRay(seed, x, y, aspect_ratio, cameraParams);
     Scene scene = Scene{spheres[0], spheres + 1, wallColors};
