@@ -477,11 +477,6 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
             return float3(0,0,0);
         }
         
-        //Return if we hit a light source
-        if (h.material == LIGHT){
-            accumulatedColor += indirectLightingColor * h.color;
-            return accumulatedColor;
-        }
         
         //Bounce the ray
         ray = bounce(h, seed);
@@ -489,16 +484,22 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         //Indirect Lighting Factor
         indirectLightingColor *= h.color;
         
-        
-        
-        //Direct Lighting Factor
+        //Direct Lighting Shadow Factor
         float3 lightDirection = normalize(scene.light.position - h.hitPosition);
-        //float3 lightDirection = normalize(sampleLight(scene.light.position, seed) - ray.origin);
+        float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
+        Ray shadowRay = {jitteredPosition, lightDirection};
+        Hit shadowHit = getClosestHit(shadowRay, scene, seed);
+        //if (shadowHit.material == LIGHT){
+            //Direct Lighting Factor
+            
+            //float3 lightDirection = normalize(sampleLight(scene.light.position, seed) - ray.origin);
+            
+            float cos_a_max = sqrt(1.0 - clamp(0.5 * 0.5 / dot(scene.light.position - ray.origin, scene.light.position - ray.origin), 0.0, 1.0));
+            float weight = 2.0 * (1.0 - cos_a_max);
+            
+            accumulatedColor += (indirectLightingColor * scene.light.color) * (weight * clamp(dot( lightDirection, h.normal ), 0., 1.));
+        //}
         
-        float cos_a_max = sqrt(1.0 - clamp(0.5 * 0.5 / dot(scene.light.position - ray.origin, scene.light.position - ray.origin), 0.0, 1.0));
-        float weight = 2.0 * (1.0 - cos_a_max);
-        
-        accumulatedColor += (indirectLightingColor * scene.light.color) * (weight * clamp(dot( lightDirection, h.normal ), 0., 1.));
     
         //Direct Lighting Shadow Factor
         //float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
@@ -614,7 +615,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
             break;
     }
     
-    Scene scene = Scene{spheres[0], spheres, wallColors};
+    Scene scene = Scene{spheres[0], spheres + 1, wallColors};
     
     float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
     

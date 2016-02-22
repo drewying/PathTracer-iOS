@@ -117,7 +117,7 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.light = Sphere(position:Vector3D(x:0.5,y:0.5,z:-0.7), radius:0.3, color:Vector3D(x: 2.0,y: 2.0,z: 2.0), material:Material.LIGHT)
+            scene.light = Sphere(position:Vector3D(x:0.5,y:0.5,z:-0.7), radius:0.3, color:Vector3D(x: 1.0,y: 1.0,z: 1.0), material:Material.LIGHT)
             
             scene.wallColors[0] = Vector3D(x: 0.0, y: 0.0, z: 1.0);
             scene.wallColors[1] = Vector3D(x: 1.0, y: 1.0, z: 0.0);
