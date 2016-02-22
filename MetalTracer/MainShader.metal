@@ -466,7 +466,7 @@ float3 sampleLight(float3 lightPosition, thread uint *seed) {
     return lightPosition.xyz + n;
 }
 
-float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLighting, bool includeIndirectLighting){
+float3 tracePath(Ray ray, thread uint *seed, Scene scene){
     float3 indirectLightingColor = float3(1.0,1.0,1.0);
     float3 accumulatedColor = float3(0.0,0.0,0.0);
     
@@ -599,28 +599,7 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     float y = -0.5 + gid.y  * dy;
     
     Ray r = makeRay(seed, x, y, aspect_ratio, cameraParams);
-    
-    uint lightingMode = intParams[4];
-    
-    bool includeDirect = false;
-    bool includeIndirect = false;
-    
-    switch (lightingMode){
-        case 1:
-            includeDirect = true;
-            break;
-        case 2:
-            includeIndirect = true;
-            break;
-        case 3:
-            includeDirect = true;
-            includeIndirect = true;
-            break;
-    }
-    
     Scene scene = Scene{spheres[0], spheres + 1, wallColors};
-    
-    float4 outColor = float4(tracePath(r, seed, scene, includeDirect, includeIndirect), 1.0);
-    
+    float4 outColor = float4(tracePath(r, seed, scene), 1.0);
     outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }
