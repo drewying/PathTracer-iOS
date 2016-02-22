@@ -16,7 +16,7 @@ using namespace metal;
 
 #define EPSILON 1.e-3
 
-static constant int bounceCount = 5;
+static constant int bounceCount = 4;
 
 enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
     
@@ -306,6 +306,24 @@ float3 cosineWeightedDirection(thread uint *seed){
     float z = sqrt(1.0 - u1);
     return normalize(float3(x,y,z));
 }
+    
+float3 cosWeightedRandomHemisphereDirection( const float3 n, thread uint *seed ) {
+    
+    float u1 = rand(seed);
+    float u2 = rand(seed);
+    
+    float3  uu = normalize( cross( n, float3(0.0,1.0,1.0) ) );
+    float3  vv = cross( uu, n );
+    
+    float r = sqrt(u1);
+    float theta = 2 * M_PI * u2;
+    
+    float x = r * cos(theta);
+    float y = r * sin(theta);
+    float z = sqrt(1.0 - u1);
+    
+    return normalize(float3(x*uu + y*vv + z*n));
+}
 
 Ray bounce(Hit h, thread uint *seed){
     
@@ -314,14 +332,8 @@ Ray bounce(Hit h, thread uint *seed){
     if (h.material == DIFFUSE){
         //outVector = uniformSampleDirection(seed);
         //outVector = cosineWeightedDirection(seed);
-        outVector = bookSampleDirection(seed);
-        float3 normal = h.normal;
-        
-        // if the point is in the wrong hemisphere, mirror it
-        if (dot(normal, outVector) < 0.0) {
-            outVector *= -1.0;
-        }
-        
+        //outVector = bookSampleDirection(seed);
+        outVector = cosWeightedRandomHemisphereDirection(h.normal, seed);
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, h.normal);
     } else if (h.material == DIELECTRIC){
@@ -478,16 +490,16 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         indirectLightingColor *= h.color;
         
         
+        
         //Direct Lighting Factor
-        if (i < bounceCount - 1){
-            float3 lightDirection = normalize(scene.light.position - h.hitPosition);
-            //float3 lightDirection = normalize(sampleLight(scene.light.position, seed) - ray.origin);
-            
-            float cos_a_max = sqrt(1.0 - clamp(0.5 * 0.5 / dot(scene.light.position - ray.origin, scene.light.position - ray.origin), 0.0, 1.0));
-            float weight = 2.0 * (1.0 - cos_a_max);
-            
-            accumulatedColor += (indirectLightingColor * scene.light.color) * (weight * clamp(dot( lightDirection, h.normal ), 0., 1.));
-        }
+        float3 lightDirection = normalize(scene.light.position - h.hitPosition);
+        //float3 lightDirection = normalize(sampleLight(scene.light.position, seed) - ray.origin);
+        
+        float cos_a_max = sqrt(1.0 - clamp(0.5 * 0.5 / dot(scene.light.position - ray.origin, scene.light.position - ray.origin), 0.0, 1.0));
+        float weight = 2.0 * (1.0 - cos_a_max);
+        
+        accumulatedColor += (indirectLightingColor * scene.light.color) * (weight * clamp(dot( lightDirection, h.normal ), 0., 1.));
+    
         //Direct Lighting Shadow Factor
         //float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
         //Ray shadowRay = {jitteredPosition, lightDirection};
