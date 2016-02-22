@@ -16,7 +16,7 @@ using namespace metal;
 
 #define EPSILON 1.e-3
 
-static constant int bounceCount = 4;
+static constant int bounceCount = 5;
 
 enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
     
@@ -337,7 +337,7 @@ Ray bounce(Hit h, thread uint *seed){
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, h.normal);
     } else if (h.material == DIELECTRIC){
-        if (rand(seed) > 0.9){
+        if (rand(seed) > 0.95){
             outVector = reflect(h.ray.direction, h.normal);
         } else{
             float3 normal = h.normal;
@@ -489,7 +489,10 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
         float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
         Ray shadowRay = {jitteredPosition, lightDirection};
         Hit shadowHit = getClosestHit(shadowRay, scene, seed);
-        //if (shadowHit.material == LIGHT){
+        float lightDistance = distance(scene.light.position, jitteredPosition);
+        float shadowFactor = (shadowHit.didHit && shadowHit.distance <= lightDistance) ? 0.0 : 1.0;
+        
+        if (shadowFactor > 0.0){
             //Direct Lighting Factor
             
             //float3 lightDirection = normalize(sampleLight(scene.light.position, seed) - ray.origin);
@@ -498,7 +501,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene, bool includeDirectLigh
             float weight = 2.0 * (1.0 - cos_a_max);
             
             accumulatedColor += (indirectLightingColor * scene.light.color) * (weight * clamp(dot( lightDirection, h.normal ), 0., 1.));
-        //}
+        }
         
     
         //Direct Lighting Shadow Factor
