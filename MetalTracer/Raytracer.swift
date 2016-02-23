@@ -18,6 +18,9 @@ class Raytracer: NSObject {
     var renderMode:Int = 3;
     var imageTexture: MTLTexture! = nil;
     
+    var seedMemory:UnsafeMutablePointer<Void> = nil
+    var alignment:Int = 0x4000
+    var byteSize:Int = Int(196608 * sizeof(UInt32))
     
     init(renderContext:MetalContext, xResolution:Int, yResolution:Int){
         self.renderContext = renderContext;
@@ -26,6 +29,13 @@ class Raytracer: NSObject {
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
+
+        //Set up seed memory
+        posix_memalign(&seedMemory, alignment, byteSize)
+        let x:UnsafeMutablePointer<UInt32> = UnsafeMutablePointer<UInt32>(seedMemory)
+        for i in 0...196607 {
+            x[i] = arc4random()
+        }
     }
     
     func reset(){
@@ -35,6 +45,8 @@ class Raytracer: NSObject {
     }
     
     func renderScene(scene:Scene) -> UIImage{
+        //let x:UnsafeMutablePointer<UInt32> = UnsafeMutablePointer<UInt32>(seedMemory)
+        //print(x[0])
         
         let threadgroupCounts = MTLSizeMake(16,16, 1);
         let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
@@ -50,10 +62,11 @@ class Raytracer: NSObject {
         
         let a = renderContext.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:.CPUCacheModeDefaultCache);
         
-        commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
-        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 1);
-        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
-        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 3);
+        commandEncoder.setBuffer(renderContext.device.newBufferWithBytesNoCopy(seedMemory, length: byteSize, options:.CPUCacheModeDefaultCache, deallocator:nil), offset: 0, atIndex: 0)
+        commandEncoder.setBuffer(a, offset: 0, atIndex: 1);
+        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 2);
+        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 3);
+        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 4);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         
@@ -63,6 +76,8 @@ class Raytracer: NSObject {
         commandEncoder.endEncoding()
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
+        
+        
         
         //self.inputTexture.replaceRegion(MTLRegionMake2D(0, 0, self.xResolution, self.yResolution), mipmapLevel: 0, withBytes: &self.outputTexture, bytesPerRow: 4*self.xResolution);
         
