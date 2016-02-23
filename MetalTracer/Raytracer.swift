@@ -14,6 +14,7 @@ class Raytracer: NSObject {
     var yResolution:Int;
     var inputTexture: MTLTexture;
     var outputTexture: MTLTexture;
+    var renderTexture: MTLTexture;
     var sampleNumber = 1;
     var renderMode:Int = 3;
     var imageTexture: MTLTexture! = nil;
@@ -26,10 +27,11 @@ class Raytracer: NSObject {
         self.renderContext = renderContext;
         self.xResolution = xResolution;
         self.yResolution = yResolution;
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA32Float, width: xResolution, height: yResolution, mipmapped: false);
+        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
-
+        renderTexture = renderContext.device.newTextureWithDescriptor(textureDescriptorRender);
         //Set up seed memory
         posix_memalign(&seedMemory, alignment, byteSize)
         let x:UnsafeMutablePointer<UInt32> = UnsafeMutablePointer<UInt32>(seedMemory)
@@ -39,14 +41,14 @@ class Raytracer: NSObject {
     }
     
     func reset(){
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA32Float, width: xResolution, height: yResolution, mipmapped: false);
+        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
+        renderTexture = renderContext.device.newTextureWithDescriptor(textureDescriptorRender);
     }
     
     func renderScene(scene:Scene) -> UIImage{
-        //let x:UnsafeMutablePointer<UInt32> = UnsafeMutablePointer<UInt32>(seedMemory)
-        //print(x[0])
         
         let threadgroupCounts = MTLSizeMake(16,16, 1);
         let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
@@ -54,9 +56,10 @@ class Raytracer: NSObject {
         let commandEncoder = commandBuffer.computeCommandEncoder();
         
         commandEncoder.setComputePipelineState(renderContext.pipelineState);
+        
         commandEncoder.setTexture(inputTexture, atIndex: 0);
         commandEncoder.setTexture(outputTexture, atIndex:1);
-        commandEncoder.setTexture(imageTexture, atIndex:2);
+        commandEncoder.setTexture(renderTexture, atIndex:2);
         
         let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(renderMode), 2];
         
@@ -71,20 +74,15 @@ class Raytracer: NSObject {
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         
         renderContext.commandQueue.insertDebugCaptureBoundary();
-        //commandEncoder.insertDebugSignpost("com.apple.GPUTools.event.debug-frame")
         
         commandEncoder.endEncoding()
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
-        
-        
-        
-        //self.inputTexture.replaceRegion(MTLRegionMake2D(0, 0, self.xResolution, self.yResolution), mipmapLevel: 0, withBytes: &self.outputTexture, bytesPerRow: 4*self.xResolution);
-        
+    
         self.inputTexture = self.outputTexture;
         sampleNumber++
         //return UIImage.imageFromTexture(self.inputTexture)
-        return UIImage(MTLTexture: self.inputTexture)
+        return UIImage(MTLTexture: self.renderTexture)
     }
 }
 

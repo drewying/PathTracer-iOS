@@ -571,6 +571,7 @@ void hashSeed(device uint *s){
 
 kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
                       texture2d<float, access::write> outTexture [[texture(1)]],
+                      texture2d<float, access::write> renderTexture [[texture(2)]],
                       uint2 gid [[thread_position_in_grid]],
                       uint gindex [[thread_index_in_threadgroup]],
                       device uint *seed [[buffer(0)]],
@@ -603,11 +604,13 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     float x = -0.5 + gid.x  * dx;
     float y = -0.5 + gid.y  * dy;
     
-    x += (rand(seed) - 0.5)/xResolution;
-    y+= (rand(seed) - 0.5)/yResolution;
-    
-    Ray r = makeRay(seed, x, y, aspect_ratio, cameraParams);
     Scene scene = Scene{spheres[0], spheres + 1, wallColors};
-    float4 outColor = float4(tracePath(r, seed + gidIndex, scene), 1.0);
-    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    
+    x += (rand(seed + gidIndex) - 0.5)/xResolution;
+    y += (rand(seed + gidIndex) - 0.5)/yResolution;
+    Ray r = makeRay(seed, x, y, aspect_ratio, cameraParams);
+    inColor += float4(tracePath(r, seed + gidIndex, scene), 1.0);
+    
+    outTexture.write(inColor, gid);
+    renderTexture.write(inColor/sampleNumber, gid);
 }
