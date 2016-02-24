@@ -19,10 +19,6 @@ class Raytracer: NSObject {
     var renderMode:Int = 3;
     var imageTexture: MTLTexture! = nil;
     
-    var seedMemory:UnsafeMutablePointer<Void> = nil
-    var alignment:Int = 0x4000
-    var byteSize:Int = Int(196608 * sizeof(UInt32))
-    
     init(renderContext:MetalContext, xResolution:Int, yResolution:Int){
         self.renderContext = renderContext;
         self.xResolution = xResolution;
@@ -32,13 +28,6 @@ class Raytracer: NSObject {
         inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         renderTexture = renderContext.device.newTextureWithDescriptor(textureDescriptorRender);
-        
-        //Set up seed memory
-        posix_memalign(&seedMemory, alignment, byteSize)
-        let x:UnsafeMutablePointer<UInt32> = UnsafeMutablePointer<UInt32>(seedMemory)
-        for i in 0...196607 {
-            x[i] = arc4random()
-        }
     }
     
     func reset(){
@@ -66,11 +55,10 @@ class Raytracer: NSObject {
         
         let a = renderContext.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:.CPUCacheModeDefaultCache);
         
-        commandEncoder.setBuffer(renderContext.device.newBufferWithBytesNoCopy(seedMemory, length: byteSize, options:.CPUCacheModeDefaultCache, deallocator:nil), offset: 0, atIndex: 0)
-        commandEncoder.setBuffer(a, offset: 0, atIndex: 1);
-        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 2);
-        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 3);
-        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 4);
+        commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
+        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 1);
+        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
+        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 3);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         
