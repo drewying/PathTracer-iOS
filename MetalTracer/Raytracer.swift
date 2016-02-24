@@ -32,6 +32,7 @@ class Raytracer: NSObject {
         inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
         renderTexture = renderContext.device.newTextureWithDescriptor(textureDescriptorRender);
+        
         //Set up seed memory
         posix_memalign(&seedMemory, alignment, byteSize)
         let x:UnsafeMutablePointer<UInt32> = UnsafeMutablePointer<UInt32>(seedMemory)

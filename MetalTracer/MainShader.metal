@@ -16,7 +16,7 @@ using namespace metal;
 
 #define EPSILON 1.e-3
 
-static constant int bounceCount = 7;
+static constant int bounceCount = 5;
 
 enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
     
@@ -333,6 +333,9 @@ Ray bounce(Hit h, device uint *seed){
     if (h.material == DIFFUSE){
         //outVector = uniformSampleDirection(seed);
         //outVector = cosineWeightedDirection(seed);
+        //if (dot(h.normal, outVector) < 0.0) {
+        //    outVector *= -1.0;
+        //}
         //outVector = bookSampleDirection(seed);
         outVector = cosWeightedRandomHemisphereDirection(h.normal, seed);
     } else if (h.material == SPECULAR){
@@ -493,7 +496,7 @@ float3 tracePath(Ray ray, device uint *seed, Scene scene){
         float lightDistance = distance(scene.light.position, jitteredPosition);
         bool inShadow = (shadowHit.didHit && shadowHit.distance <= lightDistance);
         
-        if (!inShadow && i < bounceCount - 1){
+        if (!inShadow){
             //Direct Lighting Factor
             
             //float directLightingFactor = dot(normal, lightDirection)/dot(lightDirection, lightDirection);
