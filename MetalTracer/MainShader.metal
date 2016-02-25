@@ -610,8 +610,10 @@ kernel void mainProgram(texture2d<float, access::read> inTexture [[texture(0)]],
     x += (rand(s) - 0.5)/xResolution;
     y += (rand(s) - 0.5)/yResolution;
     Ray r = makeRay(s, x, y, aspect_ratio, cameraParams);
-    inColor += float4(tracePath(r, s, scene), 1.0);
+    float4 outColor = float4(tracePath(r, s, scene), 1.0);
     
-    outTexture.write(inColor, gid);
-    renderTexture.write(inColor/sampleNumber, gid);
+    //outTexture.write(inColor, gid);
+    //renderTexture.write(inColor/sampleNumber, gid);
+    outTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
+    renderTexture.write(mix(outColor, inColor, float(sampleNumber)/float(sampleNumber + 1)), gid);
 }

@@ -117,7 +117,7 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.light = Sphere(position:Vector3D(x:0.35,y:0.25,z:-0.8), radius:0.0, color:Vector3D(x: 1.0,y: 1.0,z: 1.0), material:Material.LIGHT)
+            scene.light = Sphere(position:Vector3D(x:0.3,y:0.3,z:-0.95), radius:0.0, color:Vector3D(x: 1.5,y: 1.5,z: 1.5), material:Material.LIGHT)
             
             scene.wallColors[0] = Vector3D(x: 0.0, y: 0.0, z: 1.0);
             scene.wallColors[1] = Vector3D(x: 1.0, y: 1.0, z: 0.0);
@@ -133,7 +133,7 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
             scene.addSphere(Sphere(position: Vector3D(x:0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.2, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.9,z:0.0), radius:0.3, color:Vector3D(x: 2.0,y: 2.0,z: 2.0), material:Material.LIGHT)
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.9,z:0.0), radius:0.3, color:Vector3D(x: 3.0,y: 3.0,z: 3.0), material:Material.LIGHT)
             
             scene.wallColors[0] = Vector3D(x: 0.0, y: 0.75, z: 0.0);
             scene.wallColors[1] = Vector3D(x: 0.75, y: 0.0, z: 0.0);
@@ -148,7 +148,7 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x:-0.4, y:-0.4, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: 0.4, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.4, y:-0.4, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIELECTRIC))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:0.0), radius:0.3, color:Vector3D(x: 2.0,y: 2.0,z: 2.0), material:Material.LIGHT)
             
             scene.wallColors[0] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
             scene.wallColors[1] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
@@ -163,7 +163,7 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x:-0.15, y:-0.15, z:0.3), radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: 0.15, z:0.3), radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.15, y:-0.15, z:0.3), radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIELECTRIC))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:-0.3), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:-0.3), radius:0.3, color:Vector3D(x: 3.0,y: 3.0,z: 3.0), material:Material.LIGHT)
             
             scene.wallColors[0] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
             scene.wallColors[1] = Vector3D(x: 0.5, y: 0.5, z: 0.5);
@@ -178,7 +178,7 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x: 0.6, y:0.0, z:0.0), radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x: 0.3, y: 0.0, z:0.0), radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIELECTRIC))
             scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:0.0, z:0.0), radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIELECTRIC))
-            scene.light = Sphere(position:Vector3D(x:-0.6,y:0.0,z:0.0), radius:0.3, color:Vector3D(x: 5.0,y: 5.0,z: 5.0), material:Material.LIGHT)
+            scene.light = Sphere(position:Vector3D(x:-0.6,y:0.0,z:0.0), radius:0.3, color:Vector3D(x: 3.0,y: 3.0,z: 3.0), material:Material.LIGHT)
             
             scene.wallColors[0] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
             scene.wallColors[1] = Vector3D(x: 0.75, y: 0.75, z: 0.75);
