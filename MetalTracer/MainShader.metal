@@ -478,7 +478,7 @@ float3 tracePath(Ray ray, thread uint *seed, Scene scene){
         Hit h = getClosestHit(ray, scene, seed);
         
         if (h.didHit == false){
-            return float3(0,0,0);
+            return float3(.196,.196,.196);
         }
         
         
