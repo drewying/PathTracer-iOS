@@ -38,6 +38,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var sphereMaterialSegmentedControl: UISegmentedControl!
     @IBOutlet weak var sphereSizeSlider: UISlider!
  
+    @IBOutlet weak var renderingProgressView: UIProgressView!
 
     @IBOutlet weak var lightXSlider: UISlider!
     @IBOutlet weak var lightYSlider: UISlider!
@@ -340,6 +341,7 @@ class ViewController: UIViewController {
                 let image:UIImage = self.rayTracer.renderScene(self.scene);
                 dispatch_async(dispatch_get_main_queue(), {
                     self.imageView.image = image;
+                    self.renderingProgressView.setProgress(Float(self.rayTracer.sampleNumber)/2000.0, animated: true)
                     self.sampleLabel.text = "Pass:\(self.rayTracer.sampleNumber)"
                 });
             });
