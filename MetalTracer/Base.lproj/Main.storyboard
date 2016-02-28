@@ -21,10 +21,11 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx3-AP-XSr">
                                 <rect key="frame" x="20" y="476" width="560" height="116"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <string key="text">1. Drag the image to move the camera
-2. Tap on a sphere to select it and change it’s properties
-3. While selected, drag the sphere around to move it’s position in the scene
-4. Double tap to add a new sphere</string>
+                                <string key="text">1. The longer you let the image render, the more realistic the image becomes.
+2. Drag the image to move the camera.
+3. Tap on a sphere to select it and change it’s properties
+4. While selected, drag the sphere around to move it’s position in the scene
+5. Double tap on the image to add a new sphere</string>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
