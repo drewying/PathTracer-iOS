@@ -4,6 +4,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -21,11 +22,11 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx3-AP-XSr">
                                 <rect key="frame" x="20" y="476" width="560" height="116"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <string key="text">1. The longer you let the image render, the more realistic the image becomes.
+                                <string key="text">1. The longer the image renders, the more realistic the image looks.
 2. Drag the image to move the camera.
-3. Tap on a sphere to select it and change it’s properties
-4. While selected, drag the sphere around to move it’s position in the scene
-5. Double tap on the image to add a new sphere</string>
+3. Tap on a sphere to select it and change it’s properties.
+4. While selected, drag the sphere around to move it’s position in the scene.
+5. Double tap on the image to add a new sphere.</string>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -54,7 +55,7 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q2d-dV-JsO">
                                         <rect key="frame" x="527" y="8" width="65" height="30"/>
-                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="65" id="8gx-wU-hUX"/>
                                         </constraints>
@@ -303,6 +304,9 @@
                                             <segment title="Ceiling"/>
                                             <segment title="Floor"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="selectWall:" destination="BYZ-38-t0r" eventType="valueChanged" id="Hvm-Z8-0Fi"/>
+                                        </connections>
                                     </segmentedControl>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="soC-ZT-yqX">
                                         <rect key="frame" x="156" y="49" width="11" height="21"/>
@@ -380,6 +384,54 @@
                                     </mask>
                                 </variation>
                             </view>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xih-kv-uFS" userLabel="InfoEditView">
+                                <rect key="frame" x="0.0" y="470" width="600" height="86"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUR-3o-6ap" userLabel="Save">
+                                        <rect key="frame" x="250" y="-2" width="100" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="M3i-EJ-yIA"/>
+                                            <constraint firstAttribute="width" constant="100" id="oPP-4x-Xgf"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <state key="normal" title="Save Image">
+                                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rsh-zb-jeU" userLabel="Help">
+                                        <rect key="frame" x="250" y="28" width="100" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="100" id="s65-pN-lwc"/>
+                                            <constraint firstAttribute="height" constant="30" id="vfj-gw-prH"/>
+                                        </constraints>
+                                        <state key="normal" title="Information">
+                                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T5T-Ef-0S0" userLabel="Feedback">
+                                        <rect key="frame" x="250" y="58" width="100" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="100" id="06q-x2-yvu"/>
+                                            <constraint firstAttribute="height" constant="30" id="Hpn-vp-Ara"/>
+                                        </constraints>
+                                        <state key="normal" title="Feedback">
+                                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.1976768092" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="rsh-zb-jeU" firstAttribute="centerX" secondItem="Xih-kv-uFS" secondAttribute="centerX" id="Cib-pN-R7w"/>
+                                    <constraint firstItem="qUR-3o-6ap" firstAttribute="centerX" secondItem="Xih-kv-uFS" secondAttribute="centerX" id="DM2-if-zF7"/>
+                                    <constraint firstItem="T5T-Ef-0S0" firstAttribute="centerX" secondItem="Xih-kv-uFS" secondAttribute="centerX" id="Nkz-n0-Mqa"/>
+                                    <constraint firstItem="qUR-3o-6ap" firstAttribute="centerY" secondItem="Xih-kv-uFS" secondAttribute="centerY" multiplier="0.3" id="Xrd-bV-6hv"/>
+                                    <constraint firstItem="rsh-zb-jeU" firstAttribute="centerY" secondItem="Xih-kv-uFS" secondAttribute="centerY" id="nfx-4L-jHf"/>
+                                    <constraint firstItem="T5T-Ef-0S0" firstAttribute="centerY" secondItem="Xih-kv-uFS" secondAttribute="centerY" multiplier="1.7" id="oao-cl-THd"/>
+                                </constraints>
+                            </view>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="3i3-to-PZy">
                                 <rect key="frame" x="0.0" y="556" width="600" height="44"/>
                                 <constraints>
@@ -404,7 +456,7 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="McV-0p-YuE"/>
-                                    <barButtonItem tag="3" enabled="NO" title="Sphere" id="Sui-sF-6Ab">
+                                    <barButtonItem tag="3" title="Info" id="Sui-sF-6Ab" userLabel="Info Toolbar Button">
                                         <connections>
                                             <action selector="selectPane:" destination="BYZ-38-t0r" id="IHn-ft-tt7"/>
                                         </connections>
@@ -416,9 +468,11 @@
                         <color key="tintColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Xih-kv-uFS" secondAttribute="trailing" id="0ut-NW-sHh"/>
                             <constraint firstAttribute="trailing" secondItem="ziz-Bc-yiu" secondAttribute="trailing" id="4Qk-rH-3LB"/>
                             <constraint firstAttribute="trailing" secondItem="l29-em-rwi" secondAttribute="trailing" id="4ox-11-JXS"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="6Dv-CD-vSj" secondAttribute="bottom" id="6P8-Kg-uU5"/>
+                            <constraint firstItem="Xih-kv-uFS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="7ZR-Ih-QSX"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="l29-em-rwi" secondAttribute="bottom" id="HI0-a7-qNB"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="HM2-Ow-WcX"/>
                             <constraint firstAttribute="trailing" secondItem="9i6-Hc-zLp" secondAttribute="trailing" id="ILj-Sb-bmN"/>
@@ -439,10 +493,12 @@
                             <constraint firstItem="l29-em-rwi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dgX-vG-44s"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="egY-4d-OAW"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="elQ-oq-qj9"/>
+                            <constraint firstItem="9i6-Hc-zLp" firstAttribute="bottom" secondItem="Xih-kv-uFS" secondAttribute="top" id="htt-5l-GJ4"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="jsx-Mb-IE0"/>
                             <constraint firstAttribute="trailing" secondItem="3i3-to-PZy" secondAttribute="trailing" id="nad-iY-bnf"/>
                             <constraint firstAttribute="trailing" secondItem="6Dv-CD-vSj" secondAttribute="trailing" id="o6d-Fw-VL5"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="oZb-xa-cWL"/>
+                            <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="Xih-kv-uFS" secondAttribute="bottom" id="rpE-0T-ZAC"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="tZ8-61-qFf"/>
                             <constraint firstAttribute="trailing" secondItem="Jx3-AP-XSr" secondAttribute="trailing" constant="20" id="tiR-Fi-vFj"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="wCN-AB-6kb"/>
@@ -450,6 +506,7 @@
                     </view>
                     <connections>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
+                        <outlet property="infoEditView" destination="Xih-kv-uFS" id="Xd7-xA-fi9"/>
                         <outlet property="lightEditView" destination="ziz-Bc-yiu" id="8ga-4E-OWh"/>
                         <outlet property="lightXSlider" destination="oUe-kj-khE" id="srq-B6-nCx"/>
                         <outlet property="lightYSlider" destination="VLf-Jo-jDE" id="8EQ-8h-z93"/>
@@ -467,7 +524,6 @@
                         <outlet property="sphereMaterialSegmentedControl" destination="4my-bi-mKd" id="bgC-Xw-tcp"/>
                         <outlet property="sphereRedSlider" destination="LDJ-Rn-T72" id="dSm-IA-wuB"/>
                         <outlet property="sphereSizeSlider" destination="3Xh-jW-0By" id="mPk-Zk-e5j"/>
-                        <outlet property="sphereToolbarButton" destination="Sui-sF-6Ab" id="cab-zj-RFk"/>
                         <outlet property="toolbar" destination="3i3-to-PZy" id="GGz-q9-FJ9"/>
                     </connections>
                 </viewController>

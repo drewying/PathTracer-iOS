@@ -17,15 +17,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var sampleLabel: UILabel!
     
     @IBOutlet weak var toolbar: UIToolbar!
-    /*@IBOutlet weak var mainToolbarButton: UIBarButtonItem!
-    @IBOutlet weak var lightingToolbarButton: UIBarButtonItem!
-    @IBOutlet weak var sceneToolbarButton: UIBarButtonItem!*/
-    @IBOutlet weak var sphereToolbarButton: UIBarButtonItem!
     
     @IBOutlet weak var mainEditView: UIView!
     @IBOutlet weak var sphereEditView: UIView!
     @IBOutlet weak var sceneEditView: UIView!
     @IBOutlet weak var lightEditView: UIView!
+    @IBOutlet weak var infoEditView: UIView!
     
     @IBOutlet weak var sceneWallSegmentedControl: UISegmentedControl!
     @IBOutlet weak var sceneRedSlider: UISlider!
@@ -82,8 +79,7 @@ class ViewController: UIViewController {
     var scene: Scene! = nil;
     
     override func viewDidAppear(animated: Bool) {
-        panes = [mainEditView, lightEditView, sceneEditView, sphereEditView];
-        //toolbarButtons = [mainToolbarButton, lightingToolbarButton, sceneToolbarButton, sphereToolbarButton];
+        panes = [mainEditView, lightEditView, sceneEditView, infoEditView];
         
         let size:CGSize = self.imageView.frame.size
         xResolution = Int(size.width)
@@ -208,6 +204,10 @@ class ViewController: UIViewController {
         selectedSphere = scene.getClosestHit(ray);
     }
     
+    @IBAction func selectWall(sender: AnyObject) {
+        updateWallColorsView()
+    }
+    
     @IBAction func doubleTapAction(sender: AnyObject) {
         addSphere()
     }
@@ -290,9 +290,7 @@ class ViewController: UIViewController {
     
     @IBAction func selectPane(sender: UIBarButtonItem) {
         selectedSphere = -1
-        sphereToolbarButton.enabled = false
         
-        //sender.enabled = !sender.enabled
         currentPane?.hidden = true
         if (currentPane != panes[sender.tag]){
             currentPane = panes[sender.tag]
@@ -307,10 +305,6 @@ class ViewController: UIViewController {
             updateLightingEditView()
         case 2:
             updateWallColorsView()
-        case 3:
-            if (selectedSphere != -1){
-                updateSphereEditView();
-            }
         default: break
         }
     }
@@ -377,9 +371,9 @@ class ViewController: UIViewController {
     var lastY:Float = 0.0
     
     func updateWallColorsView(){
-        self.lightXSlider.value = scene.light.position.x
-        self.lightYSlider.value = scene.light.position.y
-        self.lightZSlider.value = scene.light.position.z
+        sceneRedSlider.value = scene.wallColors[sceneWallSegmentedControl.selectedSegmentIndex].x
+        sceneGreenSlider.value = scene.wallColors[sceneWallSegmentedControl.selectedSegmentIndex].y
+        sceneBlueSlider.value = scene.wallColors[sceneWallSegmentedControl.selectedSegmentIndex].z
     }
     
     func updateLightingEditView(){
