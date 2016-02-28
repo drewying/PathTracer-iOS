@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -17,6 +18,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx3-AP-XSr">
+                                <rect key="frame" x="20" y="476" width="560" height="116"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <string key="text">1. Drag the image to move the camera
+2. Tap on a sphere to select it and change it’s properties
+3. While selected, drag the sphere around to move it’s position in the scene
+4. Double tap to add a new sphere</string>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                             <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1ft-mH-1i8" userLabel="OutputImage">
                                 <rect key="frame" x="0.0" y="20" width="600" height="448"/>
                                 <gestureRecognizers/>
@@ -27,6 +39,7 @@
                                     <outletCollection property="gestureRecognizers" destination="50r-TN-zaZ" appends="YES" id="1Cw-ht-JU7"/>
                                     <outletCollection property="gestureRecognizers" destination="Gdd-6h-Ajn" appends="YES" id="6sX-td-vv4"/>
                                     <outletCollection property="gestureRecognizers" destination="ZeO-YG-kaT" appends="YES" id="t55-R5-Gv6"/>
+                                    <outletCollection property="gestureRecognizers" destination="vYA-dE-aQZ" appends="YES" id="DyO-0R-vZK"/>
                                 </connections>
                             </imageView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9i6-Hc-zLp">
@@ -374,23 +387,27 @@
                                 <items>
                                     <barButtonItem title="Scenes" id="BEH-BU-d9y">
                                         <connections>
-                                            <action selector="editMain" destination="BYZ-38-t0r" id="1JX-Da-0lM"/>
+                                            <action selector="selectPane:" destination="BYZ-38-t0r" id="L5z-Qc-rWX"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="lf9-iD-dZZ"/>
-                                    <barButtonItem title="Lighting" id="7U9-wt-BS4">
+                                    <barButtonItem tag="1" title="Lighting" id="7U9-wt-BS4">
                                         <connections>
-                                            <action selector="editLighting" destination="BYZ-38-t0r" id="TKV-xR-5c7"/>
+                                            <action selector="selectPane:" destination="BYZ-38-t0r" id="3p1-Ka-kgE"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="2Zl-SS-bMH"/>
-                                    <barButtonItem title="Colors" id="Jyr-Fv-PwE">
+                                    <barButtonItem tag="2" title="Colors" id="Jyr-Fv-PwE">
                                         <connections>
-                                            <action selector="editScene" destination="BYZ-38-t0r" id="iGr-zn-3ux"/>
+                                            <action selector="selectPane:" destination="BYZ-38-t0r" id="Hfo-Dk-GP2"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="McV-0p-YuE"/>
-                                    <barButtonItem title="Sphere" id="Sui-sF-6Ab"/>
+                                    <barButtonItem tag="3" enabled="NO" title="Sphere" id="Sui-sF-6Ab">
+                                        <connections>
+                                            <action selector="selectPane:" destination="BYZ-38-t0r" id="IHn-ft-tt7"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -405,13 +422,16 @@
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="HM2-Ow-WcX"/>
                             <constraint firstAttribute="trailing" secondItem="9i6-Hc-zLp" secondAttribute="trailing" id="ILj-Sb-bmN"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="JX6-Jp-5HB"/>
+                            <constraint firstItem="Jx3-AP-XSr" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="L0s-ZD-jIS"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="Jpj-AB-ukp" secondAttribute="bottom" id="NUz-ze-Vmn"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="NgN-cf-sNf"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Phz-wR-nv3"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="Px2-fN-mKT"/>
                             <constraint firstAttribute="centerX" secondItem="1ft-mH-1i8" secondAttribute="centerX" id="UqF-gH-X3w"/>
+                            <constraint firstItem="Jx3-AP-XSr" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="X6t-OF-2a8"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="XEx-T7-GHS"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="XMb-ZW-8MU"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="Jx3-AP-XSr" secondAttribute="bottom" constant="8" id="bQr-Ux-dWg"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="bottom" id="cig-7i-3wY"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="cs8-c1-gta"/>
                             <constraint firstAttribute="trailing" secondItem="1ft-mH-1i8" secondAttribute="trailing" id="dSW-tO-1z6"/>
@@ -423,6 +443,7 @@
                             <constraint firstAttribute="trailing" secondItem="6Dv-CD-vSj" secondAttribute="trailing" id="o6d-Fw-VL5"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="oZb-xa-cWL"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="tZ8-61-qFf"/>
+                            <constraint firstAttribute="trailing" secondItem="Jx3-AP-XSr" secondAttribute="trailing" constant="20" id="tiR-Fi-vFj"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="wCN-AB-6kb"/>
                         </constraints>
                     </view>
@@ -432,15 +453,12 @@
                         <outlet property="lightXSlider" destination="oUe-kj-khE" id="srq-B6-nCx"/>
                         <outlet property="lightYSlider" destination="VLf-Jo-jDE" id="8EQ-8h-z93"/>
                         <outlet property="lightZSlider" destination="ebF-a1-vA4" id="dGU-Ye-Nc2"/>
-                        <outlet property="lightingToolbarButton" destination="7U9-wt-BS4" id="nCA-fd-hbr"/>
                         <outlet property="mainEditView" destination="Jpj-AB-ukp" id="DAh-Pb-7ZW"/>
-                        <outlet property="mainToolbarButton" destination="BEH-BU-d9y" id="rji-Ok-hTG"/>
                         <outlet property="renderingProgressView" destination="9i6-Hc-zLp" id="b61-UR-AbH"/>
                         <outlet property="sceneBlueSlider" destination="Ku3-ME-ijj" id="e1p-zZ-wWl"/>
                         <outlet property="sceneEditView" destination="l29-em-rwi" id="ABM-Ot-ZRW"/>
                         <outlet property="sceneGreenSlider" destination="6ll-sV-w2e" id="q3j-38-zF7"/>
                         <outlet property="sceneRedSlider" destination="NOe-fX-aRZ" id="Trg-Pm-l4H"/>
-                        <outlet property="sceneToolbarButton" destination="Jyr-Fv-PwE" id="lDX-Oy-FC1"/>
                         <outlet property="sceneWallSegmentedControl" destination="aMj-wW-8Dx" id="0Ec-YM-mAZ"/>
                         <outlet property="sphereBlueSlider" destination="pVy-fe-U37" id="0lv-LF-oiI"/>
                         <outlet property="sphereEditView" destination="6Dv-CD-vSj" id="q7r-Fe-d43"/>
@@ -448,7 +466,7 @@
                         <outlet property="sphereMaterialSegmentedControl" destination="4my-bi-mKd" id="bgC-Xw-tcp"/>
                         <outlet property="sphereRedSlider" destination="LDJ-Rn-T72" id="dSm-IA-wuB"/>
                         <outlet property="sphereSizeSlider" destination="3Xh-jW-0By" id="mPk-Zk-e5j"/>
-                        <outlet property="sphereToolbarButton" destination="Sui-sF-6Ab" id="X1l-Gr-d3z"/>
+                        <outlet property="sphereToolbarButton" destination="Sui-sF-6Ab" id="cab-zj-RFk"/>
                         <outlet property="toolbar" destination="3i3-to-PZy" id="GGz-q9-FJ9"/>
                     </connections>
                 </viewController>
@@ -468,6 +486,11 @@
                         <action selector="pinchAction:" destination="BYZ-38-t0r" id="fej-5d-6Xr"/>
                     </connections>
                 </pinchGestureRecognizer>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="vYA-dE-aQZ">
+                    <connections>
+                        <action selector="doubleTapAction:" destination="BYZ-38-t0r" id="tuA-Xf-27I"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="140" y="135"/>
         </scene>

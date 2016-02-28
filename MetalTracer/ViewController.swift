@@ -17,9 +17,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var sampleLabel: UILabel!
     
     @IBOutlet weak var toolbar: UIToolbar!
-    @IBOutlet weak var mainToolbarButton: UIBarButtonItem!
+    /*@IBOutlet weak var mainToolbarButton: UIBarButtonItem!
     @IBOutlet weak var lightingToolbarButton: UIBarButtonItem!
-    @IBOutlet weak var sceneToolbarButton: UIBarButtonItem!
+    @IBOutlet weak var sceneToolbarButton: UIBarButtonItem!*/
     @IBOutlet weak var sphereToolbarButton: UIBarButtonItem!
     
     @IBOutlet weak var mainEditView: UIView!
@@ -45,9 +45,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var lightZSlider: UISlider!
     
     
-
+    var currentPane:UIView?
+    var currentButton:UIBarButtonItem?
+    
     var panes:[UIView] = [];
-    var toolbarButtons:[UIBarButtonItem] = [];
     
     var context:MetalContext = MetalContext(device: MTLCreateSystemDefaultDevice()!);
     
@@ -63,9 +64,16 @@ class ViewController: UIViewController {
     var selectedSphere:Int = -1 {
         didSet {
             if (selectedSphere > -1){
-                updateSphereEditView();
-                selectPane(3);
+                if (currentPane != sphereEditView){
+                    currentPane?.hidden = true
+                }
+                currentPane = sphereEditView
+                updateSphereEditView()
+                sphereEditView.hidden = false
+            } else if (!sphereEditView.hidden){
+                sphereEditView.hidden = true
             }
+            
         }
     }
     
@@ -75,7 +83,7 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         panes = [mainEditView, lightEditView, sceneEditView, sphereEditView];
-        toolbarButtons = [mainToolbarButton, lightingToolbarButton, sceneToolbarButton, sphereToolbarButton];
+        //toolbarButtons = [mainToolbarButton, lightingToolbarButton, sceneToolbarButton, sphereToolbarButton];
         
         let size:CGSize = self.imageView.frame.size
         xResolution = Int(size.width)
@@ -116,7 +124,7 @@ class ViewController: UIViewController {
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.light = Sphere(position:Vector3D(x:-0.3,y:0.3,z:0.95), radius:0.0, color:Vector3D(x: 2.0,y: 2.0,z: 2.0), material:Material.LIGHT)
+            scene.light = Sphere(position:Vector3D(x:-0.3,y:0.25,z:0.95), radius:0.0, color:Vector3D(x: 1.5,y: 1.5,z: 1.5), material:Material.LIGHT)
             
             scene.wallColors[0] = Vector3D(x: 1.0, y: 1.0, z: 0.0);
             scene.wallColors[1] = Vector3D(x: 0.0, y: 0.0, z: 1.0);
@@ -161,6 +169,7 @@ class ViewController: UIViewController {
             scene.camera.cameraPosition = Vector3D(x:0.0, y:0.0, z:3.0)
             scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 4){
+            //Escher
             scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: -0.3, z:-0.3), radius:0.7, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
             scene.addSphere(Sphere(position: Vector3D(x: -0.5, y: 0.6, z:0.7), radius:0.2, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
             scene.addSphere(Sphere(position: Vector3D(x: 0.4, y:-0.6, z:0.6), radius:0.2, color:Vector3D(x: 0.5, y: 0.5, z:0.5), material: Material.DIELECTRIC))
@@ -197,9 +206,11 @@ class ViewController: UIViewController {
         let y:Float = -0.5 + Float(point.y)  * dy;
         let ray:Ray = scene.camera.getRay(x, y: y);
         selectedSphere = scene.getClosestHit(ray);
-        lightEditView.hidden = true;
     }
     
+    @IBAction func doubleTapAction(sender: AnyObject) {
+        addSphere()
+    }
    
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
         
@@ -277,32 +288,41 @@ class ViewController: UIViewController {
         self.resetDisplay(true);
     }
     
-    @IBAction func editMain(){
-        selectPane(0);
+    @IBAction func selectPane(sender: UIBarButtonItem) {
+        selectedSphere = -1
+        sphereToolbarButton.enabled = false
+        
+        //sender.enabled = !sender.enabled
+        currentPane?.hidden = true
+        if (currentPane != panes[sender.tag]){
+            currentPane = panes[sender.tag]
+            currentPane?.hidden = false
+            currentButton = sender
+        } else {
+            currentPane = nil
+        }
+        
+        switch (sender.tag){
+        case 1:
+            updateLightingEditView()
+        case 2:
+            updateWallColorsView()
+        case 3:
+            if (selectedSphere != -1){
+                updateSphereEditView();
+            }
+        default: break
+        }
     }
     
-    @IBAction func editLighting(){
-        updateLightingEditView();
-        selectPane(1);
-    }
-    
-    @IBAction func editScene(){
-        selectPane(2);
-    }
-    
-    @IBAction func editSphere(){
-        updateSphereEditView();
-        selectPane(3);
-    }
-    
-    func selectPane(index: Int){
+        /*func selectPane(index: Int){
         for i in 0...panes.count-1 {
             panes[i].hidden = (index != i);
             toolbarButtons[i].tintColor = (index == i) ? UIColor.darkGrayColor() : UIColor.lightGrayColor();
         }
-    }
+    }*/
     
-    @IBAction func addSphere(){
+    func addSphere(){
         if (scene.sphereCount >= 5){
             return;
         }
@@ -355,6 +375,12 @@ class ViewController: UIViewController {
     
     var lastX:Float = 0.0
     var lastY:Float = 0.0
+    
+    func updateWallColorsView(){
+        self.lightXSlider.value = scene.light.position.x
+        self.lightYSlider.value = scene.light.position.y
+        self.lightZSlider.value = scene.light.position.z
+    }
     
     func updateLightingEditView(){
         self.lightXSlider.value = scene.light.position.x
