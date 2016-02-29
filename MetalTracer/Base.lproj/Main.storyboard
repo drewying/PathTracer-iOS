@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -19,8 +18,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx3-AP-XSr">
-                                <rect key="frame" x="20" y="476" width="560" height="116"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx3-AP-XSr">
+                                <rect key="frame" x="20" y="463" width="560" height="100"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <string key="text">1. The longer the image renders, the more realistic the image looks.
 2. Drag the image to move the camera.
@@ -473,11 +472,11 @@
                             <constraint firstAttribute="trailing" secondItem="l29-em-rwi" secondAttribute="trailing" id="4ox-11-JXS"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="6Dv-CD-vSj" secondAttribute="bottom" id="6P8-Kg-uU5"/>
                             <constraint firstItem="Xih-kv-uFS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="7ZR-Ih-QSX"/>
+                            <constraint firstItem="Jx3-AP-XSr" firstAttribute="centerY" secondItem="Jpj-AB-ukp" secondAttribute="centerY" id="Ggw-qj-UUw"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="l29-em-rwi" secondAttribute="bottom" id="HI0-a7-qNB"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="HM2-Ow-WcX"/>
                             <constraint firstAttribute="trailing" secondItem="9i6-Hc-zLp" secondAttribute="trailing" id="ILj-Sb-bmN"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="JX6-Jp-5HB"/>
-                            <constraint firstItem="Jx3-AP-XSr" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" constant="8" id="L0s-ZD-jIS"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="Jpj-AB-ukp" secondAttribute="bottom" id="NUz-ze-Vmn"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="NgN-cf-sNf"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Phz-wR-nv3"/>
@@ -486,7 +485,6 @@
                             <constraint firstItem="Jx3-AP-XSr" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="X6t-OF-2a8"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="XEx-T7-GHS"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="XMb-ZW-8MU"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="Jx3-AP-XSr" secondAttribute="bottom" constant="8" id="bQr-Ux-dWg"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="bottom" id="cig-7i-3wY"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="cs8-c1-gta"/>
                             <constraint firstAttribute="trailing" secondItem="1ft-mH-1i8" secondAttribute="trailing" id="dSW-tO-1z6"/>
