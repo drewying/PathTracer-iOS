@@ -331,6 +331,20 @@ class ViewController: UIViewController {
         resetDisplay(true);
     }
     
+    @IBAction func saveImage(sender: AnyObject) {
+        if let image = imageView.image {
+            let sharingItems:[AnyObject] = [image.copy()]
+            let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
+            self.presentViewController(activityViewController, animated: true, completion: nil)
+        }
+        
+    }
+    
+    @IBAction func showInformation(sender: AnyObject) {
+    }
+
+    @IBAction func showFeedback(sender: AnyObject) {
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
