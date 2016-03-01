@@ -9,8 +9,9 @@
 import UIKit
 import Metal
 import QuartzCore
+import MessageUI
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     
     @IBOutlet weak var imageView: UIImageView!
@@ -78,23 +79,27 @@ class ViewController: UIViewController {
     
     var scene: Scene! = nil;
     
-    override func viewDidAppear(animated: Bool) {
-        panes = [mainEditView, lightEditView, sceneEditView, infoEditView];
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if ((scene == nil)){
+            panes = [mainEditView, lightEditView, sceneEditView, infoEditView];
+            
+            let size:CGSize = self.imageView.frame.size
+            xResolution = Int(size.width)
+            yResolution = Int(size.height)
+            
+            let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height))
+            scene = Scene(camera:camera, context:self.context)
+            
+            self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context)
+            self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution)
+            rayTracer.imageTexture = imageTexture
+            
+            timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
+            timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+            setupScene(0)
+        }
         
-        let size:CGSize = self.imageView.frame.size
-        xResolution = Int(size.width)
-        yResolution = Int(size.height)
-        
-        let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(size.width/size.height))
-        scene = Scene(camera:camera, context:self.context)
-        
-        self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context)
-        self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution)
-        rayTracer.imageTexture = imageTexture
-        
-        timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
-        timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-        setupScene(0)
     }
     
     func setupScene(sceneIndex: Int) {
@@ -332,19 +337,35 @@ class ViewController: UIViewController {
     }
     
     @IBAction func saveImage(sender: AnyObject) {
-        if let image = imageView.image {
-            let sharingItems:[AnyObject] = [image.copy()]
-            let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
-            self.presentViewController(activityViewController, animated: true, completion: nil)
-        }
-        
+        let image:UIImage = imageView.image!;
+        UIGraphicsBeginImageContext(image.size);
+        CGContextDrawImage(UIGraphicsGetCurrentContext(),CGRectMake(0.0,0.0, image.size.width, image.size.height),image.CGImage);
+        let flippedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        let sharingItems:[AnyObject] = [flippedImage]
+    
+        let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
+        self.presentViewController(activityViewController, animated: true, completion: nil)
     }
     
     @IBAction func showInformation(sender: AnyObject) {
     }
 
     @IBAction func showFeedback(sender: AnyObject) {
+        if !MFMailComposeViewController.canSendMail() {
+            return
+        }
+        
+        let composeVC = MFMailComposeViewController()
+        composeVC.mailComposeDelegate = self
+        
+        composeVC.setToRecipients(["drew@thinkpeopletech.com"])
+        composeVC.setSubject("Real Time Path Tracer Feedback v1.0")
+        
+        self.presentViewController(composeVC, animated: true, completion: nil)
+        
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -407,6 +428,10 @@ class ViewController: UIViewController {
         sphereBlueSlider.value = s.color.z
         sphereSizeSlider.value = s.radius
         sphereMaterialSegmentedControl.selectedSegmentIndex = Int(s.material)
+    }
+    
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+        controller.dismissViewControllerAnimated(true, completion: nil)
     }
 }
 
