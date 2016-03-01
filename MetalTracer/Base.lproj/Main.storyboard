@@ -190,28 +190,36 @@ The longer the image renders, the more realistic the image looks.</string>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ziz-Bc-yiu" userLabel="LightEditView">
                                 <rect key="frame" x="0.0" y="470" width="600" height="86"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Position:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F2c-EA-zHa">
-                                        <rect key="frame" x="8" y="8" width="66" height="21"/>
+                                    <slider contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="oUe-kj-khE" userLabel="Intensity Slider">
+                                        <rect key="frame" x="26" y="4" width="568" height="31"/>
+                                        <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="maximumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="oZk-vq-tRn"/>
+                                        </connections>
+                                    </slider>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Intensity" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LWF-RG-Dre" userLabel="Intensity">
+                                        <rect key="frame" x="8" y="8" width="12" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="oUe-kj-khE" userLabel="X Slider">
-                                        <rect key="frame" x="26" y="37" width="568" height="31"/>
+                                    <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="vaF-Fc-cEv" userLabel="X Slider">
+                                        <rect key="frame" x="26" y="40" width="568" height="31"/>
                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="maximumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <connections>
-                                            <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="l4h-CE-oCg"/>
+                                            <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="est-2H-tAJ"/>
                                         </connections>
                                     </slider>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LWF-RG-Dre" userLabel="X">
-                                        <rect key="frame" x="8" y="42" width="12" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LcS-zQ-EyS" userLabel="X">
+                                        <rect key="frame" x="8" y="44" width="12" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="VLf-Jo-jDE" userLabel="Y Slider">
-                                        <rect key="frame" x="25" y="75" width="569" height="31"/>
+                                        <rect key="frame" x="25" y="76" width="569" height="31"/>
                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="thumbTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <connections>
@@ -219,19 +227,19 @@ The longer the image renders, the more realistic the image looks.</string>
                                         </connections>
                                     </slider>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Y" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fG5-DV-wI4" userLabel="Y">
-                                        <rect key="frame" x="8" y="79" width="11" height="21"/>
+                                        <rect key="frame" x="8" y="80" width="11" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="ebF-a1-vA4" userLabel="Z Slider">
-                                        <rect key="frame" x="25" y="113" width="569" height="31"/>
+                                        <rect key="frame" x="25" y="112" width="569" height="31"/>
                                         <connections>
                                             <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="Xcn-yI-uQO"/>
                                         </connections>
                                     </slider>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Z" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pp3-6W-OWX" userLabel="Z">
-                                        <rect key="frame" x="8" y="118" width="11" height="21"/>
+                                        <rect key="frame" x="8" y="116" width="11" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -239,23 +247,26 @@ The longer the image renders, the more realistic the image looks.</string>
                                 </subviews>
                                 <color key="backgroundColor" white="0.1976768092" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="ebF-a1-vA4" secondAttribute="trailing" constant="8" id="3dn-yU-7E2"/>
-                                    <constraint firstItem="F2c-EA-zHa" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="top" constant="8" id="6Eo-Hg-e9b"/>
-                                    <constraint firstItem="fG5-DV-wI4" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="7Mu-wA-lQq"/>
-                                    <constraint firstItem="ebF-a1-vA4" firstAttribute="leading" secondItem="Pp3-6W-OWX" secondAttribute="trailing" constant="8" id="7eH-7R-EiP"/>
-                                    <constraint firstItem="LWF-RG-Dre" firstAttribute="centerY" secondItem="oUe-kj-khE" secondAttribute="centerY" id="8It-YT-DKj"/>
-                                    <constraint firstAttribute="trailing" secondItem="oUe-kj-khE" secondAttribute="trailing" constant="8" id="8SJ-Ox-l3l"/>
-                                    <constraint firstItem="ebF-a1-vA4" firstAttribute="top" secondItem="VLf-Jo-jDE" secondAttribute="bottom" constant="8" id="8X3-xj-G4W"/>
-                                    <constraint firstItem="fG5-DV-wI4" firstAttribute="centerY" secondItem="VLf-Jo-jDE" secondAttribute="centerY" id="ETL-qg-fsx"/>
-                                    <constraint firstItem="oUe-kj-khE" firstAttribute="leading" secondItem="LWF-RG-Dre" secondAttribute="trailing" constant="8" id="Gcm-Yv-NxF"/>
-                                    <constraint firstItem="oUe-kj-khE" firstAttribute="top" secondItem="F2c-EA-zHa" secondAttribute="bottom" constant="8" id="LaJ-yA-Gie"/>
-                                    <constraint firstItem="VLf-Jo-jDE" firstAttribute="leading" secondItem="fG5-DV-wI4" secondAttribute="trailing" constant="8" id="Uwc-gs-hTy"/>
-                                    <constraint firstItem="VLf-Jo-jDE" firstAttribute="top" secondItem="oUe-kj-khE" secondAttribute="bottom" constant="8" id="dfh-bd-xwg"/>
-                                    <constraint firstAttribute="trailing" secondItem="VLf-Jo-jDE" secondAttribute="trailing" constant="8" id="e0j-Ax-flm"/>
-                                    <constraint firstItem="LWF-RG-Dre" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="e6T-G8-h7C"/>
-                                    <constraint firstItem="Pp3-6W-OWX" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="iY1-QY-vzL"/>
-                                    <constraint firstItem="F2c-EA-zHa" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="sio-Zb-ZHv"/>
-                                    <constraint firstItem="Pp3-6W-OWX" firstAttribute="centerY" secondItem="ebF-a1-vA4" secondAttribute="centerY" id="z7b-h2-qXh"/>
+                                    <constraint firstItem="fG5-DV-wI4" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="27P-rS-Yzk"/>
+                                    <constraint firstAttribute="trailing" secondItem="vaF-Fc-cEv" secondAttribute="trailing" constant="8" id="67K-Gq-ZCq"/>
+                                    <constraint firstAttribute="trailing" secondItem="oUe-kj-khE" secondAttribute="trailing" constant="8" id="A2p-uJ-gVi"/>
+                                    <constraint firstItem="ebF-a1-vA4" firstAttribute="leading" secondItem="Pp3-6W-OWX" secondAttribute="trailing" constant="8" id="CaG-r4-xtb"/>
+                                    <constraint firstItem="oUe-kj-khE" firstAttribute="centerY" secondItem="LWF-RG-Dre" secondAttribute="centerY" id="IhO-QQ-uhu"/>
+                                    <constraint firstItem="Pp3-6W-OWX" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="JhP-Mf-hzy"/>
+                                    <constraint firstItem="fG5-DV-wI4" firstAttribute="top" secondItem="LcS-zQ-EyS" secondAttribute="bottom" constant="15" id="OH7-PY-16Y"/>
+                                    <constraint firstItem="oUe-kj-khE" firstAttribute="leading" secondItem="LWF-RG-Dre" secondAttribute="trailing" constant="8" id="Qm0-nb-ugy"/>
+                                    <constraint firstItem="LcS-zQ-EyS" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="Yqv-Zd-MbP"/>
+                                    <constraint firstItem="LWF-RG-Dre" firstAttribute="leading" secondItem="ziz-Bc-yiu" secondAttribute="leading" constant="8" id="aWj-Kn-ziW"/>
+                                    <constraint firstItem="VLf-Jo-jDE" firstAttribute="leading" secondItem="fG5-DV-wI4" secondAttribute="trailing" constant="8" id="aiW-ue-dh7"/>
+                                    <constraint firstItem="Pp3-6W-OWX" firstAttribute="top" secondItem="fG5-DV-wI4" secondAttribute="bottom" constant="15" id="ava-bf-C18"/>
+                                    <constraint firstItem="LWF-RG-Dre" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="top" constant="8" id="iWi-Iu-dlD"/>
+                                    <constraint firstAttribute="trailing" secondItem="ebF-a1-vA4" secondAttribute="trailing" constant="8" id="jZr-sR-tiz"/>
+                                    <constraint firstItem="VLf-Jo-jDE" firstAttribute="centerY" secondItem="fG5-DV-wI4" secondAttribute="centerY" id="ktb-BA-q48"/>
+                                    <constraint firstItem="vaF-Fc-cEv" firstAttribute="centerY" secondItem="LcS-zQ-EyS" secondAttribute="centerY" id="pDl-IM-EOG"/>
+                                    <constraint firstItem="ebF-a1-vA4" firstAttribute="centerY" secondItem="Pp3-6W-OWX" secondAttribute="centerY" id="pJV-X4-LNv"/>
+                                    <constraint firstItem="LcS-zQ-EyS" firstAttribute="top" secondItem="LWF-RG-Dre" secondAttribute="bottom" constant="15" id="ri3-aJ-soq"/>
+                                    <constraint firstItem="vaF-Fc-cEv" firstAttribute="leading" secondItem="LcS-zQ-EyS" secondAttribute="trailing" constant="8" id="tdl-UC-j2G"/>
+                                    <constraint firstAttribute="trailing" secondItem="VLf-Jo-jDE" secondAttribute="trailing" constant="8" id="vMJ-jK-Ali"/>
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jpj-AB-ukp" userLabel="MainEditView">
@@ -515,7 +526,8 @@ The longer the image renders, the more realistic the image looks.</string>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
                         <outlet property="infoEditView" destination="Xih-kv-uFS" id="Xd7-xA-fi9"/>
                         <outlet property="lightEditView" destination="ziz-Bc-yiu" id="8ga-4E-OWh"/>
-                        <outlet property="lightXSlider" destination="oUe-kj-khE" id="srq-B6-nCx"/>
+                        <outlet property="lightIntensitySlider" destination="oUe-kj-khE" id="4xh-9Y-zyR"/>
+                        <outlet property="lightXSlider" destination="vaF-Fc-cEv" id="ii9-Ky-bUl"/>
                         <outlet property="lightYSlider" destination="VLf-Jo-jDE" id="8EQ-8h-z93"/>
                         <outlet property="lightZSlider" destination="ebF-a1-vA4" id="dGU-Ye-Nc2"/>
                         <outlet property="mainEditView" destination="Jpj-AB-ukp" id="DAh-Pb-7ZW"/>

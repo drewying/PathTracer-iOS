@@ -38,6 +38,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
  
     @IBOutlet weak var renderingProgressView: UIProgressView!
 
+    @IBOutlet weak var lightIntensitySlider: UISlider!
     @IBOutlet weak var lightXSlider: UISlider!
     @IBOutlet weak var lightYSlider: UISlider!
     @IBOutlet weak var lightZSlider: UISlider!
@@ -255,6 +256,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     @IBAction func lightPositionSlider(sender: UISlider) {
         switch(sender){
+        case lightIntensitySlider: scene.light.color = Vector3D(x: sender.value, y: sender.value, z: sender.value)
         case lightXSlider:scene.light.position.x = sender.value;
         case lightYSlider:scene.light.position.y = sender.value;
         case lightZSlider:scene.light.position.z = sender.value;
@@ -412,6 +414,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     func updateLightingEditView(){
+        self.lightIntensitySlider.value = scene.light.color.x
         self.lightXSlider.value = scene.light.position.x
         self.lightYSlider.value = scene.light.position.y
         self.lightZSlider.value = scene.light.position.z
