@@ -341,9 +341,9 @@ Ray bounce(Hit h, thread uint *seed){
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, h.normal);
     } else if (h.material == DIELECTRIC){
-        //if (rand(seed) > 0.9){
-        //    outVector = reflect(h.ray.direction, h.normal);
-        //} else{
+        if (rand(seed) > 0.925){
+            outVector = reflect(h.ray.direction, h.normal);
+        } else{
             float3 normal = h.normal;
             float3 incident = h.ray.direction;
             float3 nl = dot(normal, incident) < 0 ? normal : normal * -1.0;
@@ -354,7 +354,7 @@ Ray bounce(Hit h, thread uint *seed){
             float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
             normal *= ((into > 0) - (into < 0));
             outVector = refract(incident, normal, refractiveIndexRatio);
-        //}
+        }
         
     } else {
         outVector = h.ray.direction;

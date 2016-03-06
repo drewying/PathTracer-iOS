@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3AAAB3D41C8CE66800110BE0 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */; };
 		D1816ABB1A68EA4D008D74C6 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1816ABA1A68EA4D008D74C6 /* Box.swift */; };
 		D18524221A6DE9CB00C1E9D8 /* MBETextureUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18524211A6DE9CB00C1E9D8 /* MBETextureUtility.swift */; };
 		D1C2607F1A3D13A70063CDF3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1C2607E1A3D13A70063CDF3 /* Metal.framework */; };
@@ -33,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfoViewController.swift; path = MetalTracer/InfoViewController.swift; sourceTree = SOURCE_ROOT; };
 		D130D6C01A314FD10096BFC7 /* MetalTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1816ABA1A68EA4D008D74C6 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Box.swift; path = MetalTracer/Box.swift; sourceTree = SOURCE_ROOT; };
 		D18524211A6DE9CB00C1E9D8 /* MBETextureUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MBETextureUtility.swift; path = MetalTracer/MBETextureUtility.swift; sourceTree = SOURCE_ROOT; };
@@ -119,6 +121,7 @@
 				D18524211A6DE9CB00C1E9D8 /* MBETextureUtility.swift */,
 				D1D407211A67B12200CA07E0 /* Vector3D.swift */,
 				D1D407221A67B12200CA07E0 /* ViewController.swift */,
+				3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */,
 			);
 			name = MetalTracer;
 			path = Raytracer;
@@ -218,6 +221,7 @@
 				D1D4072B1A67B12200CA07E0 /* Material.swift in Sources */,
 				D1D4072D1A67B12200CA07E0 /* MetalContext.swift in Sources */,
 				D1D407341A67B12200CA07E0 /* UIImage+MBETextureUtilities.m in Sources */,
+				3AAAB3D41C8CE66800110BE0 /* InfoViewController.swift in Sources */,
 				D1D407321A67B12200CA07E0 /* Sphere.swift in Sources */,
 				D18524221A6DE9CB00C1E9D8 /* MBETextureUtility.swift in Sources */,
 				D1D407231A67B12200CA07E0 /* AppDelegate.swift in Sources */,
