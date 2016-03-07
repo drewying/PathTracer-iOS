@@ -87,8 +87,14 @@ class Scene : NSObject {
     }
     
     func deleteSphere(index:Int){
+        
+        for i in index...spheres.count - 2 {
+            spheres[i] = spheres[i + 1]
+        }
         sphereCount--;
-        spheres[index].radius = 0;
+        spheres[sphereCount].radius = 0.0
+        
+        
         resetBuffer();
     }
 }

@@ -214,8 +214,26 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         updateWallColorsView()
     }
     
-    @IBAction func doubleTapAction(sender: AnyObject) {
-        addSphere()
+    @IBAction func doubleTapAction(sender: UITapGestureRecognizer) {
+        if (scene.sphereCount >= 5){
+            return;
+        }
+        
+        let point = sender.locationInView(self.imageView)
+        let x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0)
+        let y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0)
+        
+        /*let cosy = scene.camera.cameraUp ⋅ Vector3D.up()
+        let cosx = scene.camera.cameraRight ⋅ Vector3D.right()
+        let position:Vector3D = Matrix.transformPoint(matrix, right: Vector3D(x: x, y: y, z: 0));*/
+        
+        let angleX = acos(scene.camera.cameraRight ⋅ Vector3D.right()) / (scene.camera.cameraRight.length() * Vector3D.right().length())
+        let angleY = acos(scene.camera.cameraUp ⋅ Vector3D.up()) / (scene.camera.cameraUp.length() * Vector3D.up().length())
+        
+        let matrix = Matrix.rotateY(angleX) * Matrix.rotateX(angleY)
+        let position:Vector3D = Matrix.transformPoint(matrix, right: Vector3D(x: x, y: y, z: 0))
+        scene.addSphere(Sphere(position: position, radius:0.25, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
+        resetDisplay(true)
     }
    
     @IBAction func dragAction(sender: UIPanGestureRecognizer) {
@@ -235,17 +253,18 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             let xVelocity = Float(velocity.x/(CGFloat(M_PI) * CGFloat(xResolution)));
             let yVelocity = Float(velocity.y/(CGFloat(M_PI) * CGFloat(yResolution)));
             
-            //if (abs(xDelta) < abs(yDelta)){
-                let yMatrix:Matrix = Matrix.rotate(self.scene.camera.cameraRight, angle:-yVelocity)
-                self.scene.camera.cameraUp = Matrix.transformVector(yMatrix, right: self.scene.camera.cameraUp);
-                self.scene.camera.cameraPosition = Matrix.transformPoint(yMatrix, right: self.scene.camera.cameraPosition)
-                
-            //} else{
-                let xMatrix:Matrix = Matrix.rotateY(xVelocity);
-                self.scene.camera.cameraUp = Matrix.transformVector(xMatrix, right: self.scene.camera.cameraUp);
-                self.scene.camera.cameraPosition = Matrix.transformPoint(xMatrix, right: self.scene.camera.cameraPosition)
-                
-            //}
+            /*let matrix:Matrix = Matrix.rotateY(xVelocity) * Matrix.rotate(self.scene.camera.cameraRight, angle:-yVelocity)
+            self.scene.camera.cameraUp = Matrix.transformVector(matrix, right: self.scene.camera.cameraUp);
+            self.scene.camera.cameraPosition = Matrix.transformPoint(matrix, right: self.scene.camera.cameraPosition)*/
+            
+            let yMatrix:Matrix = Matrix.rotate(self.scene.camera.cameraRight, angle:-yVelocity)
+            self.scene.camera.cameraUp = Matrix.transformVector(yMatrix, right: self.scene.camera.cameraUp);
+            self.scene.camera.cameraPosition = Matrix.transformPoint(yMatrix, right: self.scene.camera.cameraPosition)
+            
+            let xMatrix:Matrix = Matrix.rotateY(xVelocity);
+            self.scene.camera.cameraUp = Matrix.transformVector(xMatrix, right: self.scene.camera.cameraUp);
+            self.scene.camera.cameraPosition = Matrix.transformPoint(xMatrix, right: self.scene.camera.cameraPosition)
+
             
         }
         
@@ -322,15 +341,6 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             toolbarButtons[i].tintColor = (index == i) ? UIColor.darkGrayColor() : UIColor.lightGrayColor();
         }
     }*/
-    
-    func addSphere(){
-        if (scene.sphereCount >= 5){
-            return;
-        }
-        let yPosition:Float = 0.4 * Float(scene.sphereCount-2);
-        scene.addSphere(Sphere(position: Vector3D(x:0.0, y:yPosition, z:0.0),radius:0.2, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
-        resetDisplay(true);
-    }
     
     @IBAction func deleteSphere(sender: AnyObject) {
         scene.deleteSphere(selectedSphere);

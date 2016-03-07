@@ -38,6 +38,30 @@ struct Vector3D{
     func toString() -> String{
         return "(\(x),\(y),\(z)";
     }
+    
+    static func up() -> Vector3D {
+        return Vector3D(x: 0.0, y: 1.0, z: 0.0)
+    }
+    
+    static func down() -> Vector3D {
+        return Vector3D(x: 0.0, y: -1.0, z: 0.0)
+    }
+    
+    static func forward() -> Vector3D {
+        return Vector3D(x: 0.0, y: 0.0, z: 1.0)
+    }
+    
+    static func back() -> Vector3D {
+        return Vector3D(x: 0.0, y: 0.0, z: -1.0)
+    }
+    
+    static func right() -> Vector3D {
+        return Vector3D(x: 1.0, y: 0.0, z: 0.0)
+    }
+    
+    static func left() -> Vector3D {
+        return Vector3D(x: -1.0, y: 0.0, z: 0.0)
+    }
 }
 
 prefix func - (vector: Vector3D) -> Vector3D {
