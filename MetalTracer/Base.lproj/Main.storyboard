@@ -45,7 +45,7 @@ Double tap on the image to add a new sphere.
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1ft-mH-1i8" userLabel="OutputImage">
-                                <rect key="frame" x="0.0" y="20" width="600" height="448"/>
+                                <rect key="frame" x="0.0" y="20" width="609" height="448"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="448" id="Ony-fE-6AY"/>
@@ -516,13 +516,12 @@ Double tap on the image to add a new sphere.
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="NgN-cf-sNf"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Phz-wR-nv3"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="Px2-fN-mKT"/>
-                            <constraint firstAttribute="centerX" secondItem="1ft-mH-1i8" secondAttribute="centerX" id="UqF-gH-X3w"/>
                             <constraint firstItem="Jx3-AP-XSr" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="X6t-OF-2a8"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="XEx-T7-GHS"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="XMb-ZW-8MU"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="bottom" id="cig-7i-3wY"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="cs8-c1-gta"/>
-                            <constraint firstAttribute="trailing" secondItem="1ft-mH-1i8" secondAttribute="trailing" id="dSW-tO-1z6"/>
+                            <constraint firstAttribute="trailing" secondItem="1ft-mH-1i8" secondAttribute="trailing" constant="-9" id="dSW-tO-1z6"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dgX-vG-44s"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="egY-4d-OAW"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="elQ-oq-qj9"/>
@@ -614,7 +613,7 @@ Double tap on the image to add a new sphere.
                                     </fragment>
                                     <fragment>
                                         <string key="content">
-This is a real time path tracer. A path tracer is a program that uses mathematics to create realistic looking computer generated graphics. It is the same method used in most computer animated films, including Pixar movies. This program does path tracing in real time.
+This is a real time path tracer. A path tracer is a program that uses mathematics to create realistic looking computer generated graphics. It is used in most computer animated films, including Pixar movies. This program does path tracing in real time.
 
 </string>
                                         <attributes>
@@ -641,7 +640,7 @@ This is a real time path tracer. A path tracer is a program that uses mathematic
                                     </fragment>
                                     <fragment>
                                         <string key="content">
-Typically a path tracer takes a very long time to create an image. Many many hours, and even days to render a single scene. But by using Apple’s Metal technology and cutting some mathematical corners, we are able to create a path tracer that can render an image in mere seconds. And you can even watch it render the image in real time.
+Typically a path tracer takes a very long time to create an image. Many many hours, and sometimes even days to render a single scene. But by using Apple’s Metal technology and cutting some mathematical corners, we are able to create a path tracer that can render an image in mere seconds. And you can even watch it render the image in real time.
 
 </string>
                                         <attributes>
