@@ -62,7 +62,7 @@ class Raytracer: NSObject {
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         
-        renderContext.commandQueue.insertDebugCaptureBoundary();
+        //renderContext.commandQueue.insertDebugCaptureBoundary();
         
         commandEncoder.endEncoding()
         commandBuffer.commit()
