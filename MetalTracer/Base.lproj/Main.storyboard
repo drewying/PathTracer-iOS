@@ -537,6 +537,7 @@ Double tap on the image to add a new sphere.
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="currentColorView" destination="Iw4-aO-AVN" id="Apa-fk-Zwb"/>
                         <outlet property="imageView" destination="1ft-mH-1i8" id="ids-lZ-nVJ"/>
                         <outlet property="infoEditView" destination="Xih-kv-uFS" id="Xd7-xA-fi9"/>
                         <outlet property="lightEditView" destination="ziz-Bc-yiu" id="8ga-4E-OWh"/>

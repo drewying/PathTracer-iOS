@@ -24,6 +24,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     @IBOutlet weak var sceneEditView: UIView!
     @IBOutlet weak var lightEditView: UIView!
     @IBOutlet weak var infoEditView: UIView!
+    @IBOutlet weak var currentColorView: UIView!
     
     @IBOutlet weak var sceneWallSegmentedControl: UISegmentedControl!
     @IBOutlet weak var sceneRedSlider: UISlider!
@@ -296,6 +297,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         case sphereBlueSlider:scene.spheres[selectedSphere].color.z = sender.value
         default:scene.spheres[selectedSphere].color.x = sender.value
         }
+        currentColorView.backgroundColor = UIColor(red: CGFloat(sphereRedSlider.value), green: CGFloat(sphereGreenSlider.value), blue: CGFloat(sphereBlueSlider.value), alpha: 1.0)
         self.resetDisplay(false)
     }
     
@@ -439,6 +441,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         sphereRedSlider.value = s.color.x
         sphereGreenSlider.value = s.color.y
         sphereBlueSlider.value = s.color.z
+        currentColorView.backgroundColor = UIColor(red: CGFloat(s.color.x), green: CGFloat(s.color.y), blue: CGFloat(s.color.z), alpha: 1.0)
         sphereSizeSlider.value = s.radius
         sphereMaterialSegmentedControl.selectedSegmentIndex = Int(s.material)
     }
