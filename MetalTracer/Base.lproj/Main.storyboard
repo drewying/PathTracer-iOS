@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -20,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jx3-AP-XSr">
-                                <rect key="frame" x="20" y="414" width="560" height="131"/>
+                                <rect key="frame" x="20" y="406" width="560" height="150"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <attributedString key="attributedText">
                                     <fragment>
@@ -46,11 +45,8 @@ Double tap on the image to add a new sphere.
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1ft-mH-1i8" userLabel="OutputImage">
-                                <rect key="frame" x="137" y="20" width="326" height="381"/>
+                                <rect key="frame" x="0.0" y="20" width="609" height="384"/>
                                 <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="1ft-mH-1i8" secondAttribute="height" multiplier="384:448" id="2cw-ZN-JkO"/>
-                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="50r-TN-zaZ" appends="YES" id="1Cw-ht-JU7"/>
                                     <outletCollection property="gestureRecognizers" destination="Gdd-6h-Ajn" appends="YES" id="6sX-td-vv4"/>
@@ -59,13 +55,13 @@ Double tap on the image to add a new sphere.
                                 </connections>
                             </imageView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9i6-Hc-zLp">
-                                <rect key="frame" x="0.0" y="401" width="600" height="2"/>
+                                <rect key="frame" x="0.0" y="404" width="609" height="2"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="progressTintColor" red="0.94117647058823528" green="0.94117647058823528" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="trackTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </progressView>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Dv-CD-vSj" userLabel="SphereEditView">
-                                <rect key="frame" x="0.0" y="403" width="600" height="153"/>
+                                <rect key="frame" x="0.0" y="406" width="600" height="150"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q2d-dV-JsO">
                                         <rect key="frame" x="527" y="8" width="65" height="30"/>
@@ -171,7 +167,7 @@ Double tap on the image to add a new sphere.
                                 <color key="backgroundColor" white="0.1976768092" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="EcB-6Z-8CW" firstAttribute="leading" secondItem="4my-bi-mKd" secondAttribute="leading" id="03a-eW-C2A"/>
-                                    <constraint firstAttribute="height" constant="153" id="0vl-sm-K8C"/>
+                                    <constraint firstAttribute="height" constant="150" id="0vl-sm-K8C"/>
                                     <constraint firstItem="4my-bi-mKd" firstAttribute="leading" secondItem="XUs-eT-Kuj" secondAttribute="trailing" constant="8" id="5Yd-08-cOD"/>
                                     <constraint firstItem="2en-YL-0fx" firstAttribute="leading" secondItem="3Xh-jW-0By" secondAttribute="leading" id="8Fc-rd-O10"/>
                                     <constraint firstItem="4kC-ME-dX4" firstAttribute="centerY" secondItem="LDJ-Rn-T72" secondAttribute="centerY" id="97P-bB-0Wn"/>
@@ -204,7 +200,7 @@ Double tap on the image to add a new sphere.
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ziz-Bc-yiu" userLabel="LightEditView">
-                                <rect key="frame" x="0.0" y="403" width="600" height="153"/>
+                                <rect key="frame" x="0.0" y="406" width="600" height="150"/>
                                 <subviews>
                                     <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="oUe-kj-khE" userLabel="Intensity Slider">
                                         <rect key="frame" x="80" y="4" width="514" height="31"/>
@@ -286,16 +282,16 @@ Double tap on the image to add a new sphere.
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jpj-AB-ukp" userLabel="MainEditView">
-                                <rect key="frame" x="0.0" y="403" width="600" height="153"/>
+                                <rect key="frame" x="0.0" y="406" width="600" height="150"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scene Selection" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V12-8a-PwC">
-                                        <rect key="frame" x="8" y="8" width="124" height="21"/>
+                                        <rect key="frame" x="8" y="16" width="124" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="NcM-29-7k4">
-                                        <rect key="frame" x="8" y="37" width="584" height="29"/>
+                                        <rect key="frame" x="8" y="45" width="584" height="29"/>
                                         <segments>
                                             <segment title="Scene 1"/>
                                             <segment title="Scene 2"/>
@@ -314,11 +310,11 @@ Double tap on the image to add a new sphere.
                                     <constraint firstItem="NcM-29-7k4" firstAttribute="leading" secondItem="Jpj-AB-ukp" secondAttribute="leading" constant="8" id="2I8-hM-kOy"/>
                                     <constraint firstAttribute="trailing" secondItem="NcM-29-7k4" secondAttribute="trailing" constant="8" id="klm-ja-KCb"/>
                                     <constraint firstItem="V12-8a-PwC" firstAttribute="leading" secondItem="Jpj-AB-ukp" secondAttribute="leading" constant="8" id="lXv-na-NqL"/>
-                                    <constraint firstItem="V12-8a-PwC" firstAttribute="top" secondItem="Jpj-AB-ukp" secondAttribute="top" constant="8" id="wUF-MI-xJF"/>
+                                    <constraint firstItem="V12-8a-PwC" firstAttribute="top" secondItem="Jpj-AB-ukp" secondAttribute="top" constant="16" id="wUF-MI-xJF"/>
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="l29-em-rwi" userLabel="SceneEditView">
-                                <rect key="frame" x="0.0" y="403" width="600" height="153"/>
+                                <rect key="frame" x="0.0" y="406" width="600" height="150"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="aMj-wW-8Dx">
                                         <rect key="frame" x="8" y="8" width="584" height="29"/>
@@ -335,25 +331,25 @@ Double tap on the image to add a new sphere.
                                         </connections>
                                     </segmentedControl>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="soC-ZT-yqX">
-                                        <rect key="frame" x="156" y="49" width="11" height="21"/>
+                                        <rect key="frame" x="156" y="46" width="11" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="G" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZp-hD-y62">
-                                        <rect key="frame" x="154" y="87" width="13" height="21"/>
+                                        <rect key="frame" x="154" y="84" width="13" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cwk-Wz-HoZ" userLabel="B">
-                                        <rect key="frame" x="156" y="125" width="11" height="21"/>
+                                        <rect key="frame" x="156" y="122" width="11" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="NOe-fX-aRZ" userLabel="Red Slider">
-                                        <rect key="frame" x="173" y="44" width="254" height="31"/>
+                                        <rect key="frame" x="173" y="41" width="254" height="31"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="250" id="xPS-or-Q78"/>
                                         </constraints>
@@ -364,7 +360,7 @@ Double tap on the image to add a new sphere.
                                         </connections>
                                     </slider>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="6ll-sV-w2e" userLabel="Green Slider">
-                                        <rect key="frame" x="173" y="82" width="254" height="31"/>
+                                        <rect key="frame" x="173" y="79" width="254" height="31"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="250" id="bdS-CF-Bus"/>
                                         </constraints>
@@ -375,7 +371,7 @@ Double tap on the image to add a new sphere.
                                         </connections>
                                     </slider>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Ku3-ME-ijj" userLabel="Blue Slider">
-                                        <rect key="frame" x="173" y="120" width="254" height="31"/>
+                                        <rect key="frame" x="173" y="117" width="254" height="31"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="250" id="g0s-Hj-fYa"/>
                                         </constraints>
@@ -400,16 +396,16 @@ Double tap on the image to add a new sphere.
                                     <constraint firstItem="NOe-fX-aRZ" firstAttribute="leading" secondItem="soC-ZT-yqX" secondAttribute="trailing" constant="8" id="faU-V9-8or"/>
                                     <constraint firstItem="Ku3-ME-ijj" firstAttribute="top" secondItem="6ll-sV-w2e" secondAttribute="bottom" constant="8" id="gtW-ym-1j3"/>
                                     <constraint firstItem="soC-ZT-yqX" firstAttribute="centerY" secondItem="NOe-fX-aRZ" secondAttribute="centerY" id="jzN-F6-brR"/>
-                                    <constraint firstItem="NOe-fX-aRZ" firstAttribute="top" secondItem="aMj-wW-8Dx" secondAttribute="bottom" constant="8" id="ou4-zo-bcT"/>
+                                    <constraint firstItem="NOe-fX-aRZ" firstAttribute="top" secondItem="aMj-wW-8Dx" secondAttribute="bottom" constant="5" id="ou4-zo-bcT"/>
                                     <constraint firstAttribute="centerX" secondItem="Ku3-ME-ijj" secondAttribute="centerX" id="xXM-YM-ila"/>
                                     <constraint firstAttribute="centerX" secondItem="NOe-fX-aRZ" secondAttribute="centerX" id="zbs-xe-ZMa"/>
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xih-kv-uFS" userLabel="InfoEditView">
-                                <rect key="frame" x="0.0" y="403" width="600" height="153"/>
+                                <rect key="frame" x="0.0" y="406" width="600" height="150"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUR-3o-6ap" userLabel="Save">
-                                        <rect key="frame" x="250" y="15" width="100" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUR-3o-6ap" userLabel="Save">
+                                        <rect key="frame" x="250" y="14" width="100" height="30"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="M3i-EJ-yIA"/>
@@ -423,8 +419,8 @@ Double tap on the image to add a new sphere.
                                             <action selector="saveImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9Lp-HN-ZI1"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rsh-zb-jeU" userLabel="Help">
-                                        <rect key="frame" x="250" y="62" width="100" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rsh-zb-jeU" userLabel="Help">
+                                        <rect key="frame" x="250" y="66" width="100" height="30"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="100" id="s65-pN-lwc"/>
@@ -438,8 +434,8 @@ Double tap on the image to add a new sphere.
                                             <segue destination="6Vg-lU-OVv" kind="presentation" id="FE7-oc-flh"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T5T-Ef-0S0" userLabel="Feedback">
-                                        <rect key="frame" x="250" y="108" width="100" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T5T-Ef-0S0" userLabel="Feedback">
+                                        <rect key="frame" x="250" y="114" width="100" height="30"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="100" id="06q-x2-yvu"/>
@@ -504,26 +500,29 @@ Double tap on the image to add a new sphere.
                             <constraint firstAttribute="trailing" secondItem="l29-em-rwi" secondAttribute="trailing" id="4ox-11-JXS"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="6Dv-CD-vSj" secondAttribute="bottom" id="6P8-Kg-uU5"/>
                             <constraint firstItem="Xih-kv-uFS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="7ZR-Ih-QSX"/>
+                            <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="Jx3-AP-XSr" secondAttribute="bottom" id="8Kl-Jd-Q3X"/>
                             <constraint firstItem="Jx3-AP-XSr" firstAttribute="centerY" secondItem="Jpj-AB-ukp" secondAttribute="centerY" id="Ggw-qj-UUw"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="l29-em-rwi" secondAttribute="bottom" id="HI0-a7-qNB"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="HM2-Ow-WcX"/>
-                            <constraint firstItem="1ft-mH-1i8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ICL-81-upb"/>
-                            <constraint firstAttribute="trailing" secondItem="9i6-Hc-zLp" secondAttribute="trailing" id="ILj-Sb-bmN"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="JX6-Jp-5HB"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="Jpj-AB-ukp" secondAttribute="bottom" id="NUz-ze-Vmn"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="NgN-cf-sNf"/>
+                            <constraint firstItem="1ft-mH-1i8" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="O9v-rt-3SF"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Phz-wR-nv3"/>
                             <constraint firstItem="Jpj-AB-ukp" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="Px2-fN-mKT"/>
+                            <constraint firstItem="9i6-Hc-zLp" firstAttribute="leading" secondItem="1ft-mH-1i8" secondAttribute="leading" id="Tvg-Rc-WFI"/>
                             <constraint firstItem="Jx3-AP-XSr" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="X6t-OF-2a8"/>
-                            <constraint firstItem="9i6-Hc-zLp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="XEx-T7-GHS"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="XMb-ZW-8MU"/>
+                            <constraint firstAttribute="trailing" secondItem="1ft-mH-1i8" secondAttribute="trailing" constant="-9" id="ZvC-p3-vJF"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="ziz-Bc-yiu" secondAttribute="bottom" id="cig-7i-3wY"/>
                             <constraint firstItem="6Dv-CD-vSj" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="cs8-c1-gta"/>
                             <constraint firstItem="l29-em-rwi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dgX-vG-44s"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="top" secondItem="1ft-mH-1i8" secondAttribute="bottom" id="egY-4d-OAW"/>
                             <constraint firstItem="1ft-mH-1i8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="elQ-oq-qj9"/>
+                            <constraint firstItem="9i6-Hc-zLp" firstAttribute="trailing" secondItem="1ft-mH-1i8" secondAttribute="trailing" id="hmf-aI-UFD"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="bottom" secondItem="Xih-kv-uFS" secondAttribute="top" id="htt-5l-GJ4"/>
                             <constraint firstItem="ziz-Bc-yiu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="jsx-Mb-IE0"/>
+                            <constraint firstItem="Jx3-AP-XSr" firstAttribute="top" secondItem="9i6-Hc-zLp" secondAttribute="bottom" id="k9l-lm-gh7"/>
                             <constraint firstAttribute="trailing" secondItem="3i3-to-PZy" secondAttribute="trailing" id="nad-iY-bnf"/>
                             <constraint firstAttribute="trailing" secondItem="6Dv-CD-vSj" secondAttribute="trailing" id="o6d-Fw-VL5"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="oZb-xa-cWL"/>
