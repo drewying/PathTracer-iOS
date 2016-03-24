@@ -48,18 +48,18 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     var currentPane:UIView?
     var currentButton:UIBarButtonItem?
     
-    var panes:[UIView] = [];
+    var panes:[UIView] = []
     
-    var context:MetalContext = MetalContext(device: MTLCreateSystemDefaultDevice()!);
+    var context:MetalContext! = nil
     
-    var imageTexture: MTLTexture! = nil;
+    var imageTexture: MTLTexture! = nil
 
-    var rayTracer:Raytracer! = nil;
+    var rayTracer:Raytracer! = nil
     
     var timer: CADisplayLink! = nil
     
-    var xResolution:Int = 0;
-    var yResolution:Int = 0;
+    var xResolution:Int = 0
+    var yResolution:Int = 0
     
     var selectedSphere:Int = -1 {
         didSet {
@@ -97,7 +97,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             self.rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution)
             rayTracer.imageTexture = imageTexture
             
-            timer = CADisplayLink(target: self, selector: Selector("renderLoop"))
+            timer = CADisplayLink(target: self, selector: #selector(ViewController.renderLoop))
             timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
             setupScene(0)
         }
@@ -382,7 +382,14 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        var device = MTLCreateSystemDefaultDevice()
+        device = MTLCreateSystemDefaultDevice()
+        guard device != nil else {
+            print("Metal is not supported on this device")
+            imageView = UIImageView(frame: self.view.frame)
+            return
+        }
+        context = MetalContext(device: device!)
     }
     
     var que:dispatch_queue_t = dispatch_queue_create("Rendering", DISPATCH_QUEUE_SERIAL);
@@ -448,6 +455,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
 }
 

@@ -69,7 +69,7 @@ class Raytracer: NSObject {
         commandBuffer.waitUntilCompleted()
     
         self.inputTexture = self.outputTexture;
-        sampleNumber++
+        sampleNumber += 1
         //return UIImage.imageFromTexture(self.inputTexture)
         return UIImage(MTLTexture: self.renderTexture)
     }

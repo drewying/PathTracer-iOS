@@ -82,7 +82,7 @@ class Scene : NSObject {
     
     func addSphere(sphere:Sphere){
         spheres[sphereCount] = sphere;
-        sphereCount++;
+        sphereCount += 1;
         resetBuffer();
     }
     
@@ -91,7 +91,7 @@ class Scene : NSObject {
         for i in index...spheres.count - 2 {
             spheres[i] = spheres[i + 1]
         }
-        sphereCount--;
+        sphereCount -= 1;
         spheres[sphereCount].radius = 0.0
         
         
