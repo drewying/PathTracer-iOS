@@ -341,20 +341,30 @@ Ray bounce(Hit h, thread uint *seed){
     } else if (h.material == SPECULAR){
         outVector = reflect(h.ray.direction, h.normal);
     } else if (h.material == DIELECTRIC){
-        if (rand(seed) > 0.925){
-            outVector = reflect(h.ray.direction, h.normal);
-        } else{
-            float3 normal = h.normal;
-            float3 incident = h.ray.direction;
-            float3 nl = dot(normal, incident) < 0 ? normal : normal * -1.0;
-            float into = dot(nl, normal);
-            
-            float refractiveIndexAir = 1;
-            float refractiveIndexGlass = 1.5;
-            float refractiveIndexRatio = pow(refractiveIndexAir / refractiveIndexGlass, (into > 0) - (into < 0));
-            normal *= ((into > 0) - (into < 0));
-            outVector = refract(incident, normal, refractiveIndexRatio);
+      
+        float theta1 = abs(dot(h.ray.direction, h.normal));
+        
+        float internalIndex = 1.0; //Air
+        float externalIndex = 1.5; //Glass
+        
+        if (theta1 >= 0.0) {
+            internalIndex = 1.5;
+            externalIndex = 1.0;
         }
+        
+        float eta = externalIndex/internalIndex;
+        float theta2 = sqrt(1.0 - (eta * eta) * (1.0 - (theta1 * theta1)));
+        float rs = (externalIndex * theta1 - internalIndex * theta2) / (externalIndex*theta1 + internalIndex * theta2);
+        float rp = (internalIndex * theta1 - externalIndex * theta2) / (internalIndex*theta1 + externalIndex * theta2);
+        float reflectance = (rs*rs + rp*rp);
+        
+        // Check for perfect refraction (Reflection)
+        if(rand(seed) < reflectance) {
+            outVector = reflect(h.ray.direction, h.normal);
+        } else {
+            outVector = ((h.ray.direction + (h.normal * theta1)) * eta) + (h.normal * -theta2);
+        }
+        
         
     } else {
         outVector = h.ray.direction;
