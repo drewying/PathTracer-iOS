@@ -375,7 +375,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         composeVC.mailComposeDelegate = self
         
         composeVC.setToRecipients(["drew@thinkpeopletech.com"])
-        composeVC.setSubject("Real Time Path Tracer Feedback v1.0")
+        composeVC.setSubject("Real Time Path Tracer Feedback v1.05")
         
         self.present(composeVC, animated: true, completion: nil)
         
