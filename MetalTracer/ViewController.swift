@@ -359,7 +359,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let sharingItems:[AnyObject] = [flippedImage]
     
         let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = sender as! UIView
+        activityViewController.popoverPresentationController?.sourceView = sender as? UIView
         self.present(activityViewController, animated: true, completion: nil)
     }
     

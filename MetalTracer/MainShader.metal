@@ -155,7 +155,6 @@ Hit planeIntersection(Plane p, Ray ray, float distance){
     float denom = dot(n, ray.direction);
     if (-denom > EPSILON) {
         float t = (d - dot(n, ray.origin)) / denom;
-        float3 hitpos = ray.origin + ray.direction * t;
         return getHit(distance, t, ray, p.normal, p.color, p.material);
     }
     return noHit();

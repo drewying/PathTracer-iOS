@@ -13,8 +13,6 @@ import CoreGraphics
 extension UIImage {
     class func imageFromTexture(_ texture:MTLTexture) -> UIImage{
         
-        let temp = CIImage(texture:texture)
-        
         let imageSize = CGSize(width: texture.width, height: texture.height)
         let imageByteCount = Int(imageSize.width * imageSize.height * 4)
         
@@ -29,15 +27,14 @@ extension UIImage {
         
         texture.getBytes(&imageBytes, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
         
-        
         let providerRef = CGDataProvider(
-            data: Data(bytes: UnsafePointer<UInt8>(&imageBytes), count: imageBytes.count * sizeof(UInt8))
+            data: Data(buffer: UnsafeBufferPointer(start: &imageBytes, count: imageBytes.count)) as CFData
         )
         
         let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue)
         //let renderingIntent = kCGRenderingIntentDefault
         
-        let imageRef = CGImage(width: Int(imageSize.width), height: Int(imageSize.height), bitsPerComponent: bitsPerComponent, bitsPerPixel: bitsPerPixel, bytesPerRow: bytesPerRow, space: rgbColorSpace, bitmapInfo: bitmapInfo, provider: providerRef, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+        let imageRef = CGImage(width: Int(imageSize.width), height: Int(imageSize.height), bitsPerComponent: bitsPerComponent, bitsPerPixel: bitsPerPixel, bytesPerRow: bytesPerRow, space: rgbColorSpace, bitmapInfo: bitmapInfo, provider: providerRef!, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         
         return UIImage(cgImage: imageRef!)
     }
