@@ -13,7 +13,7 @@ struct Box {
     var max:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
     var normal:Vector3D = Vector3D(x: 0.0, y:0.0, z:0.0);
     var color:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
-    var material:Material = Material.DIFFUSE;
+    var material:Material = Material.diffuse;
     
     init(min:Vector3D, max:Vector3D, normal:Vector3D, color:Vector3D, material:Material){
         self.min = min;

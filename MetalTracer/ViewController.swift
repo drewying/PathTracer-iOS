@@ -65,13 +65,13 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         didSet {
             if (selectedSphere > -1){
                 if (currentPane != sphereEditView){
-                    currentPane?.hidden = true
+                    currentPane?.isHidden = true
                 }
                 currentPane = sphereEditView
                 updateSphereEditView()
-                sphereEditView.hidden = false
-            } else if (!sphereEditView.hidden){
-                sphereEditView.hidden = true
+                sphereEditView.isHidden = false
+            } else if (!sphereEditView.isHidden){
+                sphereEditView.isHidden = true
             }
             
         }
@@ -98,19 +98,19 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             rayTracer.imageTexture = imageTexture
             
             timer = CADisplayLink(target: self, selector: #selector(ViewController.renderLoop))
-            timer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+            timer.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
             setupScene(0)
         }
         
     }
     
-    func setupScene(sceneIndex: Int) {
+    func setupScene(_ sceneIndex: Int) {
         scene.clearSpheres()
         if (sceneIndex == 0){
             //Metal and Glass
-            scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIELECTRIC))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.8,z:0.0), radius:0.0, color:Vector3D(x: 3.0,y: 3.0,z: 3.0), material:Material.LIGHT)
+            scene.addSphere(Sphere(position: Vector3D(x:-0.5, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.specular))
+            scene.addSphere(Sphere(position: Vector3D(x:0.5, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.dielectric))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.8,z:0.0), radius:0.0, color:Vector3D(x: 3.0,y: 3.0,z: 3.0), material:Material.light)
             
             scene.wallColors[0] = Vector3D(x: 0.75, y: 0.0, z: 0.0)
             scene.wallColors[1] = Vector3D(x: 0.0, y: 0.0, z: 0.75)
@@ -123,11 +123,11 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 1){
             //Column of Balls
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.light = Sphere(position:Vector3D(x:-0.3,y:0.25,z:0.95), radius:0.0, color:Vector3D(x: 1.5,y: 1.5,z: 1.5), material:Material.LIGHT)
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.diffuse))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.diffuse))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.25, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.diffuse))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:0.75, z:0.0),radius:0.25, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.diffuse))
+            scene.light = Sphere(position:Vector3D(x:-0.3,y:0.25,z:0.95), radius:0.0, color:Vector3D(x: 1.5,y: 1.5,z: 1.5), material:Material.light)
             
             scene.wallColors[0] = Vector3D(x: 1.0, y: 1.0, z: 0.0);
             scene.wallColors[1] = Vector3D(x: 0.0, y: 0.0, z: 1.0);
@@ -140,11 +140,11 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 2){
             //Mirrored
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.7, z:0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.2, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.9,z:0.0), radius:0.0, color:Vector3D(x: 3.0,y: 3.0,z: 3.0), material:Material.LIGHT)
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.7, z:0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.specular))
+            scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.specular))
+            scene.addSphere(Sphere(position: Vector3D(x:0.3, y:-0.7, z:-0.3),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.specular))
+            scene.addSphere(Sphere(position: Vector3D(x:0.0, y:-0.2, z:0.0),radius:0.3, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.specular))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.9,z:0.0), radius:0.0, color:Vector3D(x: 3.0,y: 3.0,z: 3.0), material:Material.light)
             
             scene.wallColors[0] = Vector3D(x: 0.75, y: 0.00, z: 0.00);
             scene.wallColors[1] = Vector3D(x: 0.00, y: 0.75, z: 0.00);
@@ -157,10 +157,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 3){
             //Primary Colors
-            scene.addSphere(Sphere(position: Vector3D(x: 0.3, y:-0.7, z:-0.5),radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x: 0.0, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.DIFFUSE))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.5,z:0.0), radius:0.0, color:Vector3D(x: 2.0,y: 2.0,z: 2.0), material:Material.LIGHT)
+            scene.addSphere(Sphere(position: Vector3D(x: 0.3, y:-0.7, z:-0.5),radius:0.3, color:Vector3D(x: 0.25, y: 0.25, z: 1.0), material: Material.diffuse))
+            scene.addSphere(Sphere(position: Vector3D(x: 0.0, y:-0.7, z:0.0),radius:0.3, color:Vector3D(x: 0.25, y: 1.0, z: 0.25), material: Material.diffuse))
+            scene.addSphere(Sphere(position: Vector3D(x:-0.3, y:-0.7, z:0.5),radius:0.3, color:Vector3D(x: 1.0, y: 0.25, z:0.25), material: Material.diffuse))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.5,z:0.0), radius:0.0, color:Vector3D(x: 2.0,y: 2.0,z: 2.0), material:Material.light)
             
             scene.wallColors[0] = Vector3D(x: 0.80, y: 0.80, z: 0.80);
             scene.wallColors[1] = Vector3D(x: 0.80, y: 0.80, z: 0.80);
@@ -173,10 +173,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             scene.camera.cameraUp = Vector3D(x:0.0, y:1.0, z:0.0)
         } else if (sceneIndex == 4){
             //Escher
-            scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: -0.3, z:-0.3), radius:0.7, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.SPECULAR))
-            scene.addSphere(Sphere(position: Vector3D(x: -0.5, y: 0.6, z:0.7), radius:0.2, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.DIFFUSE))
-            scene.addSphere(Sphere(position: Vector3D(x: 0.4, y:-0.6, z:0.6), radius:0.2, color:Vector3D(x: 0.5, y: 0.5, z:0.5), material: Material.DIELECTRIC))
-            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:0.95), radius:0.0, color:Vector3D(x: 1.5,y: 1.5,z: 1.5), material:Material.LIGHT)
+            scene.addSphere(Sphere(position: Vector3D(x: 0.0, y: -0.3, z:-0.3), radius:0.7, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.specular))
+            scene.addSphere(Sphere(position: Vector3D(x: -0.5, y: 0.6, z:0.7), radius:0.2, color:Vector3D(x: 1.0, y: 1.0, z: 1.0), material: Material.diffuse))
+            scene.addSphere(Sphere(position: Vector3D(x: 0.4, y:-0.6, z:0.6), radius:0.2, color:Vector3D(x: 0.5, y: 0.5, z:0.5), material: Material.dielectric))
+            scene.light = Sphere(position:Vector3D(x:0.0,y:0.0,z:0.95), radius:0.0, color:Vector3D(x: 1.5,y: 1.5,z: 1.5), material:Material.light)
             
             scene.wallColors[0] = Vector3D(x: 0.35, y: 0.35, z: 0.35);
             scene.wallColors[1] = Vector3D(x: 0.35, y: 0.35, z: 0.35);
@@ -191,18 +191,18 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         resetDisplay(true)
     }
     
-    @IBAction func loadScene(sender: UISegmentedControl) {
+    @IBAction func loadScene(_ sender: UISegmentedControl) {
         setupScene(sender.selectedSegmentIndex)
     }
     
-    @IBAction func pinchAction(sender: UIPinchGestureRecognizer) {
+    @IBAction func pinchAction(_ sender: UIPinchGestureRecognizer) {
         self.scene.camera.cameraPosition = Matrix.transformPoint(Matrix.translate( self.scene.camera.cameraPosition * (Float(sender.velocity) * -0.1)), right: self.scene.camera.cameraPosition);
         sender.scale = 1.0;
         self.resetDisplay(false);
     }
-    @IBAction func tapAction(sender: UITapGestureRecognizer) {
+    @IBAction func tapAction(_ sender: UITapGestureRecognizer) {
         
-        let point = sender.locationInView(self.imageView);
+        let point = sender.location(in: self.imageView);
         let dx:Float = 1.0 / Float(xResolution);
         let dy:Float = 1.0 / Float(yResolution);
         let x:Float = -0.5 + Float(CGFloat(xResolution)-point.x)  * dx;
@@ -211,16 +211,16 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         selectedSphere = scene.getClosestHit(ray);
     }
     
-    @IBAction func selectWall(sender: AnyObject) {
+    @IBAction func selectWall(_ sender: AnyObject) {
         updateWallColorsView()
     }
     
-    @IBAction func doubleTapAction(sender: UITapGestureRecognizer) {
+    @IBAction func doubleTapAction(_ sender: UITapGestureRecognizer) {
         if (scene.sphereCount >= 5){
             return;
         }
         
-        let point = sender.locationInView(self.imageView)
+        let point = sender.location(in: self.imageView)
         let x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0)
         let y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0)
         
@@ -233,13 +233,13 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         let matrix = Matrix.rotateY(angleX) * Matrix.rotateX(angleY)
         let position:Vector3D = Matrix.transformPoint(matrix, right: Vector3D(x: x, y: y, z: 0))
-        scene.addSphere(Sphere(position: position, radius:0.25, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.DIFFUSE))
+        scene.addSphere(Sphere(position: position, radius:0.25, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.diffuse))
         resetDisplay(true)
     }
    
-    @IBAction func dragAction(sender: UIPanGestureRecognizer) {
+    @IBAction func dragAction(_ sender: UIPanGestureRecognizer) {
         
-        let point = sender.locationInView(self.imageView);
+        let point = sender.location(in: self.imageView);
         let x = Float((((CGFloat(xResolution)-point.x)/CGFloat(xResolution)) * 2.0) - 1.0);
         let y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0);
         let xDelta:Float = x - lastX;
@@ -250,7 +250,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             let matrix:Matrix = Matrix.translate(scene.camera.cameraRight * xDelta) * Matrix.translate(scene.camera.cameraUp * yDelta);
             scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
         } else{
-            let velocity = sender.velocityInView(self.imageView);
+            let velocity = sender.velocity(in: self.imageView);
             let xVelocity = Float(velocity.x/(CGFloat(M_PI) * CGFloat(xResolution)));
             let yVelocity = Float(velocity.y/(CGFloat(M_PI) * CGFloat(yResolution)));
             
@@ -274,7 +274,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         self.resetDisplay(false);
     }
     
-    @IBAction func lightPositionSlider(sender: UISlider) {
+    @IBAction func lightPositionSlider(_ sender: UISlider) {
         switch(sender){
         case lightIntensitySlider: scene.light.color = Vector3D(x: sender.value, y: sender.value, z: sender.value)
         case lightXSlider:scene.light.position.x = sender.value;
@@ -285,12 +285,12 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         self.resetDisplay(false);
     }
     
-    @IBAction func radiusSlider(sender: UISlider) {
+    @IBAction func radiusSlider(_ sender: UISlider) {
         self.scene.spheres[selectedSphere].radius = sender.value;
         self.resetDisplay(false);
     }
     
-    @IBAction func sphereColorSlider(sender: UISlider) {
+    @IBAction func sphereColorSlider(_ sender: UISlider) {
         switch (sender){
         case sphereRedSlider:scene.spheres[selectedSphere].color.x = sender.value
         case sphereGreenSlider:scene.spheres[selectedSphere].color.y = sender.value
@@ -301,28 +301,28 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         self.resetDisplay(false)
     }
     
-    @IBAction func sceneWallColorSlider(sender: UISlider) {
+    @IBAction func sceneWallColorSlider(_ sender: UISlider) {
         scene.wallColors[sceneWallSegmentedControl.selectedSegmentIndex] = Vector3D(x: sceneRedSlider.value, y: sceneGreenSlider.value, z: sceneBlueSlider.value)
         self.resetDisplay(false)
     }
     
-    @IBAction func sphereMaterialSegmentedControl(sender: UISegmentedControl) {
+    @IBAction func sphereMaterialSegmentedControl(_ sender: UISegmentedControl) {
         switch (sender.selectedSegmentIndex){
-        case 0:self.scene.spheres[selectedSphere].material = Material.DIFFUSE.rawValue;
-        case 1:self.scene.spheres[selectedSphere].material = Material.SPECULAR.rawValue;
-        case 2:self.scene.spheres[selectedSphere].material = Material.DIELECTRIC.rawValue;
-        default:self.scene.spheres[selectedSphere].material = Material.DIFFUSE.rawValue;
+        case 0:self.scene.spheres[selectedSphere].material = Material.diffuse.rawValue;
+        case 1:self.scene.spheres[selectedSphere].material = Material.specular.rawValue;
+        case 2:self.scene.spheres[selectedSphere].material = Material.dielectric.rawValue;
+        default:self.scene.spheres[selectedSphere].material = Material.diffuse.rawValue;
         }
         self.resetDisplay(true);
     }
     
-    @IBAction func selectPane(sender: UIBarButtonItem) {
+    @IBAction func selectPane(_ sender: UIBarButtonItem) {
         selectedSphere = -1
         
-        currentPane?.hidden = true
+        currentPane?.isHidden = true
         if (currentPane != panes[sender.tag]){
             currentPane = panes[sender.tag]
-            currentPane?.hidden = false
+            currentPane?.isHidden = false
             currentButton = sender
         } else {
             currentPane = nil
@@ -344,29 +344,29 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         }
     }*/
     
-    @IBAction func deleteSphere(sender: AnyObject) {
+    @IBAction func deleteSphere(_ sender: AnyObject) {
         scene.deleteSphere(selectedSphere);
         selectedSphere = -1;
         resetDisplay(true);
     }
     
-    @IBAction func saveImage(sender: AnyObject) {
+    @IBAction func saveImage(_ sender: AnyObject) {
         let image:UIImage = imageView.image!;
         UIGraphicsBeginImageContext(image.size);
-        CGContextDrawImage(UIGraphicsGetCurrentContext(),CGRectMake(0.0,0.0, image.size.width, image.size.height),image.CGImage);
-        let flippedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsGetCurrentContext()?.draw(image.cgImage!, in: CGRect(x: 0.0,y: 0.0, width: image.size.width, height: image.size.height));
+        let flippedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!;
         UIGraphicsEndImageContext();
         let sharingItems:[AnyObject] = [flippedImage]
     
         let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = sender as! UIView
-        self.presentViewController(activityViewController, animated: true, completion: nil)
+        self.present(activityViewController, animated: true, completion: nil)
     }
     
-    @IBAction func showInformation(sender: AnyObject) {
+    @IBAction func showInformation(_ sender: AnyObject) {
     }
 
-    @IBAction func showFeedback(sender: AnyObject) {
+    @IBAction func showFeedback(_ sender: AnyObject) {
         if !MFMailComposeViewController.canSendMail() {
             return
         }
@@ -377,7 +377,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         composeVC.setToRecipients(["drew@thinkpeopletech.com"])
         composeVC.setSubject("Real Time Path Tracer Feedback v1.0")
         
-        self.presentViewController(composeVC, animated: true, completion: nil)
+        self.present(composeVC, animated: true, completion: nil)
         
     }
     
@@ -393,13 +393,13 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         context = MetalContext(device: device!)
     }
     
-    var que:dispatch_queue_t = dispatch_queue_create("Rendering", DISPATCH_QUEUE_SERIAL);
+    var que:DispatchQueue = DispatchQueue(label: "Rendering", attributes: []);
 
     func renderLoop() {
         autoreleasepool {
-            dispatch_async(self.que, {
+            self.que.async(execute: {
                 let image:UIImage = self.rayTracer.renderScene(self.scene);
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     self.imageView.image = image
                     self.renderingProgressView.setProgress(Float(self.rayTracer.sampleNumber)/2000.0, animated: true)
                     //self.sampleLabel.text = "Pass:\(self.rayTracer.sampleNumber)"
@@ -410,7 +410,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         }
     }
     
-    func resetDisplay(activeReset:Bool) {
+    func resetDisplay(_ activeReset:Bool) {
         self.rayTracer.sampleNumber = 1
         scene.resetBuffer()
         self.renderingProgressView.progress = 0.0
@@ -454,12 +454,12 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         sphereMaterialSegmentedControl.selectedSegmentIndex = Int(s.material)
     }
     
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
 }
 

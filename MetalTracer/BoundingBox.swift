@@ -12,7 +12,7 @@ struct BoundingBox {
     var min:Vector3D;
     var max:Vector3D;
     
-    func intersectsWithRay(ray:Ray) -> Bool{
+    func intersectsWithRay(_ ray:Ray) -> Bool{
         
         //Code from http://people.csail.mit.edu/amy/papers/box-jgt.ps
         

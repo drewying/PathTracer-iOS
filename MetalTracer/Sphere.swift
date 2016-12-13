@@ -11,7 +11,7 @@ import Foundation
 struct Sphere{
     var position:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
     var radius:Float = 0.0;
-    var material:UInt32 = Material.DIFFUSE.rawValue;
+    var material:UInt32 = Material.diffuse.rawValue;
     var color:Vector3D = Vector3D(x: 0.0,y: 0.0,z: 0.0);
 
     init(position:Vector3D, radius:Float, color:Vector3D, material:Material){

@@ -11,7 +11,10 @@ import UIKit
 import CoreGraphics
 
 extension UIImage {
-    class func imageFromTexture(texture:MTLTexture) -> UIImage{
+    class func imageFromTexture(_ texture:MTLTexture) -> UIImage{
+        
+        let temp = CIImage(texture:texture)
+        
         let imageSize = CGSize(width: texture.width, height: texture.height)
         let imageByteCount = Int(imageSize.width * imageSize.height * 4)
         
@@ -21,48 +24,48 @@ extension UIImage {
         let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
             
         let bytesPerRow = bytesPerPixel * Int(imageSize.width)
-        var imageBytes = [UInt8](count: imageByteCount, repeatedValue: 0)
+        var imageBytes = [UInt8](repeating: 0, count: imageByteCount)
         let region = MTLRegionMake2D(0, 0, Int(imageSize.width), Int(imageSize.height))
         
-        texture.getBytes(&imageBytes, bytesPerRow: Int(bytesPerRow), fromRegion: region, mipmapLevel: 0)
+        texture.getBytes(&imageBytes, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
         
         
-        let providerRef = CGDataProviderCreateWithCFData(
-            NSData(bytes: &imageBytes, length: imageBytes.count * sizeof(UInt8))
+        let providerRef = CGDataProvider(
+            data: Data(bytes: UnsafePointer<UInt8>(&imageBytes), count: imageBytes.count * sizeof(UInt8))
         )
         
-        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue)
         //let renderingIntent = kCGRenderingIntentDefault
         
-        let imageRef = CGImageCreate(Int(imageSize.width), Int(imageSize.height), bitsPerComponent, bitsPerPixel, bytesPerRow, rgbColorSpace, bitmapInfo, providerRef, nil, false, .RenderingIntentDefault)
+        let imageRef = CGImage(width: Int(imageSize.width), height: Int(imageSize.height), bitsPerComponent: bitsPerComponent, bitsPerPixel: bitsPerPixel, bytesPerRow: bytesPerRow, space: rgbColorSpace, bitmapInfo: bitmapInfo, provider: providerRef, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         
-        return UIImage(CGImage: imageRef!)
+        return UIImage(cgImage: imageRef!)
     }
     
-    class func textureFromImage(image:UIImage, context:MetalContext) -> MTLTexture{
+    class func textureFromImage(_ image:UIImage, context:MetalContext) -> MTLTexture{
         let bytesPerPixel = Int(4)
         let bitsPerComponent = Int(8)
         let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
         
         let image = UIImage(named: "texture.jpg")
-        let imageRef = image?.CGImage
-        let imageWidth:Int = Int(CGImageGetWidth(imageRef))
-        let imageHeight:Int = Int(CGImageGetHeight(imageRef))
+        let imageRef = image?.cgImage
+        let imageWidth:Int = Int(imageRef!.width)
+        let imageHeight:Int = Int(imageRef!.height)
         let bytesPerRow:Int = bytesPerPixel * imageWidth
         
-        var rawData = [UInt8](count: Int(imageWidth * imageHeight * 4), repeatedValue: UInt8(0))
+        var rawData = [UInt8](repeating: UInt8(0), count: Int(imageWidth * imageHeight * 4))
         
-        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.ByteOrder32Big.rawValue | CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue)
         
-        let graphicsContext = CGBitmapContextCreate(&rawData, imageWidth, imageHeight, bitsPerComponent, bytesPerRow, rgbColorSpace, bitmapInfo.rawValue)
+        let graphicsContext = CGContext(data: &rawData, width: imageWidth, height: imageHeight, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: rgbColorSpace, bitmapInfo: bitmapInfo.rawValue)
         
-        CGContextDrawImage(graphicsContext, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), imageRef)
+        graphicsContext?.draw(imageRef!, in: CGRect(x: 0, y: 0, width: CGFloat(imageWidth), height: CGFloat(imageHeight)))
         
-        let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(MTLPixelFormat.RGBA8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
+        let imageTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: MTLPixelFormat.rgba8Unorm, width: Int(imageWidth), height: Int(imageHeight), mipmapped: true)
         
-        let imageTexture = context.device.newTextureWithDescriptor(imageTextureDescriptor)
+        let imageTexture = context.device.makeTexture(descriptor: imageTextureDescriptor)
         let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
-        imageTexture.replaceRegion(region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
+        imageTexture.replace(region: region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
         
         return imageTexture;
     }

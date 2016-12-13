@@ -18,10 +18,10 @@ class MetalContext: NSObject {
     init(device:MTLDevice){
         self.device = device;
         defaultLibrary = device.newDefaultLibrary()!;
-        commandQueue = device.newCommandQueue();
-        let kernalProgram:MTLFunction! = defaultLibrary.newFunctionWithName("mainProgram");
+        commandQueue = device.makeCommandQueue();
+        let kernalProgram:MTLFunction! = defaultLibrary.makeFunction(name: "mainProgram");
         do{
-            try pipelineState = device.newComputePipelineStateWithFunction(kernalProgram);
+            try pipelineState = device.makeComputePipelineState(function: kernalProgram);
         } catch _{
             pipelineState = nil
         }

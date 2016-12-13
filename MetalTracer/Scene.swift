@@ -11,13 +11,13 @@ import Foundation
 class Scene : NSObject {
     
     var camera:Camera;
-    var light:Sphere = Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.LIGHT)
+    var light:Sphere = Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.light)
     var spheres:[Sphere] = [
-        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE)
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+        Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse)
     ]
             
     var wallColors:[Vector3D] = [
@@ -47,11 +47,11 @@ class Scene : NSObject {
     
     func clearSpheres(){
         spheres = [
-            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE),
-            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.DIFFUSE)
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse),
+            Sphere(position: Vector3D(x: 0.0, y: 0.0, z: 0.0), radius: 0.0, color: Vector3D(x:0.0, y:0.0, z:0.0), material: Material.diffuse)
         ];
         sphereCount = 0
     }
@@ -62,16 +62,16 @@ class Scene : NSObject {
         for sphere:Sphere in spheres{
             sphereData.append(sphere);
         }
-        sphereBuffer = context.device.newBufferWithBytes(&sphereData, length: (sizeof(Sphere) + 3) * (spheres.count + 1), options:.CPUCacheModeDefaultCache);
+        sphereBuffer = context.device.makeBuffer(bytes: &sphereData, length: (MemoryLayout<Sphere>.size + 3) * (spheres.count + 1), options:MTLResourceOptions());
         
         cameraData = [camera.cameraPosition, camera.cameraUp];
-        cameraBuffer = context.device.newBufferWithBytes(&cameraData, length: sizeof(Vector3D) * 2, options:.CPUCacheModeDefaultCache);
+        cameraBuffer = context.device.makeBuffer(bytes: &cameraData, length: MemoryLayout<Vector3D>.size * 2, options:MTLResourceOptions());
         
-        wallColorBuffer = context.device.newBufferWithBytes(&wallColors, length: sizeof(Vector3D) * 6, options:.CPUCacheModeDefaultCache);
+        wallColorBuffer = context.device.makeBuffer(bytes: &wallColors, length: MemoryLayout<Vector3D>.size * 6, options:MTLResourceOptions());
         
     }
     
-    func getClosestHit(ray:Ray) -> Int{
+    func getClosestHit(_ ray:Ray) -> Int{
         for i in (0...spheres.count-1){
             if (spheres[i].getBounds().intersectsWithRay(ray)){
                 return i;
@@ -80,13 +80,13 @@ class Scene : NSObject {
         return -1;
     }
     
-    func addSphere(sphere:Sphere){
+    func addSphere(_ sphere:Sphere){
         spheres[sphereCount] = sphere;
         sphereCount += 1;
         resetBuffer();
     }
     
-    func deleteSphere(index:Int){
+    func deleteSphere(_ index:Int){
         
         for i in index...spheres.count - 2 {
             spheres[i] = spheres[i + 1]

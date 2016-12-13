@@ -23,42 +23,42 @@ class Raytracer: NSObject {
         self.renderContext = renderContext;
         self.xResolution = xResolution;
         self.yResolution = yResolution;
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA32Float, width: xResolution, height: yResolution, mipmapped: false);
-        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
-        outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
-        renderTexture = renderContext.device.newTextureWithDescriptor(textureDescriptorRender);
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
+        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        inputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
+        outputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
+        renderTexture = renderContext.device.makeTexture(descriptor: textureDescriptorRender);
     }
     
     func reset(){
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA32Float, width: xResolution, height: yResolution, mipmapped: false);
-        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        inputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
-        outputTexture = renderContext.device.newTextureWithDescriptor(textureDescriptor);
-        renderTexture = renderContext.device.newTextureWithDescriptor(textureDescriptorRender);
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
+        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        inputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
+        outputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
+        renderTexture = renderContext.device.makeTexture(descriptor: textureDescriptorRender);
     }
     
-    func renderScene(scene:Scene) -> UIImage{
+    func renderScene(_ scene:Scene) -> UIImage{
         
         let threadgroupCounts = MTLSizeMake(16,16, 1);
         let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
-        let commandBuffer = renderContext.commandQueue.commandBuffer();
-        let commandEncoder = commandBuffer.computeCommandEncoder();
+        let commandBuffer = renderContext.commandQueue.makeCommandBuffer();
+        let commandEncoder = commandBuffer.makeComputeCommandEncoder();
         
         commandEncoder.setComputePipelineState(renderContext.pipelineState);
         
-        commandEncoder.setTexture(inputTexture, atIndex: 0);
-        commandEncoder.setTexture(outputTexture, atIndex:1);
-        commandEncoder.setTexture(renderTexture, atIndex:2);
+        commandEncoder.setTexture(inputTexture, at: 0);
+        commandEncoder.setTexture(outputTexture, at:1);
+        commandEncoder.setTexture(renderTexture, at:2);
         
-        let intParams = [UInt32(sampleNumber), UInt32(NSDate().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(renderMode), 2];
+        let intParams = [UInt32(sampleNumber), UInt32(Date().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(renderMode), 2];
         
-        let a = renderContext.device.newBufferWithBytes(intParams, length: sizeof(UInt32) * intParams.count, options:.CPUCacheModeDefaultCache);
+        let a = renderContext.device.makeBuffer(bytes: intParams, length: MemoryLayout<UInt32>.size * intParams.count, options:MTLResourceOptions());
         
-        commandEncoder.setBuffer(a, offset: 0, atIndex: 0);
-        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, atIndex: 1);
-        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, atIndex: 2);
-        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, atIndex: 3);
+        commandEncoder.setBuffer(a, offset: 0, at: 0);
+        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, at: 1);
+        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, at: 2);
+        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, at: 3);
         
         commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         
@@ -71,7 +71,7 @@ class Raytracer: NSObject {
         self.inputTexture = self.outputTexture;
         sampleNumber += 1
         //return UIImage.imageFromTexture(self.inputTexture)
-        return UIImage(MTLTexture: self.renderTexture)
+        return UIImage(mtlTexture: self.renderTexture)
     }
 }
 

@@ -177,6 +177,7 @@
 					D130D6BF1A314FD10096BFC7 = {
 						CreatedOnToolsVersion = 6.1;
 						DevelopmentTeam = 4DCQ4JU9B3;
+						LastSwiftMigration = 0810;
 					};
 				};
 			};
@@ -355,6 +356,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MetalTracer/MetalTracer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -373,6 +375,7 @@
 				PRODUCT_NAME = MetalTracer;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MetalTracer/MetalTracer-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

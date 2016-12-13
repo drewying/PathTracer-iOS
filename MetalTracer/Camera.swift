@@ -24,7 +24,7 @@ struct Camera {
         self.aspectRatio = aspectRatio;
     }
     
-    func getRay(x:Float, y:Float) -> Ray{
+    func getRay(_ x:Float, y:Float) -> Ray{
         let lookAt:Vector3D = -cameraPosition.normalized();
         let l:Vector3D = (lookAt-cameraPosition).normalized();
         var right:Vector3D = l × cameraUp;

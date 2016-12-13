@@ -27,7 +27,7 @@ struct Matrix{
         return m;
     }
     
-    static func translate(vector:Vector3D) -> Matrix{
+    static func translate(_ vector:Vector3D) -> Matrix{
         var returnMatrix = identityMatrix();
         returnMatrix.x[0][3] = vector.x;
         returnMatrix.x[1][3] = vector.y;
@@ -35,7 +35,7 @@ struct Matrix{
         return returnMatrix;
     }
     
-    static func rotate(axis:Vector3D, angle:Float) -> Matrix{
+    static func rotate(_ axis:Vector3D, angle:Float) -> Matrix{
         let axisN:Vector3D = axis.normalized();
         
         var returnMatrix = Matrix();
@@ -70,7 +70,7 @@ struct Matrix{
         return returnMatrix;
     }
     
-    static func rotateX(angle:Float) -> Matrix {
+    static func rotateX(_ angle:Float) -> Matrix {
         var returnMatrix = identityMatrix();
         let cosine:Float = cos(angle);
         let sine:Float = sin(angle);
@@ -83,7 +83,7 @@ struct Matrix{
         return returnMatrix;
     }
     
-    static func rotateY(angle:Float) -> Matrix {
+    static func rotateY(_ angle:Float) -> Matrix {
         var returnMatrix = identityMatrix();
         let cosine:Float = cos(angle);
         let sine:Float = sin(angle);
@@ -96,7 +96,7 @@ struct Matrix{
         return returnMatrix
     }
     
-    static func rotateZ(angle:Float) -> Matrix {
+    static func rotateZ(_ angle:Float) -> Matrix {
         var returnMatrix = identityMatrix();
         let cosine:Float = cos(angle);
         let sine:Float = sin(angle);
@@ -109,11 +109,11 @@ struct Matrix{
         return returnMatrix;
     }
     
-    static func transformPoint(left:Matrix, right:Vector3D) -> Vector3D {
+    static func transformPoint(_ left:Matrix, right:Vector3D) -> Vector3D {
         return left * right;
     }
     
-    static func transformVector(left:Matrix, right:Vector3D) -> Vector3D{
+    static func transformVector(_ left:Matrix, right:Vector3D) -> Vector3D{
         
         var x = (right.x * left.x[0][0] + right.y * left.x[0][1] + right.z * left.x[0][2]);
         x += left.x[0][3];

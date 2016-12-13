@@ -9,9 +9,9 @@
 import UIKit
 
 enum Material:UInt32{
-    case DIFFUSE = 0;
-    case SPECULAR = 1;
-    case DIELECTRIC = 2;
-    case TRANSPARENT = 3;
-    case LIGHT = 4;
+    case diffuse = 0;
+    case specular = 1;
+    case dielectric = 2;
+    case transparent = 3;
+    case light = 4;
 }
