@@ -23,19 +23,30 @@ class Raytracer: NSObject {
         self.renderContext = renderContext;
         self.xResolution = xResolution;
         self.yResolution = yResolution;
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
-        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        inputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
-        outputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
-        renderTexture = renderContext.device.makeTexture(descriptor: textureDescriptorRender);
+        
+        let inputTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
+        inputTextureDescriptor.usage = .shaderRead;
+        let outputTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
+        outputTextureDescriptor.usage = .shaderWrite;
+        let renderTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        renderTextureDescriptor.usage = .shaderWrite;
+        
+        inputTexture = renderContext.device.makeTexture(descriptor: inputTextureDescriptor);
+        outputTexture = renderContext.device.makeTexture(descriptor: outputTextureDescriptor);
+        renderTexture = renderContext.device.makeTexture(descriptor: renderTextureDescriptor);
     }
     
     func reset(){
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
-        let textureDescriptorRender = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
-        inputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
-        outputTexture = renderContext.device.makeTexture(descriptor: textureDescriptor);
-        renderTexture = renderContext.device.makeTexture(descriptor: textureDescriptorRender);
+        let inputTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
+        inputTextureDescriptor.usage = .shaderRead;
+        let outputTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: xResolution, height: yResolution, mipmapped: false);
+        outputTextureDescriptor.usage = .shaderWrite;
+        let renderTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
+        renderTextureDescriptor.usage = .shaderWrite;
+        
+        inputTexture = renderContext.device.makeTexture(descriptor: inputTextureDescriptor);
+        outputTexture = renderContext.device.makeTexture(descriptor: outputTextureDescriptor);
+        renderTexture = renderContext.device.makeTexture(descriptor: renderTextureDescriptor);
     }
     
     func renderScene(_ scene:Scene) -> UIImage{

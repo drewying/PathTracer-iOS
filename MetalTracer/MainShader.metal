@@ -405,57 +405,21 @@ inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
         }
     }*/
     
-    Hit hit = boxIntersection(boxes[0], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[0];
-    }
-    hit = boxIntersection(boxes[1], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[1];
-    }
-    hit = boxIntersection(boxes[2], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[2];
-    }
-    hit = boxIntersection(boxes[3], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[3];
-    }
-    hit = boxIntersection(boxes[4], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[4];
-    }
-    hit = boxIntersection(boxes[5], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-        h.color = scene.colors[5];
+    for (int i = 0; i < 6; i++) {
+        Hit hit = boxIntersection(boxes[i], r, h.distance);
+        if (hit.didHit){
+            h = hit;
+            h.color = scene.colors[i];
+        }
     }
     
-    hit = sphereIntersection(scene.spheres[0], r, h.distance);
-    if (hit.didHit){
-        h = hit;
+    for (int i = 0; i < 5; i++) {
+        Hit hit = sphereIntersection(scene.spheres[i], r, h.distance);
+        if (hit.didHit){
+            h = hit;
+        }
     }
-    hit = sphereIntersection(scene.spheres[1], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    hit = sphereIntersection(scene.spheres[2], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    hit = sphereIntersection(scene.spheres[3], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
-    hit = sphereIntersection(scene.spheres[4], r, h.distance);
-    if (hit.didHit){
-        h = hit;
-    }
+    
     return h;
 }
 
