@@ -282,8 +282,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate, Ray
     
 
     
-    func resetDisplay(_ activeReset:Bool) {
-        self.raytracerView.reset()
+    func resetDisplay() {
+        self.raytracerView.restart()
         self.renderingProgressView.progress = 0.0
     }
     
