@@ -47,6 +47,7 @@ class Raytracer: NSObject {
         inputTexture = renderContext.device.makeTexture(descriptor: inputTextureDescriptor)!;
         outputTexture = renderContext.device.makeTexture(descriptor: outputTextureDescriptor)!;
         renderTexture = renderContext.device.makeTexture(descriptor: renderTextureDescriptor)!;
+        sampleNumber = 1
     }
     
     func renderScene(_ scene:Scene) -> UIImage{
@@ -73,7 +74,7 @@ class Raytracer: NSObject {
         
         commandEncoder?.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         
-        //renderContext.commandQueue.insertDebugCaptureBoundary();
+        renderContext.commandQueue.insertDebugCaptureBoundary();
         
         commandEncoder?.endEncoding()
         commandBuffer?.commit()

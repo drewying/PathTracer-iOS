@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10E2D5A220661AFC009AC3C2 /* RaytracerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E2D5A120661AFC009AC3C2 /* RaytracerView.swift */; };
 		3AAAB3D41C8CE66800110BE0 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */; };
 		D1816ABB1A68EA4D008D74C6 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1816ABA1A68EA4D008D74C6 /* Box.swift */; };
 		D18524221A6DE9CB00C1E9D8 /* MBETextureUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18524211A6DE9CB00C1E9D8 /* MBETextureUtility.swift */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		10E2D5A120661AFC009AC3C2 /* RaytracerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RaytracerView.swift; path = MetalTracer/RaytracerView.swift; sourceTree = SOURCE_ROOT; };
 		3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfoViewController.swift; path = MetalTracer/InfoViewController.swift; sourceTree = SOURCE_ROOT; };
 		D130D6C01A314FD10096BFC7 /* MetalTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1816ABA1A68EA4D008D74C6 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Box.swift; path = MetalTracer/Box.swift; sourceTree = SOURCE_ROOT; };
@@ -111,6 +113,7 @@
 				D1D407181A67B12200CA07E0 /* PathTracerParameters.swift */,
 				D1D407191A67B12200CA07E0 /* Ray.swift */,
 				D1D4071B1A67B12200CA07E0 /* Raytracer.swift */,
+				10E2D5A120661AFC009AC3C2 /* RaytracerView.swift */,
 				D1D4071C1A67B12200CA07E0 /* Scene.swift */,
 				D1D4071D1A67B12200CA07E0 /* Sphere.swift */,
 				D1EAD16B1A67B38600327963 /* LaunchScreen.xib */,
@@ -229,6 +232,7 @@
 				D1816ABB1A68EA4D008D74C6 /* Box.swift in Sources */,
 				D1D4072C1A67B12200CA07E0 /* Matrix.swift in Sources */,
 				D1D4072A1A67B12200CA07E0 /* MainShader.metal in Sources */,
+				10E2D5A220661AFC009AC3C2 /* RaytracerView.swift in Sources */,
 				D1D407301A67B12200CA07E0 /* Raytracer.swift in Sources */,
 				D1D407261A67B12200CA07E0 /* BoundingBox.swift in Sources */,
 				D1D407271A67B12200CA07E0 /* Camera.swift in Sources */,
