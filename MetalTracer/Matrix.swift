@@ -74,12 +74,12 @@ struct Matrix{
         var returnMatrix = identityMatrix();
         let cosine:Float = cos(angle);
         let sine:Float = sin(angle);
-    
+        
         returnMatrix.x[1][1] = cosine;
         returnMatrix.x[1][2] = -sine;
         returnMatrix.x[2][1] = sine;
         returnMatrix.x[2][2] = cosine;
-    
+        
         return returnMatrix;
     }
     
@@ -87,7 +87,7 @@ struct Matrix{
         var returnMatrix = identityMatrix();
         let cosine:Float = cos(angle);
         let sine:Float = sin(angle);
-    
+        
         returnMatrix.x[0][0] = cosine;
         returnMatrix.x[0][2] = sine;
         returnMatrix.x[2][0] = -sine;
@@ -100,12 +100,12 @@ struct Matrix{
         var returnMatrix = identityMatrix();
         let cosine:Float = cos(angle);
         let sine:Float = sin(angle);
-    
+        
         returnMatrix.x[0][0] = cosine;
         returnMatrix.x[0][1] = -sine;
         returnMatrix.x[1][0] = sine;
         returnMatrix.x[1][1] = cosine;
-    
+        
         return returnMatrix;
     }
     
@@ -126,7 +126,7 @@ struct Matrix{
         let returnVector = Vector3D(x:x, y:y, z:z);
         return returnVector / t;
     }
-
+    
 }
 
 func * (left: Matrix, right: Matrix) -> Matrix {

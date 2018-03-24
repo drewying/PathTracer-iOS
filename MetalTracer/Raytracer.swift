@@ -31,9 +31,9 @@ class Raytracer: NSObject {
         let renderTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         renderTextureDescriptor.usage = .shaderWrite;
         
-        inputTexture = renderContext.device.makeTexture(descriptor: inputTextureDescriptor);
-        outputTexture = renderContext.device.makeTexture(descriptor: outputTextureDescriptor);
-        renderTexture = renderContext.device.makeTexture(descriptor: renderTextureDescriptor);
+        inputTexture = renderContext.device.makeTexture(descriptor: inputTextureDescriptor)!;
+        outputTexture = renderContext.device.makeTexture(descriptor: outputTextureDescriptor)!;
+        renderTexture = renderContext.device.makeTexture(descriptor: renderTextureDescriptor)!;
     }
     
     func reset(){
@@ -44,9 +44,9 @@ class Raytracer: NSObject {
         let renderTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: xResolution, height: yResolution, mipmapped: false);
         renderTextureDescriptor.usage = .shaderWrite;
         
-        inputTexture = renderContext.device.makeTexture(descriptor: inputTextureDescriptor);
-        outputTexture = renderContext.device.makeTexture(descriptor: outputTextureDescriptor);
-        renderTexture = renderContext.device.makeTexture(descriptor: renderTextureDescriptor);
+        inputTexture = renderContext.device.makeTexture(descriptor: inputTextureDescriptor)!;
+        outputTexture = renderContext.device.makeTexture(descriptor: outputTextureDescriptor)!;
+        renderTexture = renderContext.device.makeTexture(descriptor: renderTextureDescriptor)!;
     }
     
     func renderScene(_ scene:Scene) -> UIImage{
@@ -54,31 +54,31 @@ class Raytracer: NSObject {
         let threadgroupCounts = MTLSizeMake(16,16, 1);
         let threadgroups = MTLSizeMake(xResolution / threadgroupCounts.width, yResolution / threadgroupCounts.height, 1);
         let commandBuffer = renderContext.commandQueue.makeCommandBuffer();
-        let commandEncoder = commandBuffer.makeComputeCommandEncoder();
+        let commandEncoder = commandBuffer?.makeComputeCommandEncoder();
         
-        commandEncoder.setComputePipelineState(renderContext.pipelineState);
+        commandEncoder?.setComputePipelineState(renderContext.pipelineState);
         
-        commandEncoder.setTexture(inputTexture, at: 0);
-        commandEncoder.setTexture(outputTexture, at:1);
-        commandEncoder.setTexture(renderTexture, at:2);
+        commandEncoder?.setTexture(inputTexture, index: 0);
+        commandEncoder?.setTexture(outputTexture, index:1);
+        commandEncoder?.setTexture(renderTexture, index:2);
         
         let intParams = [UInt32(sampleNumber), UInt32(Date().timeIntervalSince1970), UInt32(xResolution), UInt32(yResolution), UInt32(renderMode), 2];
         
         let a = renderContext.device.makeBuffer(bytes: intParams, length: MemoryLayout<UInt32>.size * intParams.count, options:MTLResourceOptions());
         
-        commandEncoder.setBuffer(a, offset: 0, at: 0);
-        commandEncoder.setBuffer(scene.cameraBuffer, offset: 0, at: 1);
-        commandEncoder.setBuffer(scene.sphereBuffer, offset: 0, at: 2);
-        commandEncoder.setBuffer(scene.wallColorBuffer, offset: 0, at: 3);
+        commandEncoder?.setBuffer(a, offset: 0, index: 0);
+        commandEncoder?.setBuffer(scene.cameraBuffer, offset: 0, index: 1);
+        commandEncoder?.setBuffer(scene.sphereBuffer, offset: 0, index: 2);
+        commandEncoder?.setBuffer(scene.wallColorBuffer, offset: 0, index: 3);
         
-        commandEncoder.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
+        commandEncoder?.dispatchThreadgroups(threadgroups, threadsPerThreadgroup:threadgroupCounts);
         
         //renderContext.commandQueue.insertDebugCaptureBoundary();
         
-        commandEncoder.endEncoding()
-        commandBuffer.commit()
-        commandBuffer.waitUntilCompleted()
-    
+        commandEncoder?.endEncoding()
+        commandBuffer?.commit()
+        commandBuffer?.waitUntilCompleted()
+        
         self.inputTexture = self.outputTexture;
         sampleNumber += 1
         //return UIImage.imageFromTexture(self.inputTexture)

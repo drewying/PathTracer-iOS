@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct PathTracerParameters
-{
+struct PathTracerParameters {
     var sampleNumber: UInt32;
     var timeSinceStart: UInt32;
     var xResolution: UInt32;

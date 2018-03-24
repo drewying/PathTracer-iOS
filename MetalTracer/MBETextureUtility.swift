@@ -20,7 +20,7 @@ extension UIImage {
         let bitsPerComponent:Int = Int(8)
         let bitsPerPixel:Int = 32
         let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-            
+        
         let bytesPerRow = bytesPerPixel * Int(imageSize.width)
         var imageBytes = [UInt8](repeating: 0, count: imageByteCount)
         let region = MTLRegionMake2D(0, 0, Int(imageSize.width), Int(imageSize.height))
@@ -62,8 +62,8 @@ extension UIImage {
         
         let imageTexture = context.device.makeTexture(descriptor: imageTextureDescriptor)
         let region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
-        imageTexture.replace(region: region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
+        imageTexture?.replace(region: region, mipmapLevel: 0, withBytes: &rawData, bytesPerRow: Int(bytesPerRow))
         
-        return imageTexture;
+        return imageTexture!;
     }
 }

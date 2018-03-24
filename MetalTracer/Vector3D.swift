@@ -100,8 +100,8 @@ func / (left: Vector3D, right: Float) -> Vector3D{
     return Vector3D(x:left.x / right, y:left.y / right, z: left.z / right);
 }
 
-infix operator × { associativity left precedence 160 }
-infix operator ⋅ { associativity left precedence 160 }
+infix operator × : MultiplicationPrecedence
+infix operator ⋅ : MultiplicationPrecedence
 
 func × (left: Vector3D, right: Vector3D) -> Vector3D{
     return Vector3D(

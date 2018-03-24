@@ -36,9 +36,9 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     @IBOutlet weak var sphereBlueSlider: UISlider!
     @IBOutlet weak var sphereMaterialSegmentedControl: UISegmentedControl!
     @IBOutlet weak var sphereSizeSlider: UISlider!
- 
+    
     @IBOutlet weak var renderingProgressView: UIProgressView!
-
+    
     @IBOutlet weak var lightIntensitySlider: UISlider!
     @IBOutlet weak var lightXSlider: UISlider!
     @IBOutlet weak var lightYSlider: UISlider!
@@ -53,7 +53,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     var context:MetalContext! = nil
     
     var imageTexture: MTLTexture! = nil
-
+    
     var rayTracer:Raytracer! = nil
     
     var timer: CADisplayLink! = nil
@@ -225,8 +225,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let y = Float((((CGFloat(yResolution)-point.y)/CGFloat(yResolution)) * 2.0) - 1.0)
         
         /*let cosy = scene.camera.cameraUp ⋅ Vector3D.up()
-        let cosx = scene.camera.cameraRight ⋅ Vector3D.right()
-        let position:Vector3D = Matrix.transformPoint(matrix, right: Vector3D(x: x, y: y, z: 0));*/
+         let cosx = scene.camera.cameraRight ⋅ Vector3D.right()
+         let position:Vector3D = Matrix.transformPoint(matrix, right: Vector3D(x: x, y: y, z: 0));*/
         
         let angleX = acos(scene.camera.cameraRight ⋅ Vector3D.right()) / (scene.camera.cameraRight.length() * Vector3D.right().length())
         let angleY = acos(scene.camera.cameraUp ⋅ Vector3D.up()) / (scene.camera.cameraUp.length() * Vector3D.up().length())
@@ -236,7 +236,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         scene.addSphere(Sphere(position: position, radius:0.25, color:Vector3D(x: 0.75, y: 0.75, z: 0.75), material: Material.diffuse))
         resetDisplay(true)
     }
-   
+    
     @IBAction func dragAction(_ sender: UIPanGestureRecognizer) {
         
         let point = sender.location(in: self.imageView);
@@ -251,12 +251,12 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             scene.spheres[selectedSphere].position = Matrix.transformPoint(matrix, right: currentPosition);
         } else{
             let velocity = sender.velocity(in: self.imageView);
-            let xVelocity = Float(velocity.x/(CGFloat(M_PI) * CGFloat(xResolution)));
-            let yVelocity = Float(velocity.y/(CGFloat(M_PI) * CGFloat(yResolution)));
+            let xVelocity = Float(velocity.x/(.pi * CGFloat(xResolution)));
+            let yVelocity = Float(velocity.y/(.pi * CGFloat(yResolution)));
             
             /*let matrix:Matrix = Matrix.rotateY(xVelocity) * Matrix.rotate(self.scene.camera.cameraRight, angle:-yVelocity)
-            self.scene.camera.cameraUp = Matrix.transformVector(matrix, right: self.scene.camera.cameraUp);
-            self.scene.camera.cameraPosition = Matrix.transformPoint(matrix, right: self.scene.camera.cameraPosition)*/
+             self.scene.camera.cameraUp = Matrix.transformVector(matrix, right: self.scene.camera.cameraUp);
+             self.scene.camera.cameraPosition = Matrix.transformPoint(matrix, right: self.scene.camera.cameraPosition)*/
             
             let yMatrix:Matrix = Matrix.rotate(self.scene.camera.cameraRight, angle:-yVelocity)
             self.scene.camera.cameraUp = Matrix.transformVector(yMatrix, right: self.scene.camera.cameraUp);
@@ -265,7 +265,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             let xMatrix:Matrix = Matrix.rotateY(xVelocity);
             self.scene.camera.cameraUp = Matrix.transformVector(xMatrix, right: self.scene.camera.cameraUp);
             self.scene.camera.cameraPosition = Matrix.transformPoint(xMatrix, right: self.scene.camera.cameraPosition)
-
+            
             
         }
         
@@ -337,12 +337,12 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         }
     }
     
-        /*func selectPane(index: Int){
-        for i in 0...panes.count-1 {
-            panes[i].hidden = (index != i);
-            toolbarButtons[i].tintColor = (index == i) ? UIColor.darkGrayColor() : UIColor.lightGrayColor();
-        }
-    }*/
+    /*func selectPane(index: Int){
+     for i in 0...panes.count-1 {
+     panes[i].hidden = (index != i);
+     toolbarButtons[i].tintColor = (index == i) ? UIColor.darkGrayColor() : UIColor.lightGrayColor();
+     }
+     }*/
     
     @IBAction func deleteSphere(_ sender: AnyObject) {
         scene.deleteSphere(selectedSphere);
@@ -357,7 +357,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let flippedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!;
         UIGraphicsEndImageContext();
         let sharingItems:[AnyObject] = [flippedImage]
-    
+        
         let activityViewController = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = sender as? UIView
         self.present(activityViewController, animated: true, completion: nil)
@@ -365,7 +365,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     @IBAction func showInformation(_ sender: AnyObject) {
     }
-
+    
     @IBAction func showFeedback(_ sender: AnyObject) {
         if !MFMailComposeViewController.canSendMail() {
             return
@@ -394,8 +394,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     var que:DispatchQueue = DispatchQueue(label: "Rendering", attributes: []);
-
-    func renderLoop() {
+    
+    @objc func renderLoop() {
         autoreleasepool {
             self.que.async(execute: {
                 let image:UIImage = self.rayTracer.renderScene(self.scene);

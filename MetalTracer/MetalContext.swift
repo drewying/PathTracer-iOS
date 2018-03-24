@@ -17,8 +17,8 @@ class MetalContext: NSObject {
     
     init(device:MTLDevice){
         self.device = device;
-        defaultLibrary = device.newDefaultLibrary()!;
-        commandQueue = device.makeCommandQueue();
+        defaultLibrary = device.makeDefaultLibrary()!;
+        commandQueue = device.makeCommandQueue()!;
         let kernalProgram:MTLFunction! = defaultLibrary.makeFunction(name: "mainProgram");
         do{
             try pipelineState = device.makeComputePipelineState(function: kernalProgram);
