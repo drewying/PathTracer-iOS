@@ -7,7 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		103D914F206AC1C4000F99E3 /* LightEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103D914E206AC1C4000F99E3 /* LightEditViewController.swift */; };
+		103D9151206AC4CD000F99E3 /* WallEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103D9150206AC4CD000F99E3 /* WallEditViewController.swift */; };
+		103D9153206AC737000F99E3 /* SphereEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103D9152206AC737000F99E3 /* SphereEditViewController.swift */; };
+		103D9155206AC933000F99E3 /* PresetScenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103D9154206AC933000F99E3 /* PresetScenes.swift */; };
 		10E2D5A220661AFC009AC3C2 /* RaytracerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E2D5A120661AFC009AC3C2 /* RaytracerView.swift */; };
+		10E7D5A8206AE4F300DF070F /* SceneSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E7D5A7206AE4F300DF070F /* SceneSelectViewController.swift */; };
+		10E7D5AA206AE69F00DF070F /* MoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E7D5A9206AE69F00DF070F /* MoreViewController.swift */; };
 		3AAAB3D41C8CE66800110BE0 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */; };
 		D1816ABB1A68EA4D008D74C6 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1816ABA1A68EA4D008D74C6 /* Box.swift */; };
 		D18524221A6DE9CB00C1E9D8 /* MBETextureUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18524211A6DE9CB00C1E9D8 /* MBETextureUtility.swift */; };
@@ -29,13 +35,19 @@
 		D1D407331A67B12200CA07E0 /* texture.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1D4071E1A67B12200CA07E0 /* texture.jpg */; };
 		D1D407341A67B12200CA07E0 /* UIImage+MBETextureUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D1D407201A67B12200CA07E0 /* UIImage+MBETextureUtilities.m */; };
 		D1D407351A67B12200CA07E0 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D407211A67B12200CA07E0 /* Vector3D.swift */; };
-		D1D407361A67B12200CA07E0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D407221A67B12200CA07E0 /* ViewController.swift */; };
+		D1D407361A67B12200CA07E0 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D407221A67B12200CA07E0 /* MainViewController.swift */; };
 		D1EAD16F1A67B38600327963 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D1EAD16B1A67B38600327963 /* LaunchScreen.xib */; };
 		D1EAD1701A67B38600327963 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1EAD16D1A67B38600327963 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		103D914E206AC1C4000F99E3 /* LightEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LightEditViewController.swift; path = MetalTracer/LightEditViewController.swift; sourceTree = SOURCE_ROOT; };
+		103D9150206AC4CD000F99E3 /* WallEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WallEditViewController.swift; path = MetalTracer/WallEditViewController.swift; sourceTree = SOURCE_ROOT; };
+		103D9152206AC737000F99E3 /* SphereEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SphereEditViewController.swift; path = MetalTracer/SphereEditViewController.swift; sourceTree = SOURCE_ROOT; };
+		103D9154206AC933000F99E3 /* PresetScenes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PresetScenes.swift; path = MetalTracer/PresetScenes.swift; sourceTree = SOURCE_ROOT; };
 		10E2D5A120661AFC009AC3C2 /* RaytracerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RaytracerView.swift; path = MetalTracer/RaytracerView.swift; sourceTree = SOURCE_ROOT; };
+		10E7D5A7206AE4F300DF070F /* SceneSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneSelectViewController.swift; path = MetalTracer/SceneSelectViewController.swift; sourceTree = SOURCE_ROOT; };
+		10E7D5A9206AE69F00DF070F /* MoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MoreViewController.swift; path = MetalTracer/MoreViewController.swift; sourceTree = SOURCE_ROOT; };
 		3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfoViewController.swift; path = MetalTracer/InfoViewController.swift; sourceTree = SOURCE_ROOT; };
 		D130D6C01A314FD10096BFC7 /* MetalTracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalTracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1816ABA1A68EA4D008D74C6 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Box.swift; path = MetalTracer/Box.swift; sourceTree = SOURCE_ROOT; };
@@ -61,7 +73,7 @@
 		D1D4071F1A67B12200CA07E0 /* UIImage+MBETextureUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+MBETextureUtilities.h"; path = "MetalTracer/UIImage+MBETextureUtilities.h"; sourceTree = SOURCE_ROOT; };
 		D1D407201A67B12200CA07E0 /* UIImage+MBETextureUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+MBETextureUtilities.m"; path = "MetalTracer/UIImage+MBETextureUtilities.m"; sourceTree = SOURCE_ROOT; };
 		D1D407211A67B12200CA07E0 /* Vector3D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Vector3D.swift; path = MetalTracer/Vector3D.swift; sourceTree = SOURCE_ROOT; };
-		D1D407221A67B12200CA07E0 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = MetalTracer/ViewController.swift; sourceTree = SOURCE_ROOT; };
+		D1D407221A67B12200CA07E0 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainViewController.swift; path = MetalTracer/MainViewController.swift; sourceTree = SOURCE_ROOT; };
 		D1EAD16C1A67B38600327963 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MetalTracer/Base.lproj/LaunchScreen.xib; sourceTree = SOURCE_ROOT; };
 		D1EAD16E1A67B38600327963 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = MetalTracer/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -123,8 +135,14 @@
 				D1D407201A67B12200CA07E0 /* UIImage+MBETextureUtilities.m */,
 				D18524211A6DE9CB00C1E9D8 /* MBETextureUtility.swift */,
 				D1D407211A67B12200CA07E0 /* Vector3D.swift */,
-				D1D407221A67B12200CA07E0 /* ViewController.swift */,
+				103D9154206AC933000F99E3 /* PresetScenes.swift */,
 				3AAAB3D31C8CE66800110BE0 /* InfoViewController.swift */,
+				103D914E206AC1C4000F99E3 /* LightEditViewController.swift */,
+				D1D407221A67B12200CA07E0 /* MainViewController.swift */,
+				10E7D5A9206AE69F00DF070F /* MoreViewController.swift */,
+				10E7D5A7206AE4F300DF070F /* SceneSelectViewController.swift */,
+				103D9152206AC737000F99E3 /* SphereEditViewController.swift */,
+				103D9150206AC4CD000F99E3 /* WallEditViewController.swift */,
 			);
 			name = MetalTracer;
 			path = Raytracer;
@@ -221,20 +239,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1D407361A67B12200CA07E0 /* ViewController.swift in Sources */,
+				D1D407361A67B12200CA07E0 /* MainViewController.swift in Sources */,
 				D1D4072B1A67B12200CA07E0 /* Material.swift in Sources */,
 				D1D4072D1A67B12200CA07E0 /* MetalContext.swift in Sources */,
+				103D9155206AC933000F99E3 /* PresetScenes.swift in Sources */,
 				D1D407341A67B12200CA07E0 /* UIImage+MBETextureUtilities.m in Sources */,
+				10E7D5AA206AE69F00DF070F /* MoreViewController.swift in Sources */,
 				3AAAB3D41C8CE66800110BE0 /* InfoViewController.swift in Sources */,
 				D1D407321A67B12200CA07E0 /* Sphere.swift in Sources */,
 				D18524221A6DE9CB00C1E9D8 /* MBETextureUtility.swift in Sources */,
+				103D9153206AC737000F99E3 /* SphereEditViewController.swift in Sources */,
 				D1D407231A67B12200CA07E0 /* AppDelegate.swift in Sources */,
 				D1816ABB1A68EA4D008D74C6 /* Box.swift in Sources */,
+				103D914F206AC1C4000F99E3 /* LightEditViewController.swift in Sources */,
 				D1D4072C1A67B12200CA07E0 /* Matrix.swift in Sources */,
 				D1D4072A1A67B12200CA07E0 /* MainShader.metal in Sources */,
 				10E2D5A220661AFC009AC3C2 /* RaytracerView.swift in Sources */,
+				10E7D5A8206AE4F300DF070F /* SceneSelectViewController.swift in Sources */,
 				D1D407301A67B12200CA07E0 /* Raytracer.swift in Sources */,
 				D1D407261A67B12200CA07E0 /* BoundingBox.swift in Sources */,
+				103D9151206AC4CD000F99E3 /* WallEditViewController.swift in Sources */,
 				D1D407271A67B12200CA07E0 /* Camera.swift in Sources */,
 				D1D4072E1A67B12200CA07E0 /* PathTracerParameters.swift in Sources */,
 				D1D4072F1A67B12200CA07E0 /* Ray.swift in Sources */,

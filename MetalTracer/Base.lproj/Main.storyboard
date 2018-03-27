@@ -5,13 +5,14 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--HelpViewController-->
         <scene sceneID="0JP-FQ-x6Q">
             <objects>
-                <viewController id="9pP-us-fjz" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="HelpViewController" id="9pP-us-fjz" userLabel="HelpViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="anK-Gq-bc3"/>
                         <viewControllerLayoutGuide type="bottom" id="5Cs-ah-FmU"/>
@@ -67,12 +68,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bGh-GQ-voz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2097" y="231"/>
+            <point key="canvasLocation" x="-2713" y="378"/>
         </scene>
-        <!--View Controller-->
+        <!--MainViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="MetalTracer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" userLabel="MainViewController" customClass="MainViewController" customModule="MetalTracer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -90,13 +91,16 @@
                                     <segue destination="9pP-us-fjz" kind="embed" id="eda-fI-8Fm"/>
                                 </connections>
                             </containerView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nr9-hY-fxc" customClass="RaytracerView" customModule="MetalTracer" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="426"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nr9-hY-fxc" customClass="RaytracerView" customModule="MetalTracer">
+                                <rect key="frame" x="0.0" y="20" width="375" height="423"/>
                                 <color key="backgroundColor" red="0.1976768076" green="0.1976768076" blue="0.1976768076" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9i6-Hc-zLp">
-                                <rect key="frame" x="0.0" y="446" width="375" height="2"/>
+                                <rect key="frame" x="0.0" y="443" width="375" height="5"/>
                                 <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="5" id="9Kw-48-F0A"/>
+                                </constraints>
                                 <color key="progressTintColor" red="0.94117647058823528" green="0.94117647058823528" blue="0.94117647058823528" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="trackTintColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </progressView>
@@ -118,7 +122,7 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="2Zl-SS-bMH"/>
-                                    <barButtonItem tag="2" title="Colors" id="Jyr-Fv-PwE">
+                                    <barButtonItem tag="2" title="Walls" id="Jyr-Fv-PwE">
                                         <connections>
                                             <action selector="selectPane:" destination="BYZ-38-t0r" id="Hfo-Dk-GP2"/>
                                         </connections>
@@ -152,21 +156,13 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="containerView" destination="uG4-F8-LPd" id="Tve-t2-aYD"/>
                         <outlet property="lightIntensitySlider" destination="oUe-kj-khE" id="4xh-9Y-zyR"/>
                         <outlet property="lightXSlider" destination="vaF-Fc-cEv" id="ii9-Ky-bUl"/>
                         <outlet property="lightYSlider" destination="VLf-Jo-jDE" id="8EQ-8h-z93"/>
                         <outlet property="lightZSlider" destination="ebF-a1-vA4" id="dGU-Ye-Nc2"/>
                         <outlet property="raytracerView" destination="nr9-hY-fxc" id="8iA-xL-YRF"/>
                         <outlet property="renderingProgressView" destination="9i6-Hc-zLp" id="b61-UR-AbH"/>
-                        <outlet property="sceneBlueSlider" destination="Ku3-ME-ijj" id="e1p-zZ-wWl"/>
-                        <outlet property="sceneGreenSlider" destination="6ll-sV-w2e" id="q3j-38-zF7"/>
-                        <outlet property="sceneRedSlider" destination="NOe-fX-aRZ" id="Trg-Pm-l4H"/>
-                        <outlet property="sceneWallSegmentedControl" destination="aMj-wW-8Dx" id="0Ec-YM-mAZ"/>
-                        <outlet property="sphereBlueSlider" destination="pVy-fe-U37" id="0lv-LF-oiI"/>
-                        <outlet property="sphereGreenSlider" destination="XUs-eT-Kuj" id="LPK-Ej-mMx"/>
-                        <outlet property="sphereMaterialSegmentedControl" destination="4my-bi-mKd" id="bgC-Xw-tcp"/>
-                        <outlet property="sphereRedSlider" destination="LDJ-Rn-T72" id="dSm-IA-wuB"/>
-                        <outlet property="sphereSizeSlider" destination="3Xh-jW-0By" id="mPk-Zk-e5j"/>
                         <outlet property="toolbar" destination="3i3-to-PZy" id="GGz-q9-FJ9"/>
                     </connections>
                 </viewController>
@@ -192,7 +188,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-1138" y="-82"/>
+            <point key="canvasLocation" x="-1914" y="-60"/>
         </scene>
         <!--Info View Controller-->
         <scene sceneID="ODA-Rh-KQX">
@@ -341,10 +337,10 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
             </objects>
             <point key="canvasLocation" x="804" y="125"/>
         </scene>
-        <!--View Controller-->
+        <!--MoreViewController-->
         <scene sceneID="0Ni-yr-n6d">
             <objects>
-                <viewController id="3PW-1e-x5c" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MoreViewController" id="3PW-1e-x5c" userLabel="MoreViewController" customClass="MoreViewController" customModule="MetalTracer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="SuC-Zc-pA7"/>
                         <viewControllerLayoutGuide type="bottom" id="li5-5g-zbe"/>
@@ -367,6 +363,7 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                             <color key="titleColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
+                                            <action selector="showFeedback:" destination="3PW-1e-x5c" eventType="touchUpInside" id="Mq9-FH-kg8"/>
                                             <action selector="showFeedback:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tXN-Tf-fW8"/>
                                         </connections>
                                     </button>
@@ -381,8 +378,7 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                             <color key="titleColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="showInformation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="plj-1D-1IY"/>
-                                            <segue destination="6Vg-lU-OVv" kind="presentation" id="FE7-oc-flh"/>
+                                            <action selector="showInformation:" destination="3PW-1e-x5c" eventType="touchUpInside" id="sTW-Bo-aBg"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUR-3o-6ap" userLabel="Save">
@@ -398,6 +394,7 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                         </state>
                                         <connections>
                                             <action selector="saveImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9Lp-HN-ZI1"/>
+                                            <action selector="saveImage:" destination="3PW-1e-x5c" eventType="touchUpInside" id="JbA-h7-A7G"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -414,12 +411,12 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yjc-67-CLL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2452" y="873"/>
+            <point key="canvasLocation" x="-2462" y="893"/>
         </scene>
-        <!--View Controller-->
+        <!--SphereEditViewController-->
         <scene sceneID="zZi-qN-DX3">
             <objects>
-                <viewController id="wX7-xZ-8rr" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SphereEditViewController" id="wX7-xZ-8rr" userLabel="SphereEditViewController" customClass="SphereEditViewController" customModule="MetalTracer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dev-BS-0ss"/>
                         <viewControllerLayoutGuide type="bottom" id="KMG-pf-8eh"/>
@@ -428,61 +425,61 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="feE-M6-eXZ">
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="feE-M6-eXZ">
                                 <rect key="frame" x="8" y="28" width="359" height="631"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Uw3-bt-Zqs">
-                                        <rect key="frame" x="0.0" y="0.0" width="175.5" height="631"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Uw3-bt-Zqs">
+                                        <rect key="frame" x="0.0" y="0.0" width="171.5" height="631"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Color:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dp6-dz-sbM">
-                                                <rect key="frame" x="0.0" y="0.0" width="175.5" height="96"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="171.5" height="20.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="LDJ-Rn-T72" userLabel="Red Slider">
-                                                <rect key="frame" x="-2" y="104" width="179.5" height="142"/>
+                                                <rect key="frame" x="-2" y="194" width="175.5" height="31"/>
                                                 <color key="minimumTrackTintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <color key="thumbTintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
-                                                    <action selector="sphereColorSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="lQU-hK-zQf"/>
+                                                    <action selector="sphereColorSlider:" destination="wX7-xZ-8rr" eventType="valueChanged" id="VOE-76-lCu"/>
                                                 </connections>
                                             </slider>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="XUs-eT-Kuj" userLabel="Green Slider">
-                                                <rect key="frame" x="-2" y="253" width="179.5" height="141.5"/>
+                                                <rect key="frame" x="-2" y="397.5" width="175.5" height="31"/>
                                                 <color key="minimumTrackTintColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <color key="thumbTintColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
-                                                    <action selector="sphereColorSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="io4-hN-LNQ"/>
+                                                    <action selector="sphereColorSlider:" destination="wX7-xZ-8rr" eventType="valueChanged" id="yLL-ef-WB7"/>
                                                 </connections>
                                             </slider>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="pVy-fe-U37" userLabel="Blue Slider">
-                                                <rect key="frame" x="-2" y="401.5" width="179.5" height="230.5"/>
+                                                <rect key="frame" x="-2" y="601" width="175.5" height="31"/>
                                                 <color key="minimumTrackTintColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <color key="thumbTintColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
-                                                    <action selector="sphereColorSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="Cw1-IW-DLz"/>
+                                                    <action selector="sphereColorSlider:" destination="wX7-xZ-8rr" eventType="valueChanged" id="qAt-ok-nEl"/>
                                                 </connections>
                                             </slider>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Otc-mZ-Zww">
-                                        <rect key="frame" x="183.5" y="0.0" width="175.5" height="631"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Otc-mZ-Zww">
+                                        <rect key="frame" x="187.5" y="0.0" width="171.5" height="631"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Radius:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2en-YL-0fx">
-                                                <rect key="frame" x="0.0" y="0.0" width="175.5" height="97.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="171.5" height="20.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="3Xh-jW-0By" userLabel="Radius Slider">
-                                                <rect key="frame" x="-2" y="105.5" width="179.5" height="144"/>
+                                                <rect key="frame" x="-2" y="194.5" width="175.5" height="31"/>
                                                 <connections>
-                                                    <action selector="radiusSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="E7I-ro-b5a"/>
+                                                    <action selector="radiusSlider:" destination="wX7-xZ-8rr" eventType="valueChanged" id="mLi-da-kHR"/>
                                                 </connections>
                                             </slider>
                                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="4my-bi-mKd">
-                                                <rect key="frame" x="0.0" y="256.5" width="175.5" height="134.5"/>
+                                                <rect key="frame" x="0.0" y="399" width="171.5" height="29"/>
                                                 <segments>
                                                     <segment title="Normal"/>
                                                     <segment title="Metal"/>
@@ -490,18 +487,18 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                                 </segments>
                                                 <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
-                                                    <action selector="sphereMaterialSegmentedControl:" destination="BYZ-38-t0r" eventType="valueChanged" id="kZo-x0-Ohp"/>
+                                                    <action selector="sphereMaterialSegmentedControl:" destination="wX7-xZ-8rr" eventType="valueChanged" id="ZDO-iZ-1QF"/>
                                                 </connections>
                                             </segmentedControl>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q2d-dV-JsO">
-                                                <rect key="frame" x="0.0" y="398" width="175.5" height="233"/>
+                                                <rect key="frame" x="0.0" y="601" width="171.5" height="30"/>
                                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <state key="normal" title="Delete">
                                                     <color key="titleColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="deleteSphere:" destination="BYZ-38-t0r" eventType="touchUpInside" id="JcR-Nn-xMc"/>
+                                                    <action selector="deleteSphere:" destination="wX7-xZ-8rr" eventType="touchUpInside" id="an4-7b-cQE"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -517,15 +514,22 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                             <constraint firstAttribute="trailing" secondItem="feE-M6-eXZ" secondAttribute="trailing" constant="8" id="YQA-cu-56g"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="sphereBlueSlider" destination="pVy-fe-U37" id="544-oa-ttA"/>
+                        <outlet property="sphereGreenSlider" destination="XUs-eT-Kuj" id="Fzi-II-oXc"/>
+                        <outlet property="sphereMaterialSegmentedControl" destination="4my-bi-mKd" id="OIh-Er-IgW"/>
+                        <outlet property="sphereRedSlider" destination="LDJ-Rn-T72" id="iBM-Ms-9AX"/>
+                        <outlet property="sphereSizeSlider" destination="3Xh-jW-0By" id="ZVn-RE-sEd"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tlR-Ta-g1r" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1782" y="885"/>
         </scene>
-        <!--View Controller-->
+        <!--WallEditViewController-->
         <scene sceneID="zeT-MU-Vmt">
             <objects>
-                <viewController id="Yi9-sB-rpj" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WallEditViewController" id="Yi9-sB-rpj" userLabel="WallEditViewController" customClass="WallEditViewController" customModule="MetalTracer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="f3K-2E-zb1"/>
                         <viewControllerLayoutGuide type="bottom" id="Pcp-Ul-uTX"/>
@@ -534,11 +538,11 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="jEe-ZA-flJ">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="jEe-ZA-flJ">
                                 <rect key="frame" x="8" y="28" width="359" height="631"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="aMj-wW-8Dx">
-                                        <rect key="frame" x="0.0" y="0.0" width="359" height="29"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="359" height="127"/>
                                         <segments>
                                             <segment title="West"/>
                                             <segment title="East"/>
@@ -548,29 +552,29 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                             <segment title="Floor"/>
                                         </segments>
                                         <connections>
-                                            <action selector="selectWall:" destination="BYZ-38-t0r" eventType="valueChanged" id="Hvm-Z8-0Fi"/>
+                                            <action selector="selectWall:" destination="Yi9-sB-rpj" eventType="valueChanged" id="uU0-rQ-dRj"/>
                                         </connections>
                                     </segmentedControl>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="RqY-bW-QMx">
-                                        <rect key="frame" x="0.0" y="541" width="359" height="90"/>
+                                        <rect key="frame" x="0.0" y="134" width="359" height="497"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="beq-qT-u6C">
-                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="90"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="497"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="soC-ZT-yqX">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="30"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="166"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="G" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZp-hD-y62">
-                                                        <rect key="frame" x="0.0" y="30" width="0.0" height="30"/>
+                                                        <rect key="frame" x="0.0" y="166" width="0.0" height="165.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cwk-Wz-HoZ" userLabel="B">
-                                                        <rect key="frame" x="0.0" y="60" width="0.0" height="30"/>
+                                                        <rect key="frame" x="0.0" y="331.5" width="0.0" height="165.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -578,30 +582,30 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="c6H-lj-Ap6">
-                                                <rect key="frame" x="8" y="0.0" width="351" height="90"/>
+                                                <rect key="frame" x="8" y="0.0" width="351" height="497"/>
                                                 <subviews>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="NOe-fX-aRZ" userLabel="Red Slider">
-                                                        <rect key="frame" x="-2" y="0.0" width="355" height="31"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="355" height="167"/>
                                                         <color key="minimumTrackTintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <color key="thumbTintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <connections>
-                                                            <action selector="sceneWallColorSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="QbP-KX-t41"/>
+                                                            <action selector="sceneWallColorSlider:" destination="Yi9-sB-rpj" eventType="valueChanged" id="Wkd-rd-wsK"/>
                                                         </connections>
                                                     </slider>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="6ll-sV-w2e" userLabel="Green Slider">
-                                                        <rect key="frame" x="-2" y="30" width="355" height="31"/>
+                                                        <rect key="frame" x="-2" y="166" width="355" height="166.5"/>
                                                         <color key="minimumTrackTintColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <color key="thumbTintColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <connections>
-                                                            <action selector="sceneWallColorSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="v0u-fy-G9D"/>
+                                                            <action selector="sceneWallColorSlider:" destination="Yi9-sB-rpj" eventType="valueChanged" id="qGh-7T-qSm"/>
                                                         </connections>
                                                     </slider>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Ku3-ME-ijj" userLabel="Blue Slider">
-                                                        <rect key="frame" x="-2" y="60" width="355" height="31"/>
+                                                        <rect key="frame" x="-2" y="331.5" width="355" height="166.5"/>
                                                         <color key="minimumTrackTintColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <color key="thumbTintColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <connections>
-                                                            <action selector="sceneWallColorSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="6m9-Zf-DMH"/>
+                                                            <action selector="sceneWallColorSlider:" destination="Yi9-sB-rpj" eventType="valueChanged" id="Yjf-6b-zFr"/>
                                                         </connections>
                                                     </slider>
                                                 </subviews>
@@ -609,6 +613,9 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                         </subviews>
                                     </stackView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstItem="aMj-wW-8Dx" firstAttribute="height" secondItem="jEe-ZA-flJ" secondAttribute="height" multiplier="0.2" id="kfN-qq-fDt"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" red="0.1976768076" green="0.1976768076" blue="0.1976768076" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -619,15 +626,21 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                             <constraint firstItem="Pcp-Ul-uTX" firstAttribute="top" secondItem="jEe-ZA-flJ" secondAttribute="bottom" constant="8" id="daS-dI-o2F"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="wallColorBlueSlider" destination="Ku3-ME-ijj" id="bP6-PF-gJU"/>
+                        <outlet property="wallColorGreenSlider" destination="6ll-sV-w2e" id="wIQ-q2-UHU"/>
+                        <outlet property="wallColorRedSlider" destination="NOe-fX-aRZ" id="Xfh-GR-EP7"/>
+                        <outlet property="wallSelectionSegmentedControl" destination="aMj-wW-8Dx" id="DV4-JA-5Oz"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="be9-ii-h2N" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1138" y="885"/>
         </scene>
-        <!--View Controller-->
+        <!--SceneSelectionViewController-->
         <scene sceneID="a7Q-Sn-7vr">
             <objects>
-                <viewController id="iZc-ef-ypv" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SceneSelectViewController" id="iZc-ef-ypv" userLabel="SceneSelectionViewController" customClass="SceneSelectViewController" customModule="MetalTracer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Iab-K8-APM"/>
                         <viewControllerLayoutGuide type="bottom" id="XZO-6h-DxW"/>
@@ -652,7 +665,7 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                     <segment title="Scene 5"/>
                                 </segments>
                                 <connections>
-                                    <action selector="loadScene:" destination="BYZ-38-t0r" eventType="valueChanged" id="l7S-Gd-IEV"/>
+                                    <action selector="loadScene:" destination="iZc-ef-ypv" eventType="valueChanged" id="kzR-tA-VBh"/>
                                 </connections>
                             </segmentedControl>
                         </subviews>
@@ -673,7 +686,7 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
         <!--Navigation Controller-->
         <scene sceneID="CXt-o6-0ta">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6Vg-lU-OVv" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="InfoViewController" automaticallyAdjustsScrollViewInsets="NO" id="6Vg-lU-OVv" sceneMemberID="viewController">
                     <toolbarItems/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="WRj-0J-n0n">
@@ -691,10 +704,14 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
             </objects>
             <point key="canvasLocation" x="58" y="126"/>
         </scene>
-        <!--View Controller-->
+        <!--LightEditViewController-->
         <scene sceneID="znM-X6-cqg">
             <objects>
-                <viewController id="kxd-fj-VJ2" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LightEditViewController" id="kxd-fj-VJ2" userLabel="LightEditViewController" customClass="LightEditViewController" customModule="MetalTracer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="DyR-Yp-1JK"/>
+                        <viewControllerLayoutGuide type="bottom" id="Z4c-EA-0Lm"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5tr-VZ-uob">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -739,6 +756,7 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                                 <color key="minimumTrackTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <color key="maximumTrackTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
+                                                    <action selector="lightPositionSlider:" destination="kxd-fj-VJ2" eventType="valueChanged" id="Czn-Bz-WGX"/>
                                                     <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="oZk-vq-tRn"/>
                                                 </connections>
                                             </slider>
@@ -747,6 +765,7 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                                 <color key="minimumTrackTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <color key="maximumTrackTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
+                                                    <action selector="lightPositionSlider:" destination="kxd-fj-VJ2" eventType="valueChanged" id="EgK-sy-hst"/>
                                                     <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="est-2H-tAJ"/>
                                                 </connections>
                                             </slider>
@@ -755,12 +774,14 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                                                 <color key="minimumTrackTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <color key="thumbTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
+                                                    <action selector="lightPositionSlider:" destination="kxd-fj-VJ2" eventType="valueChanged" id="Js1-C9-u95"/>
                                                     <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="qVV-GZ-d6A"/>
                                                 </connections>
                                             </slider>
                                             <slider contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="ebF-a1-vA4" userLabel="Z Slider">
                                                 <rect key="frame" x="-2" y="485.5" width="283.5" height="162.5"/>
                                                 <connections>
+                                                    <action selector="lightPositionSlider:" destination="kxd-fj-VJ2" eventType="valueChanged" id="57D-IN-FL8"/>
                                                     <action selector="lightPositionSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="Xcn-yI-uQO"/>
                                                 </connections>
                                             </slider>
@@ -777,6 +798,12 @@ Move the camera round. Play with the wall colors. Add spheres. Change the color 
                             <constraint firstAttribute="trailing" secondItem="kCC-Uq-J5j" secondAttribute="trailing" constant="10" id="vYC-wL-kRq"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="lightIntensitySlider" destination="oUe-kj-khE" id="e0Y-U2-6Ck"/>
+                        <outlet property="lightXSlider" destination="vaF-Fc-cEv" id="jlB-J6-2l9"/>
+                        <outlet property="lightYSlider" destination="VLf-Jo-jDE" id="2T3-xy-Nwq"/>
+                        <outlet property="lightZSlider" destination="ebF-a1-vA4" id="jqY-zo-yKO"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2m3-XW-r2m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
