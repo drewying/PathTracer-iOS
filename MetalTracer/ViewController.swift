@@ -273,16 +273,15 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate, Ray
         
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        raytracerView.initialize()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         setupScene(0)
         raytracerView.startRendering()
     }
     
 
     
-    func resetDisplay() {
+    func resetDisplay(_ activeReset:Bool) {
         self.raytracerView.restart()
         self.renderingProgressView.progress = 0.0
     }

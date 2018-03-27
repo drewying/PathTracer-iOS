@@ -29,7 +29,7 @@ class RaytracerView: UIView {
     private var lastY:Float = 0
     
     private var timer: CADisplayLink! = nil
-    private var context:MetalContext! = nil
+    //private var context:MetalContext! = nil
     
     private var imageTexture: MTLTexture! = nil
     
@@ -40,7 +40,7 @@ class RaytracerView: UIView {
     private var doubleTapRecognize = UITapGestureRecognizer(target: self, action: #selector(doubleTapAction(_:)))
     private var pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(pinchAction(_:)))
     private var panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panAction(_:)))
-    
+    private var context = MetalContext(device: MTLCreateSystemDefaultDevice()!)
 
     
     override func layoutSubviews() {
@@ -63,25 +63,20 @@ class RaytracerView: UIView {
         addGestureRecognizer(panRecognizer)
         addGestureRecognizer(tapRecognizer)
         addGestureRecognizer(doubleTapRecognizer)
+        
+        initialize()
     }
     
     func initialize() {
+        
         xResolution = Int(bounds.width)
         yResolution = Int(bounds.height)
-    
-        //self.imageTexture = UIImage.textureFromImage(UIImage(named: "texture.jpg")!, context: context)
         
-        var device = MTLCreateSystemDefaultDevice()
-        device = MTLCreateSystemDefaultDevice()
-        guard device != nil else {
-            print("Metal is not supported on this device")
-            return
-        }
-        context = MetalContext(device: device!)
         let camera = Camera(cameraUp:Vector3D(x:0.0, y:1.0, z:0.0), cameraPosition:Vector3D(x:0.0, y:0.0, z:3.0), aspectRatio:Float(bounds.width/bounds.height))
         scene = Scene(camera:camera, context:context)
         rayTracer = Raytracer(renderContext: context, xResolution: xResolution, yResolution: yResolution)
-        rayTracer.imageTexture = imageTexture
+        //rayTracer.imageTexture = imageTexture
+        
     }
     
     public func startRendering() {
