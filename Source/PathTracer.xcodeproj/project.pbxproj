@@ -155,13 +155,13 @@
 		10F14CE6206B57CE00E1B378 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				107A9C25206B58E700D4A3F7 /* SphereEditViewController.swift */,
-				107A9C13206B58A500D4A3F7 /* MoreViewController.swift */,
 				107A9C02206B586500D4A3F7 /* InfoViewController.swift */,
-				107A9C09206B587D00D4A3F7 /* MainViewController.swift */,
-				107A9C29206B58FF00D4A3F7 /* WallEditViewController.swift */,
 				107A9C03206B586600D4A3F7 /* LightEditViewController.swift */,
+				107A9C09206B587D00D4A3F7 /* MainViewController.swift */,
+				107A9C13206B58A500D4A3F7 /* MoreViewController.swift */,
 				107A9C21206B58D400D4A3F7 /* SceneSelectViewController.swift */,
+				107A9C25206B58E700D4A3F7 /* SphereEditViewController.swift */,
+				107A9C29206B58FF00D4A3F7 /* WallEditViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";

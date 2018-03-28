@@ -92,7 +92,7 @@
                                 </connections>
                             </containerView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nr9-hY-fxc" customClass="RaytracerView" customModule="PathTracer" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="423"/>
+                                <rect key="frame" x="0.0" y="20" width="384" height="423"/>
                                 <color key="backgroundColor" red="0.1976768076" green="0.1976768076" blue="0.1976768076" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9i6-Hc-zLp">
@@ -144,7 +144,7 @@
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="top" secondItem="nr9-hY-fxc" secondAttribute="bottom" id="3Gj-gd-OBZ"/>
                             <constraint firstItem="3i3-to-PZy" firstAttribute="top" secondItem="uG4-F8-LPd" secondAttribute="bottom" id="ExZ-o7-oAr"/>
                             <constraint firstItem="9i6-Hc-zLp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="FPy-AT-JIN"/>
-                            <constraint firstAttribute="trailing" secondItem="nr9-hY-fxc" secondAttribute="trailing" id="Nsc-xy-cDI"/>
+                            <constraint firstAttribute="trailing" secondItem="nr9-hY-fxc" secondAttribute="trailing" constant="-9" id="Nsc-xy-cDI"/>
                             <constraint firstItem="nr9-hY-fxc" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="QWn-HR-XcU"/>
                             <constraint firstAttribute="trailing" secondItem="uG4-F8-LPd" secondAttribute="trailing" id="ctk-30-8sH"/>
                             <constraint firstAttribute="trailing" secondItem="3i3-to-PZy" secondAttribute="trailing" id="nad-iY-bnf"/>

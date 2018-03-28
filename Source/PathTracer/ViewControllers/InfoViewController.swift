@@ -12,4 +12,8 @@ class InfoViewController: UIViewController {
     @IBAction func dismiss(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 }

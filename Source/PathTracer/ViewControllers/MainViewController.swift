@@ -25,6 +25,12 @@ class MainViewController: UIViewController, RaytracerViewDelegate {
     var wallEditViewController:WallEditViewController!
     
     @IBAction func selectPane(_ sender: UIBarButtonItem) {
+        if (sender.tintColor == UIColor.darkGray) {
+            switchViewController(viewController: helpViewController)
+            sender.tintColor = UIColor.lightGray
+            return
+        }
+        
         switch (sender.tag) {
         case 0:
             switchViewController(viewController: sceneSelecViewController)
@@ -60,6 +66,10 @@ class MainViewController: UIViewController, RaytracerViewDelegate {
         super.viewDidLoad()
         setupChildViewControllers()
         raytracerView.delegate = self
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     func setupChildViewControllers() {
