@@ -1,6 +1,6 @@
 # Real Time Path Tracer for iOS
 
-![alt tag](https://www.dropbox.com/s/rxinlgknaw02s5n/SCENE_1.JPG?raw=1)
+![alt tag](https://www.dropbox.com/s/m5ufa0b7u7aytcf/SCENE_3.JPG?raw=1)
 
 This is a [Path Tracer](https://en.wikipedia.org/wiki/Path_tracing) for iOS. 
 
