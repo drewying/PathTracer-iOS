@@ -18,7 +18,6 @@ using namespace metal;
 static constant int bounceCount = 5;
 
 enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 3, LIGHT = 4};
-    
     struct Ray{
         float3 origin;
         float3 direction;
@@ -41,7 +40,6 @@ enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 
         packed_float3 color;
     };
     
-    
     struct Plane{
         float3 position;
         float3 normal;
@@ -56,7 +54,6 @@ enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 
         float3 color;
         Material material;
     };
-    
     
     struct Triangle{
         float3 p0;
@@ -112,8 +109,6 @@ enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 
         } else{
             return noHit();
         }
-        
-        
     }
     
     
@@ -371,32 +366,6 @@ enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 
     
     inline Hit getClosestHit(Ray r, Scene scene, thread uint *seed){
         Hit h = noHit();
-        
-        /*for (int i=0; i<boxCount; i++){
-         Box b = boxes[i];
-         Hit hit = boxIntersection(b, r, h.distance);
-         if (hit.didHit){
-         h = hit;
-         if (scene.colors[i][0] >= 0.0){
-         h.color = scene.colors[i];
-         } else{
-         float x;
-         float y;
-         if (abs(hit.normal.x) > 0){
-         x = hit.hitPosition.z;
-         y = hit.hitPosition.y;
-         } else if (abs(hit.normal.y) > 0){
-         x = hit.hitPosition.x;
-         y = hit.hitPosition.z;
-         } else if (abs(hit.normal.z) > 0){
-         x = hit.hitPosition.x;
-         y = hit.hitPosition.y;
-         }
-         h.color = imageTexture.read(uint2(((x/2)+0.5) * 1000, 1000 - (((y/2)+0.5) * 1000))).rgb;
-         }
-         }
-         }*/
-        
         for (int i = 0; i < 6; i++) {
             Hit hit = boxIntersection(boxes[i], r, h.distance);
             if (hit.didHit){
@@ -446,43 +415,21 @@ enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 
                 return float3(.196,.196,.196);
             }
             
-            
             //Bounce the ray
             ray = bounce(h, seed);
             
             //Indirect Lighting Factor
             indirectLightingColor *= h.color;
-            
-            //Direct Lighting Shadow Factor
-            float3 lightDirection = normalize(scene.light.position - h.hitPosition);
-            float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
-            Ray shadowRay = {jitteredPosition, lightDirection};
-            Hit shadowHit = getClosestHit(shadowRay, scene, seed);
-            float lightDistance = distance(scene.light.position, jitteredPosition);
-            bool inShadow = (shadowHit.didHit && shadowHit.distance <= lightDistance);
-            
-            if (!inShadow){
-                //Direct Lighting Factor
-                
-                //float directLightingFactor = dot(normal, lightDirection)/dot(lightDirection, lightDirection);
-                float directLightingFactor = dot(h.normal, lightDirection);
-                
-                float cos_a_max = sqrt(1.0 - clamp(0.5 * 0.5 / dot(scene.light.position - ray.origin, scene.light.position - ray.origin), 0.0, 1.0));
-                float weight = 2.0 * (1.0 - cos_a_max);
-                
-                accumulatedColor += indirectLightingColor * scene.light.color * weight * clamp(directLightingFactor, 0.0, 1.0);
-            }
-            
-            
-            //Direct Lighting Shadow Factor
-            //float3 jitteredPosition = jitterPosition(seed, h.hitPosition);
-            //Ray shadowRay = {jitteredPosition, lightDirection};
-            //Hit shadowHit = getClosestHit(shadowRay, scene, seed);
-            //float lightDistance = distance(lightPosition, jitteredPosition);
-            //float shadowFactor = (shadowHit.didHit && shadowHit.distance <= lightDistance) ? 0.0 : 1.0;
         }
         return accumulatedColor;
-        
+    }
+    
+    float tentFilter(float d) {
+        if d < 0.5 {
+            return sqrt(2.0 * d) - 1.0;
+        } else {
+            return 1.0 - sqrt(2.0 - 2.0 * d);
+        }
     }
     
     Ray makeRay(thread uint *seed, float x, float y, float aspectRatio, constant packed_float3 *cameraParams){
@@ -495,9 +442,12 @@ enum Material : uint { DIFFUSE = 0, SPECULAR = 1, DIELECTRIC = 2, TRANSPARENT = 
         float r2 = 0;
         
         if (cam.apertureSize > 0.0){
-            r1 = (rand(seed) * 2.0) - 1.0;
+            r1 = tentFilter(rand(seed) * 2.0) - 1.0;
             r2 = (rand(seed) * 2.0) - 1.0;
         }
+        
+        // Tent filter
+        
         
         float3 l = normalize(lookAt-cam.position);
         float3 right = cross(l, cam.up);
